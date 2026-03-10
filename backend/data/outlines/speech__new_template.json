@@ -1,0 +1,43 @@
+{
+  "type_id": "speech",
+  "type_name": "发言",
+  "template_id": "new_template",
+  "sections": [
+    {
+      "title": "标题",
+      "bullets": [
+        "精炼"
+      ],
+      "children": null,
+      "description": null,
+      "word_count": null,
+      "granularity": null
+    },
+    {
+      "title": "发言人介绍",
+      "bullets": [
+        "100字左右"
+      ],
+      "children": null,
+      "description": null,
+      "word_count": null,
+      "granularity": null
+    },
+    {
+      "title": "发言稿浓缩",
+      "bullets": [
+        "500字左右"
+      ],
+      "children": null,
+      "description": null,
+      "word_count": null,
+      "granularity": null
+    }
+  ],
+  "meta": {
+    "is_system": false,
+    "is_favorite": false,
+    "created_at": 1765961683827.0,
+    "title": null
+  }
+}

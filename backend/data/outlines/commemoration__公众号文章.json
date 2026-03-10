@@ -1,0 +1,139 @@
+{
+  "type_id": "commemoration",
+  "type_name": "重大事件纪念",
+  "template_id": "公众号文章",
+  "sections": [
+    {
+      "title": "标题",
+      "bullets": [
+        "包含核心事件关键词",
+        "吸引读者注意"
+      ],
+      "children": [],
+      "description": "生成简洁明了的标题，突出新闻事件的核心内容。",
+      "word_count": "20-50字",
+      "granularity": "高"
+    },
+    {
+      "title": "导语",
+      "bullets": [
+        "时间、地点",
+        "主要人物/机构",
+        "核心事件概要"
+      ],
+      "children": [],
+      "description": "概括新闻稿的关键事件，包括谁、什么、何时、何地、为何。",
+      "word_count": "100-150字",
+      "granularity": "中"
+    },
+    {
+      "title": "事件背景",
+      "bullets": [
+        "事件的历史背景",
+        "相关的重大意义",
+        "与当前形势的关系"
+      ],
+      "children": [],
+      "description": "介绍事件的历史背景和重大意义。",
+      "word_count": "150-300字",
+      "granularity": "中"
+    },
+    {
+      "title": "活动过程",
+      "bullets": [
+        "重要嘉宾开幕致辞",
+        "主题演讲的关键内容",
+        "活动的主要环节"
+      ],
+      "children": [],
+      "description": "描述活动过程，包含开幕致辞与主题演讲。",
+      "word_count": "300-500字",
+      "granularity": "详细"
+    },
+    {
+      "title": "重要讨论环节",
+      "bullets": [
+        "讨论的主题",
+        "观点交流与碰撞",
+        "达成的共识或启示"
+      ],
+      "children": [],
+      "description": "总结圆桌讨论或其他重要讨论环节的要点。",
+      "word_count": "200-400字",
+      "granularity": "详细"
+    },
+    {
+      "title": "合作签约仪式",
+      "bullets": [
+        "合作的具体内容",
+        "参与方的角色与贡献",
+        "合作的长期影响"
+      ],
+      "children": [],
+      "description": "描述合作签约仪式的进行情况及其重要性。",
+      "word_count": "150-300字",
+      "granularity": "中"
+    },
+    {
+      "title": "专家与学者发言总结",
+      "bullets": [
+        "重要观点与学术贡献",
+        "对未来的展望",
+        "与事件相关的建议"
+      ],
+      "children": [],
+      "description": "总结专家学者的发言内容及其贡献",
+      "word_count": "200-400字",
+      "granularity": "中"
+    },
+    {
+      "title": "论坛成果与未来展望",
+      "bullets": [
+        "论坛的主要成果",
+        "对未来的期望和规划",
+        "可能的挑战与机遇"
+      ],
+      "children": [],
+      "description": "总结论坛的主要成果与未来的发展方向。",
+      "word_count": "150-300字",
+      "granularity": "中"
+    },
+    {
+      "title": "结语",
+      "bullets": [
+        "总结事件的影响",
+        "呼应导语内容",
+        "结束语气明确"
+      ],
+      "children": [],
+      "description": "对新闻事件做出总结，并呼应导语，增强读者印象。",
+      "word_count": "100-200字",
+      "granularity": "中"
+    },
+    {
+      "title": "媒体与活动支持",
+      "bullets": [
+        "支持媒体名单",
+        "合作方及参与机构",
+        "活动宣传渠道"
+      ],
+      "children": [],
+      "description": "列举支持媒体及活动合作方。",
+      "word_count": "100-150字",
+      "granularity": "低"
+    },
+    {
+      "title": "附加信息",
+      "bullets": [
+        "联系方式",
+        "后续活动安排",
+        "相关链接或资源"
+      ],
+      "children": [],
+      "description": "提供进一步的信息如联系方式和后续活动安排。",
+      "word_count": "50-100字",
+      "granularity": "低"
+    }
+  ],
+  "meta": null
+}

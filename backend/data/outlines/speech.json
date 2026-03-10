@@ -1,0 +1,161 @@
+{
+  "type_id": "speech",
+  "type_name": "发言",
+  "template_id": "default",
+  "sections": [
+    {
+      "title": "标题",
+      "bullets": [
+        "包含核心事件关键词",
+        "吸引读者注意"
+      ],
+      "children": [],
+      "description": "生成简洁明了的标题，突出新闻事件的核心内容。",
+      "word_count": "20-50字",
+      "granularity": "高"
+    },
+    {
+      "title": "导语",
+      "bullets": [
+        "时间、地点",
+        "主要人物/机构",
+        "核心事件概要"
+      ],
+      "children": [],
+      "description": "概括新闻稿的关键事件，包括谁、什么、何时、何地、为何。",
+      "word_count": "100-150字",
+      "granularity": "中"
+    },
+    {
+      "title": "事件背景",
+      "bullets": [
+        "历史背景",
+        "事件起因",
+        "相关政策或战略"
+      ],
+      "children": [],
+      "description": "提供事件的历史和背景信息，解释其重要性和相关性。",
+      "word_count": "150-250字",
+      "granularity": "中"
+    },
+    {
+      "title": "活动过程",
+      "bullets": [
+        "开幕致辞",
+        "主题演讲",
+        "重要活动环节"
+      ],
+      "children": [
+        {
+          "title": "开幕致辞",
+          "bullets": [
+            "致辞者信息",
+            "致辞核心内容"
+          ],
+          "children": [],
+          "description": "记录开幕致辞的要点，包括讲话人及主要内容。",
+          "word_count": "150-300字",
+          "granularity": "详细"
+        },
+        {
+          "title": "主题演讲",
+          "bullets": [
+            "演讲者信息",
+            "演讲核心观点"
+          ],
+          "children": [],
+          "description": "总结主题演讲的关键内容，特别是重要观点和数据。",
+          "word_count": "150-300字",
+          "granularity": "详细"
+        }
+      ],
+      "description": "描述活动或会议的详细流程，包括开幕致辞与主题演讲。",
+      "word_count": "300-500字",
+      "granularity": "详细"
+    },
+    {
+      "title": "重要讨论环节",
+      "bullets": [
+        "讨论主题",
+        "主要观点和结论",
+        "参与者贡献"
+      ],
+      "children": [],
+      "description": "总结关键讨论和互动内容，如圆桌讨论或嘉宾点评。",
+      "word_count": "300-500字",
+      "granularity": "详细"
+    },
+    {
+      "title": "合作签约仪式",
+      "bullets": [
+        "签约协议简介",
+        "参与方姓名和头衔",
+        "未来合作展望"
+      ],
+      "children": [],
+      "description": "记录签约仪式的详细过程，包括协议详情和签约方。",
+      "word_count": "150-300字",
+      "granularity": "中"
+    },
+    {
+      "title": "专家与学者发言总结",
+      "bullets": [
+        "发言者信息",
+        "核心观点总结",
+        "专业建议"
+      ],
+      "children": [],
+      "description": "总结专家和学者的发言，突出专业观点和建议。",
+      "word_count": "200-350字",
+      "granularity": "中"
+    },
+    {
+      "title": "论坛成果与未来展望",
+      "bullets": [
+        "活动成果",
+        "未来计划",
+        "预期影响"
+      ],
+      "children": [],
+      "description": "总结论坛或活动的成果，并展望未来发展方向。",
+      "word_count": "200-350字",
+      "granularity": "中"
+    },
+    {
+      "title": "结语",
+      "bullets": [
+        "总结事件影响",
+        "后续关注点",
+        "感谢与展望"
+      ],
+      "children": [],
+      "description": "为报道进行总结并提出后续关注点或行动建议。",
+      "word_count": "100-150字",
+      "granularity": "中"
+    },
+    {
+      "title": "媒体与活动支持",
+      "bullets": [
+        "参与媒体列表",
+        "支持机构名单"
+      ],
+      "children": [],
+      "description": "列出活动的媒体报道和支持机构，突出媒体影响力。",
+      "word_count": "100-150字",
+      "granularity": "低"
+    },
+    {
+      "title": "附加信息",
+      "bullets": [
+        "相关链接",
+        "联系方式",
+        "补充说明"
+      ],
+      "children": [],
+      "description": "提供活动的补充资料，如重要链接或联系信息。",
+      "word_count": "50-100字",
+      "granularity": "低"
+    }
+  ],
+  "meta": null
+}

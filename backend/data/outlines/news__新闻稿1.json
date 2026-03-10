@@ -1,0 +1,43 @@
+{
+  "type_id": "news",
+  "type_name": "新闻稿",
+  "template_id": "新闻稿1",
+  "sections": [
+    {
+      "title": "标题",
+      "bullets": [
+        "简洁"
+      ],
+      "children": null,
+      "description": null,
+      "word_count": null,
+      "granularity": null
+    },
+    {
+      "title": "主题内容",
+      "bullets": [
+        "丰富详实"
+      ],
+      "children": null,
+      "description": null,
+      "word_count": null,
+      "granularity": null
+    },
+    {
+      "title": "结语",
+      "bullets": [
+        "精炼"
+      ],
+      "children": null,
+      "description": null,
+      "word_count": null,
+      "granularity": null
+    }
+  ],
+  "meta": {
+    "is_system": false,
+    "is_favorite": false,
+    "created_at": 1765959102940.0,
+    "title": null
+  }
+}

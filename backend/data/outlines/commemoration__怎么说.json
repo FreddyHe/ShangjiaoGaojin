@@ -1,0 +1,104 @@
+{
+  "type_id": "commemoration",
+  "type_name": "重大事件纪念",
+  "template_id": "怎么说",
+  "sections": [
+    {
+      "title": "标题（主标题/副标题）",
+      "bullets": [
+        "包含核心事件关键词",
+        "吸引读者注意",
+        "体现活动性质或背景"
+      ],
+      "children": [],
+      "description": "生成简洁明了的标题，突出新闻事件的核心内容。",
+      "word_count": "20-50字",
+      "granularity": "高"
+    },
+    {
+      "title": "导语",
+      "bullets": [
+        "时间、地点",
+        "主要人物/机构",
+        "核心事件概要"
+      ],
+      "children": [],
+      "description": "概括新闻稿的关键事件，包括谁、什么、何时、何地、为何。",
+      "word_count": "100-150字",
+      "granularity": "中"
+    },
+    {
+      "title": "事件背景",
+      "bullets": [
+        "历史沿革",
+        "事件目标",
+        "其对机构和社会的影响"
+      ],
+      "children": [],
+      "description": "描述事件的历史背景和目标，突出其重要性和意义。",
+      "word_count": "150-250字",
+      "granularity": "中"
+    },
+    {
+      "title": "活动过程（开幕致辞与主题演讲/主旨分享与演讲）",
+      "bullets": [
+        "开幕致辞",
+        "主题演讲内容",
+        "重要嘉宾的发言要点"
+      ],
+      "children": [],
+      "description": "详细展示活动中的主要环节和演讲内容。",
+      "word_count": "300-500字",
+      "granularity": "详细"
+    },
+    {
+      "title": "重要讨论环节（圆桌讨论等）",
+      "bullets": [
+        "讨论主题",
+        "核心观点",
+        "引发的共鸣或疑问"
+      ],
+      "children": [],
+      "description": "总结讨论环节中的关键观点和对话。",
+      "word_count": "250-350字",
+      "granularity": "中"
+    },
+    {
+      "title": "专家与学者发言总结",
+      "bullets": [
+        "专家观点",
+        "学术引用",
+        "实践应用与建议"
+      ],
+      "children": [],
+      "description": "汇总专家们的观点，强调学术和实践意义。",
+      "word_count": "200-300字",
+      "granularity": "中"
+    },
+    {
+      "title": "论坛成果与未来展望",
+      "bullets": [
+        "取得的成果",
+        "未来目标",
+        "后续行动计划"
+      ],
+      "children": [],
+      "description": "描述活动的成果以及未来的计划和方向。",
+      "word_count": "200-300字",
+      "granularity": "中"
+    },
+    {
+      "title": "结语",
+      "bullets": [
+        "活动成功的要素",
+        "表达感谢",
+        "结束语"
+      ],
+      "children": [],
+      "description": "总结活动的总体影响和意义。",
+      "word_count": "100-150字",
+      "granularity": "高"
+    }
+  ],
+  "meta": null
+}

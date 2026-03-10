@@ -1,0 +1,24 @@
+{
+  "types": [
+    {
+      "id": "activity",
+      "name": "活动稿"
+    },
+    {
+      "id": "opinion",
+      "name": "观点稿"
+    },
+    {
+      "id": "short message",
+      "name": "简讯"
+    },
+    {
+      "id": "professor",
+      "name": "教授风采文稿"
+    },
+    {
+      "id": "research",
+      "name": "研究成果文稿"
+    }
+  ]
+}
