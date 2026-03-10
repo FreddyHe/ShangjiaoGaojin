@@ -1,53 +1,53 @@
 <template>
-  <div class="grid grid-cols-[250px_300px_1fr] gap-6 h-[calc(100vh-100px)]">
-    <div class="card p-4 flex flex-col gap-4 overflow-hidden">
-      <div class="font-bold text-lg">类型管理</div>
+  <div class="grid grid-cols-[280px_320px_1fr] gap-8 h-[calc(100vh-100px)]">
+    <div class="card p-5 flex flex-col gap-5 overflow-hidden">
+      <div class="font-bold text-lg text-text-primary">类型管理</div>
       <div class="grid grid-cols-2 gap-2">
         <input class="input text-sm" v-model="newId" placeholder="ID" />
         <input class="input text-sm" v-model="newName" placeholder="名称" />
         <button class="btn btn-primary col-span-2 text-sm" @click="addType">新增类型</button>
       </div>
-      <div class="flex-1 overflow-y-auto grid gap-2">
+      <div class="flex-1 overflow-y-auto grid gap-3">
         <div
           v-for="t in types"
           :key="t.id"
-          class="p-3 rounded border cursor-pointer hover:bg-gray-50"
-          :class="selectedTypeId === t.id ? 'border-brand-500 bg-brand-50' : ''"
+          class="type-card border-gray-200 bg-surface-50"
+          :class="selectedTypeId === t.id ? 'type-card-selected' : ''"
           @click="setSelectedTypeId(t.id)"
         >
           <div class="flex justify-between items-center">
-            <span class="font-medium">{{ t.name }}</span>
-            <span class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded">{{ t.template_count }}</span>
+            <span class="font-medium text-text-primary">{{ t.name }}</span>
+            <span class="badge badge-custom">{{ t.template_count }}</span>
           </div>
-          <div class="flex justify-between items-center mt-1">
-            <span class="text-xs text-gray-400">{{ t.id }}</span>
-            <button class="text-xs text-red-500 hover:underline" @click.stop="deleteType(t.id)">删除</button>
+          <div class="flex justify-between items-center mt-2">
+            <span class="text-xs text-text-muted">{{ t.id }}</span>
+            <button class="text-xs text-red-500 hover:text-red-600 hover:underline" @click.stop="deleteType(t.id)">删除</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="card p-4 flex flex-col gap-4 overflow-hidden">
-      <div class="font-bold text-lg">模板列表</div>
-      <div v-if="!selectedTypeId" class="text-gray-400 text-sm">请先选择类型</div>
-      <div v-else class="flex-1 overflow-y-auto grid gap-2">
+    <div class="card p-5 flex flex-col gap-5 overflow-hidden">
+      <div class="font-bold text-lg text-text-primary">模板列表</div>
+      <div v-if="!selectedTypeId" class="text-text-muted text-sm">请先选择类型</div>
+      <div v-else class="flex-1 overflow-y-auto grid gap-3">
         <div
           v-for="t in templates"
           :key="t.template_id"
-          class="p-3 rounded border cursor-pointer hover:bg-gray-50"
-          :class="selectedTemplateId === t.template_id ? 'border-brand-500 bg-brand-50' : ''"
+          class="template-card border-gray-200 bg-surface-50"
+          :class="selectedTemplateId === t.template_id ? 'template-card-selected' : ''"
           @click="setSelectedTemplateId(t.template_id)"
         >
-          <div class="flex justify-between items-start mb-1">
-            <span class="font-medium text-sm truncate" :title="t.template_id">
+          <div class="flex justify-between items-start mb-2">
+            <span class="font-medium text-sm truncate text-text-primary" :title="t.template_id">
               {{ t.meta?.title || (t.template_id === 'default' ? '系统默认模板' : t.template_id) }}
             </span>
             <div class="flex gap-1">
-              <span v-if="t.meta?.is_system" class="text-[10px] bg-blue-100 text-blue-600 px-1 rounded">系统</span>
+              <span v-if="t.meta?.is_system" class="badge badge-system">系统</span>
               <template v-else>
                 <button
                   @click.stop="toggleFavorite(t.template_id)"
-                  class="text-lg leading-none"
+                  class="text-lg leading-none transition-all duration-200"
                   :class="t.meta?.is_favorite ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-500'"
                 >
                   ★
@@ -61,7 +61,7 @@
               </template>
             </div>
           </div>
-          <div class="text-xs text-gray-500 line-clamp-2">
+          <div class="text-xs text-text-secondary line-clamp-2">
             {{ (t.sections_summary || []).join(' / ') }}
           </div>
         </div>
@@ -70,12 +70,12 @@
     </div>
 
     <div class="card p-6 flex flex-col overflow-hidden">
-      <div v-if="!outline" class="flex items-center justify-center h-full text-gray-400">请选择模板或新建</div>
+      <div v-if="!outline" class="flex items-center justify-center h-full text-text-muted">请选择模板或新建</div>
       <template v-else>
-        <div class="flex items-center justify-between gap-4 mb-4 pb-4 border-b">
+        <div class="flex items-center justify-between gap-4 mb-5 pb-4 border-b border-gray-200">
           <div class="flex items-center gap-2">
-            <div class="font-bold text-lg">{{ outline.meta?.title || (outline.template_id === 'default' ? '系统默认模板' : outline.template_id) }}</div>
-            <span v-if="outline.meta?.is_system" class="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded">系统内置</span>
+            <div class="font-bold text-lg text-text-primary">{{ outline.meta?.title || (outline.template_id === 'default' ? '系统默认模板' : outline.template_id) }}</div>
+            <span v-if="outline.meta?.is_system" class="badge badge-system">系统内置</span>
           </div>
           <div class="flex items-center gap-2">
             <button v-if="!outline.meta?.is_system" class="btn text-sm" @click="renameTemplate">重命名</button>
@@ -98,7 +98,7 @@
           </div>
         </div>
 
-        <div class="pt-4 border-t mt-4 flex justify-end">
+        <div class="pt-5 border-t border-gray-200 mt-5 flex justify-end">
           <button class="btn btn-primary" @click="saveOutline">保存当前模板</button>
         </div>
       </template>
@@ -336,23 +336,31 @@ export default defineComponent({
       },
       emits: ['update-title', 'add-bullet', 'update-bullet', 'add-child'],
       template: `
-        <div class="border rounded-md p-4 bg-white">
-          <input class="input font-bold" :value="section.title" @input="$emit('update-title', ($event.target as HTMLInputElement).value)" placeholder="标题" />
+        <div class="section-card border-gray-200">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-1 h-4 bg-gray-300 rounded-full"></div>
+            <input class="input font-bold text-text-primary" :value="section.title" @input="$emit('update-title', ($event.target as HTMLInputElement).value)" placeholder="标题" />
+          </div>
           <div class="mt-3 grid gap-2">
-            <input
+            <div
               v-for="(b, j) in (section.bullets || [])"
               :key="j"
-              class="input text-sm"
-              :value="b"
-              @input="$emit('update-bullet', j, ($event.target as HTMLInputElement).value)"
-              :placeholder="'要点 ' + (j+1)"
-            />
-            <div class="flex gap-2">
-              <button class="text-xs text-brand-600 hover:underline" @click="$emit('add-bullet')">+ 添加要点</button>
-              <button class="text-xs text-brand-600 hover:underline" @click="$emit('add-child')">+ 添加子标题</button>
+              class="flex items-start gap-2"
+            >
+              <span class="text-text-muted mt-2">•</span>
+              <input
+                class="input text-sm"
+                :value="b"
+                @input="$emit('update-bullet', j, ($event.target as HTMLInputElement).value)"
+                :placeholder="'要点 ' + (j+1)"
+              />
+            </div>
+            <div class="flex gap-3 mt-2">
+              <button class="text-xs text-brand-600 hover:text-brand-700 hover:underline transition-colors" @click="$emit('add-bullet')">+ 添加要点</button>
+              <button class="text-xs text-brand-600 hover:text-brand-700 hover:underline transition-colors" @click="$emit('add-child')">+ 添加子标题</button>
             </div>
           </div>
-          <div v-if="(section.children||[]).length" class="mt-3 grid gap-3 ml-6 border-l pl-4">
+          <div v-if="(section.children||[]).length" class="mt-4 grid gap-3 ml-6 border-l border-gray-200 pl-4">
             <SectionEditor
               v-for="(c, k) in (section.children||[])"
               :key="k"

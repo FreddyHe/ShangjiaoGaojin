@@ -1,28 +1,28 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col">
-    <header class="bg-white border-b h-16 flex items-center px-6 sticky top-0 z-10 shadow-sm">
+  <div class="min-h-screen bg-background-50 flex flex-col">
+    <header class="bg-surface-50 h-16 flex items-center px-6 sticky top-0 z-10">
       <div class="flex items-center gap-3">
-        <div v-if="settings.logo_url" class="h-8 w-8 object-contain">
-          <img :src="settings.logo_url" alt="Logo" class="h-8 w-8 object-contain" />
+        <div v-if="settings.logo_url" class="h-9 w-9 object-contain">
+          <img :src="settings.logo_url" alt="Logo" class="h-9 w-9 object-contain" />
         </div>
-        <div v-else class="h-8 w-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold shadow-sm">
+        <div v-else class="h-9 w-9 bg-brand-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-soft">
           {{ (settings.system_name || 'A')[0] }}
         </div>
-        <span class="font-bold text-xl text-gray-900 tracking-tight">{{ settings.system_name || '新闻稿智能体' }}</span>
+        <span class="font-bold text-xl text-text-primary tracking-tight">{{ settings.system_name || '新闻稿智能体' }}</span>
       </div>
     </header>
 
     <div class="flex flex-1 overflow-hidden">
-      <aside class="w-64 bg-white border-r flex flex-col overflow-y-auto">
+      <aside class="w-64 bg-background-50 flex flex-col overflow-y-auto">
         <nav class="p-4 space-y-1">
           <router-link
             v-for="nav in navs"
             :key="nav.path"
             :to="nav.path"
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group"
-            :class="isActive(nav.path) ? 'bg-brand-50 text-brand-700 font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'"
+            class="nav-item group"
+            :class="isActive(nav.path) ? 'nav-item-active' : 'nav-item-inactive'"
           >
-            <component :is="nav.icon" :size="18" :class="isActive(nav.path) ? 'text-brand-600' : 'text-gray-400 group-hover:text-gray-600'" />
+            <component :is="nav.icon" :size="20" :class="isActive(nav.path) ? 'text-brand-600' : 'text-text-tertiary group-hover:text-text-secondary'" />
             <span>{{ nav.label }}</span>
           </router-link>
         </nav>
@@ -33,7 +33,7 @@
           <router-view />
         </div>
         
-        <footer class="mt-12 py-6 border-t text-center text-sm text-gray-400">
+        <footer class="mt-12 py-6 text-center text-sm text-text-muted">
           {{ settings.copyright_text }}
         </footer>
       </main>

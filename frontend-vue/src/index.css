@@ -4,23 +4,23 @@
 
 @layer components {
   .btn {
-    @apply px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 font-medium transition-all duration-200 hover:bg-gray-50 hover:border-gray-400;
+    @apply px-5 py-2.5 rounded-xl border border-gray-200 bg-surface-50 text-text-primary font-medium transition-all duration-300 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm active:scale-[0.98];
   }
   
   .btn-primary {
-    @apply px-4 py-2 rounded-lg border border-brand-600 bg-brand-600 text-white font-medium transition-all duration-200 hover:bg-brand-700 hover:border-brand-700;
+    @apply px-5 py-2.5 rounded-xl border border-brand-500 bg-brand-500 text-white font-medium transition-all duration-300 hover:bg-brand-600 hover:border-brand-600 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98];
   }
   
   .btn:disabled {
-    @apply opacity-50 cursor-not-allowed;
+    @apply opacity-50 cursor-not-allowed hover:translate-y-0 hover:shadow-sm;
   }
   
   .input {
-    @apply w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200;
+    @apply w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-surface-50 text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent transition-all duration-200;
   }
   
   .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-200;
+    @apply bg-surface-50 rounded-2xl shadow-soft border-0;
   }
   
   .line-clamp-2 {
@@ -31,19 +31,19 @@
   }
   
   .prose {
-    @apply max-w-none text-gray-700 leading-relaxed;
+    @apply max-w-none text-text-secondary leading-relaxed;
   }
   
   .prose h1 {
-    @apply text-2xl font-bold mb-4 mt-6;
+    @apply text-2xl font-bold mb-4 mt-6 text-text-primary;
   }
   
   .prose h2 {
-    @apply text-xl font-semibold mb-3 mt-5;
+    @apply text-xl font-semibold mb-3 mt-5 text-text-primary;
   }
   
   .prose h3 {
-    @apply text-lg font-medium mb-2 mt-4;
+    @apply text-lg font-medium mb-2 mt-4 text-text-primary;
   }
   
   .prose p {
@@ -67,6 +67,70 @@
   }
   
   .prose a {
-    @apply text-brand-600 hover:underline;
+    @apply text-brand-600 hover:text-brand-700 hover:underline transition-colors;
+  }
+  
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300;
+  }
+  
+  .nav-item-active {
+    @apply bg-brand-100/60 text-brand-700 font-medium border-l-4 border-brand-500;
+  }
+  
+  .nav-item-inactive {
+    @apply text-text-secondary hover:bg-background-100 hover:text-text-primary;
+  }
+  
+  .type-card {
+    @apply p-4 rounded-xl border cursor-pointer transition-all duration-300 hover:shadow-md hover:-translate-y-0.5;
+  }
+  
+  .type-card-selected {
+    @apply border-brand-400 bg-brand-50/50 border-l-4 border-l-brand-500;
+  }
+  
+  .template-card {
+    @apply p-4 rounded-xl border cursor-pointer transition-all duration-300 hover:shadow-md hover:-translate-y-0.5;
+  }
+  
+  .template-card-selected {
+    @apply border-brand-400 bg-brand-50/50 border-l-4 border-l-brand-500;
+  }
+  
+  .badge {
+    @apply px-2.5 py-1 rounded-full text-xs font-medium;
+  }
+  
+  .badge-system {
+    @apply bg-blue-100 text-blue-700;
+  }
+  
+  .badge-custom {
+    @apply bg-gray-100 text-gray-600;
+  }
+  
+  .upload-zone {
+    @apply border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center transition-all duration-300 hover:border-brand-400 hover:bg-brand-50/30;
+  }
+  
+  .section-card {
+    @apply border rounded-xl p-4 bg-surface-50 transition-all duration-300 hover:shadow-sm;
+  }
+  
+  .person-card {
+    @apply bg-surface-50 p-4 rounded-xl border transition-all duration-300 hover:shadow-sm;
+  }
+  
+  .person-card-exact {
+    @apply border-l-4 border-l-green-500;
+  }
+  
+  .person-card-fuzzy {
+    @apply border-l-4 border-l-yellow-500;
+  }
+  
+  .person-card-conflict {
+    @apply border-l-4 border-l-red-500;
   }
 }

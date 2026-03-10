@@ -1,92 +1,108 @@
 <template>
-  <div class="h-[calc(100vh-4rem)] grid grid-cols-[300px_1fr] gap-6">
-    <div class="flex flex-col bg-white rounded shadow h-full overflow-hidden">
-      <div class="p-4 border-b font-bold text-lg flex justify-between items-center">
-        <span>历史记录</span>
-        <button class="text-sm text-brand-600 hover:underline" @click="loadArticles">刷新</button>
+  <div class="h-[calc(100vh-4rem)] grid grid-cols-[320px_1fr] gap-6">
+    <div class="flex flex-col bg-surface-50 rounded-2xl shadow-soft h-full overflow-hidden">
+      <div class="p-4 border-b border-gray-200 font-bold text-lg flex justify-between items-center">
+        <span class="text-text-primary">历史记录</span>
+        <button class="text-sm text-brand-600 hover:text-brand-700 hover:underline transition-colors" @click="loadArticles">刷新</button>
       </div>
-      <div class="flex-1 overflow-y-auto p-2 space-y-2">
-        <div v-if="loading" class="text-center p-4 text-gray-500">加载中...</div>
-        <div v-if="!loading && articles.length === 0" class="text-center p-4 text-gray-500">暂无记录</div>
+      <div class="flex-1 overflow-y-auto p-3 space-y-2">
+        <div v-if="loading" class="text-center p-4 text-text-muted">加载中...</div>
+        <div v-if="!loading && articles.length === 0" class="text-center p-4 text-text-muted">暂无记录</div>
         <div
           v-for="a in articles"
           :key="a.id"
           @click="selectedId = a.id"
-          class="p-3 rounded cursor-pointer border hover:border-brand-300 transition-colors"
-          :class="selectedId === a.id ? 'bg-brand-50 border-brand-500' : 'bg-white border-gray-100'"
+          class="p-4 rounded-xl cursor-pointer border transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
+          :class="selectedId === a.id ? 'bg-brand-50/50 border-brand-400 border-l-4 border-l-brand-500' : 'bg-surface-50 border-gray-200'"
         >
-          <div class="font-medium text-gray-900 truncate">{{ a.title || '未命名' }}</div>
-          <div class="flex justify-between items-center mt-1">
-            <span class="text-xs text-white bg-gray-400 px-1.5 py-0.5 rounded">{{ a.type_name }}</span>
-            <span class="text-xs text-gray-400">{{ formatDate(a.created_at) }}</span>
+          <div class="font-medium text-text-primary truncate mb-2">{{ a.title || '未命名' }}</div>
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full" :class="getTypeColor(a.type_name)"></div>
+              <span class="text-xs text-text-secondary">{{ a.type_name }}</span>
+            </div>
+            <span class="text-xs text-text-muted">{{ formatRelativeTime(a.created_at) }}</span>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="bg-white rounded shadow h-full overflow-hidden flex flex-col">
+    <div class="bg-surface-50 rounded-2xl shadow-soft h-full overflow-hidden flex flex-col">
       <div v-if="selectedArticle">
-        <div class="p-4 border-b flex justify-between items-center bg-gray-50">
+        <div class="p-5 border-b border-gray-200 flex justify-between items-center bg-background-50">
           <div>
-            <div class="font-bold text-lg">{{ selectedArticle.title }}</div>
-            <div class="text-xs text-gray-500 mt-1">
-              生成时间: {{ formatDate(selectedArticle.created_at) }} | 类型: {{ selectedArticle.type_name }}
+            <div class="font-bold text-xl text-text-primary">{{ selectedArticle.title }}</div>
+            <div class="text-sm text-text-secondary mt-2 flex items-center gap-4">
+              <span>生成时间: {{ formatDate(selectedArticle.created_at) }}</span>
+              <span>类型: {{ selectedArticle.type_name }}</span>
             </div>
           </div>
           <div class="flex gap-2">
             <a
               :href="`/api/articles/${selectedArticle.id}/download/docx`"
               target="_blank"
-              class="btn bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-200 flex items-center gap-1"
+              class="btn bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-200 flex items-center gap-1.5"
+              title="下载 Word 文档"
             >
-              Word
+              <FileText :size="16" />
+              <span>Word</span>
             </a>
             <a
               :href="`/api/articles/${selectedArticle.id}/download/pdf`"
               target="_blank"
-              class="btn bg-purple-50 text-purple-600 hover:bg-purple-100 border-purple-200 flex items-center gap-1"
+              class="btn bg-purple-50 text-purple-600 hover:bg-purple-100 border-purple-200 flex items-center gap-1.5"
+              title="下载 PDF 文档"
             >
-              PDF
+              <File :size="16" />
+              <span>PDF</span>
             </a>
             <button
               v-if="!editing"
               @click="handleEdit"
-              class="btn bg-blue-50 text-blue-600 hover:bg-blue-100 border-blue-200"
+              class="btn bg-blue-50 text-blue-600 hover:bg-blue-100 border-blue-200 flex items-center gap-1.5"
+              title="编辑内容"
             >
-              修改内容
+              <Edit3 :size="16" />
+              <span>修改</span>
             </button>
             <template v-if="editing">
               <button
                 @click="handleSave"
-                class="btn bg-green-50 text-green-600 hover:bg-green-100 border-green-200"
+                class="btn bg-green-50 text-green-600 hover:bg-green-100 border-green-200 flex items-center gap-1.5"
+                title="保存修改"
               >
-                保存
+                <Save :size="16" />
+                <span>保存</span>
               </button>
               <button
                 @click="editing = false"
-                class="btn bg-gray-50 text-gray-600 hover:bg-gray-100 border-gray-200"
+                class="btn bg-gray-50 text-text-secondary hover:bg-gray-100 border-gray-200 flex items-center gap-1.5"
+                title="取消编辑"
               >
-                取消
+                <X :size="16" />
+                <span>取消</span>
               </button>
             </template>
             <button
               @click="handleDelete(selectedArticle.id)"
-              class="btn bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
+              class="btn bg-red-50 text-red-600 hover:bg-red-100 border-red-200 flex items-center gap-1.5"
+              title="删除记录"
             >
-              删除
+              <Trash2 :size="16" />
+              <span>删除</span>
             </button>
           </div>
         </div>
         <div class="flex-1 overflow-y-auto p-6">
           <textarea
             v-if="editing"
-            class="w-full h-full p-4 border rounded font-mono text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-brand-500"
+            class="w-full h-full p-4 border rounded-xl font-mono text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-brand-400 bg-surface-50 text-text-primary resize-none"
             v-model="editContent"
           />
           <div v-else class="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none" v-html="renderedMarkdown"></div>
         </div>
       </div>
-      <div v-else class="flex items-center justify-center h-full text-gray-400">
+      <div v-else class="flex items-center justify-center h-full text-text-muted">
         请选择左侧记录查看详情
       </div>
     </div>
@@ -96,6 +112,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import MarkdownIt from 'markdown-it'
+import { FileText, File, Edit3, Save, X, Trash2 } from 'lucide-vue-next'
 import type { Article } from '@/types'
 
 const articles = ref<Article[]>([])
@@ -112,6 +129,44 @@ const renderedMarkdown = computed(() => {
   if (!selectedArticle.value) return ''
   return md.render(selectedArticle.value.content)
 })
+
+const getTypeColor = (typeName: string) => {
+  const colors: Record<string, string> = {
+    'commemoration': 'bg-brand-500',
+    'news': 'bg-blue-500',
+    'opinion': 'bg-green-500',
+    'professor': 'bg-purple-500',
+    'research': 'bg-indigo-500',
+    'speech': 'bg-orange-500',
+    'activity': 'bg-pink-500',
+  }
+  return colors[typeName] || 'bg-gray-500'
+}
+
+const formatRelativeTime = (ts: number) => {
+  const now = Date.now()
+  const diff = now - ts * 1000
+  const minutes = Math.floor(diff / 60000)
+  const hours = Math.floor(diff / 3600000)
+  const days = Math.floor(diff / 86400000)
+  
+  if (minutes < 1) return '刚刚'
+  if (minutes < 60) return `${minutes}分钟前`
+  if (hours < 24) return `${hours}小时前`
+  if (days < 7) return `${days}天前`
+  return formatDate(ts)
+}
+
+const formatDate = (ts: number) => {
+  return new Date(ts * 1000).toLocaleString('zh-CN', { 
+    year: 'numeric', 
+    month: '2-digit', 
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false 
+  })
+}
 
 const loadArticles = async () => {
   loading.value = true
@@ -163,10 +218,6 @@ const handleSave = async () => {
   } catch (e) {
     alert('保存失败: ' + (e as Error).message)
   }
-}
-
-const formatDate = (ts: number) => {
-  return new Date(ts * 1000).toLocaleString('zh-CN', { hour12: false })
 }
 
 watch(selectedId, () => {

@@ -1,7 +1,7 @@
 <template>
-  <div class="max-w-4xl mx-auto space-y-6">
+  <div class="max-w-4xl mx-auto space-y-8">
     <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-bold text-gray-800">系统设置</h1>
+      <h1 class="text-2xl font-bold text-text-primary">系统设置</h1>
       <button
         @click="handleSave"
         :disabled="saving"
@@ -12,59 +12,85 @@
       </button>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-6">
+    <div class="card p-8 space-y-8">
       <div>
-        <h2 class="text-lg font-semibold mb-4 border-b pb-2">基础设置</h2>
-        <div class="grid gap-4 md:grid-cols-2">
+        <div class="flex items-center gap-3 mb-6 pb-3 border-b border-gray-200">
+          <Settings2 :size="24" class="text-brand-600" />
+          <h2 class="text-lg font-semibold text-text-primary">基础设置</h2>
+        </div>
+        <div class="grid gap-6 md:grid-cols-2">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">系统名称</label>
+            <label class="block text-sm font-medium text-text-secondary mb-2">系统名称</label>
             <input
-              class="input w-full"
+              class="input"
               v-model="settings.system_name"
+              placeholder="新闻稿智能体"
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Logo URL (可选)</label>
-            <input
-              class="input w-full"
-              v-model="settings.logo_url"
-              placeholder="http://..."
-            />
+            <label class="block text-sm font-medium text-text-secondary mb-2">Logo URL (可选)</label>
+            <div class="relative">
+              <input
+                class="input pr-10"
+                v-model="settings.logo_url"
+                placeholder="http://..."
+              />
+              <button
+                @click="toggleApiKeyVisibility('logo')"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors"
+              >
+                <Eye :size="18" v-if="!showKeys.logo" />
+                <EyeOff :size="18" v-else />
+              </button>
+            </div>
           </div>
           <div class="md:col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-1">版权信息</label>
+            <label class="block text-sm font-medium text-text-secondary mb-2">版权信息</label>
             <input
-              class="input w-full"
+              class="input"
               v-model="settings.copyright_text"
+              placeholder="© 2024 Press Release Assistant"
             />
           </div>
         </div>
       </div>
 
       <div>
-        <h2 class="text-lg font-semibold mb-4 border-b pb-2">模型设置 (OpenAI Compatible)</h2>
-        <div class="grid gap-4">
+        <div class="flex items-center gap-3 mb-6 pb-3 border-b border-gray-200">
+          <Bot :size="24" class="text-brand-600" />
+          <h2 class="text-lg font-semibold text-text-primary">模型设置 (OpenAI Compatible)</h2>
+        </div>
+        <div class="grid gap-6">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">API Key</label>
-            <input
-              type="password"
-              class="input w-full"
-              v-model="settings.openai_api_key"
-              placeholder="sk-..."
-            />
+            <label class="block text-sm font-medium text-text-secondary mb-2">API Key</label>
+            <div class="relative">
+              <input
+                :type="showKeys.api ? 'text' : 'password'"
+                class="input pr-10"
+                v-model="settings.openai_api_key"
+                placeholder="sk-..."
+              />
+              <button
+                @click="toggleApiKeyVisibility('api')"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors"
+              >
+                <Eye :size="18" v-if="!showKeys.api" />
+                <EyeOff :size="18" v-else />
+              </button>
+            </div>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Base URL (可选)</label>
+            <label class="block text-sm font-medium text-text-secondary mb-2">Base URL (可选)</label>
             <input
-              class="input w-full"
+              class="input"
               v-model="settings.openai_base_url"
               placeholder="https://api.openai.com/v1"
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">模型名称</label>
+            <label class="block text-sm font-medium text-text-secondary mb-2">模型名称</label>
             <input
-              class="input w-full"
+              class="input"
               v-model="settings.openai_model"
               placeholder="gpt-4o-mini"
             />
@@ -77,7 +103,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { Save } from 'lucide-vue-next'
+import { Save, Settings2, Bot, Eye, EyeOff } from 'lucide-vue-next'
 import type { Settings } from '@/types'
 
 const settings = ref<Settings>({
@@ -87,6 +113,14 @@ const settings = ref<Settings>({
 })
 const loading = ref(false)
 const saving = ref(false)
+const showKeys = ref({
+  api: false,
+  logo: false
+})
+
+const toggleApiKeyVisibility = (key: 'api' | 'logo') => {
+  showKeys.value[key] = !showKeys.value[key]
+}
 
 onMounted(() => {
   fetch('/api/settings')
