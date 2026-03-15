@@ -1,5 +1,5 @@
 <template>
-  <div class="h-[calc(100vh-4rem)] grid grid-cols-[320px_1fr] gap-6">
+  <div class="h-[calc(100vh-8rem)] grid grid-cols-[320px_1fr] gap-6">
     <div class="flex flex-col bg-surface-50 rounded-2xl shadow-soft h-full overflow-hidden">
       <div class="p-4 border-b border-gray-200 font-bold text-lg flex justify-between items-center">
         <span class="text-text-primary">历史记录</span>
@@ -28,8 +28,8 @@
     </div>
 
     <div class="bg-surface-50 rounded-2xl shadow-soft h-full overflow-hidden flex flex-col">
-      <div v-if="selectedArticle">
-        <div class="p-5 border-b border-gray-200 flex justify-between items-center bg-background-50">
+      <div v-if="selectedArticle" class="flex flex-col h-full">
+        <div class="p-5 border-b border-gray-200 flex justify-between items-center bg-background-50 flex-shrink-0">
           <div>
             <div class="font-bold text-xl text-text-primary">{{ selectedArticle.title }}</div>
             <div class="text-sm text-text-secondary mt-2 flex items-center gap-4">
@@ -96,7 +96,7 @@
         <div class="flex-1 overflow-y-auto p-6">
           <textarea
             v-if="editing"
-            class="w-full h-full p-4 border rounded-xl font-mono text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-brand-400 bg-surface-50 text-text-primary resize-none"
+            class="w-full h-full min-h-[60vh] p-4 border rounded-xl font-mono text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
             v-model="editContent"
           />
           <div v-else class="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none" v-html="renderedMarkdown"></div>

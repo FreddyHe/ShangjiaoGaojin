@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from openai import OpenAI
 from docx import Document
+from docx.shared import Pt
 from pypdf import PdfReader
 from dotenv import load_dotenv
 import markdown
@@ -1321,11 +1322,35 @@ def download_docx(article_id: str):
     article = Article(**json.loads(path.read_text(encoding="utf-8")))
     
     doc = Document()
-    doc.add_heading(article.title, 0)
-    # Simple split by newline for paragraphs
-    for para in article.content.split('\n'):
-        if para.strip():
-            doc.add_paragraph(para.strip())
+    
+    style = doc.styles['Normal']
+    font = style.font
+    font.name = '宋体'
+    font.size = Pt(12)
+    from docx.oxml.ns import qn
+    style.element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+    
+    content = article.content
+    for line in content.split('\n'):
+        stripped = line.strip()
+        if not stripped:
+            continue
+        
+        if stripped.startswith('# '):
+            p = doc.add_heading(stripped[2:], level=1)
+        elif stripped.startswith('## '):
+            p = doc.add_heading(stripped[3:], level=2)
+        elif stripped.startswith('### '):
+            p = doc.add_heading(stripped[4:], level=3)
+        else:
+            clean_text = stripped.replace('**', '')
+            p = doc.add_paragraph(clean_text)
+    
+    for i in range(1, 4):
+        heading_style = doc.styles[f'Heading {i}']
+        heading_font = heading_style.font
+        heading_font.name = '黑体'
+        heading_style.element.rPr.rFonts.set(qn('w:eastAsia'), '黑体')
             
     bio = BytesIO()
     doc.save(bio)
@@ -1347,42 +1372,65 @@ def download_pdf(article_id: str):
         raise HTTPException(status_code=404, detail="article not found")
     article = Article(**json.loads(path.read_text(encoding="utf-8")))
     
-    # Try to register Chinese font
-    font_name = "Helvetica" # Default
-    # Common Windows Chinese fonts
-    font_paths = [
-        "C:/Windows/Fonts/msyh.ttf", # Microsoft YaHei
-        "C:/Windows/Fonts/simsun.ttc", # SimSun
-        "C:/Windows/Fonts/simhei.ttf", # SimHei
+    font_registered = False
+    font_family = "Helvetica"
+    
+    font_candidates = [
+        "C:/Windows/Fonts/simhei.ttf",
+        "C:/Windows/Fonts/msyh.ttf",
+        "C:/Windows/Fonts/simkai.ttf",
+        "C:/Windows/Fonts/simfang.ttf",
+        "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
+        "/usr/share/fonts/truetype/noto/NotoSansSC-Regular.otf",
     ]
     
-    for fp in font_paths:
-        if os.path.exists(fp):
+    for font_path in font_candidates:
+        if os.path.exists(font_path):
             try:
-                # Use a simple name like 'CustomChinese'
-                pdfmetrics.registerFont(TTFont('CustomChinese', fp))
-                font_name = "CustomChinese"
+                pdfmetrics.registerFont(TTFont('ChineseFont', font_path))
+                font_family = 'ChineseFont'
+                font_registered = True
+                print(f"[PDF] Registered font from {font_path}")
                 break
             except Exception as e:
-                print(f"Failed to register font {fp}: {e}")
-                pass
+                print(f"[PDF] Failed to register {font_path}: {e}")
+                continue
     
-    # Convert Markdown to HTML
+    if not font_registered:
+        print("[PDF] WARNING: No Chinese font found! PDF will show tofu blocks.")
+    
     html_content = markdown.markdown(article.content)
     
     full_html = f"""
     <html>
     <head>
+    <meta charset="utf-8">
     <style>
         @page {{
             size: A4;
             margin: 2cm;
         }}
-        body {{ 
-            font-family: "{font_name}", sans-serif; 
-            line-height: 1.5;
+        body {{
+            font-family: "{font_family}";
+            font-size: 12px;
+            line-height: 1.8;
+            color: #333;
         }}
-        h1 {{ text-align: center; margin-bottom: 20px; }}
+        h1 {{
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: "{font_family}";
+            font-size: 18px;
+        }}
+        h2 {{
+            font-family: "{font_family}";
+            font-size: 15px;
+            margin-top: 15px;
+        }}
+        h3 {{
+            font-family: "{font_family}";
+            font-size: 13px;
+        }}
         p {{ margin-bottom: 10px; }}
     </style>
     </head>
@@ -1394,7 +1442,7 @@ def download_pdf(article_id: str):
     """
     
     result = BytesIO()
-    pdf = pisa.CreatePDF(BytesIO(full_html.encode("utf-8")), result)
+    pdf = pisa.CreatePDF(BytesIO(full_html.encode("utf-8")), result, encoding='utf-8')
     
     if pdf.err:
         raise HTTPException(status_code=500, detail="PDF generation failed")

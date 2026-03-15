@@ -16,7 +16,7 @@
   }
   
   .input {
-    @apply w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-surface-50 text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent transition-all duration-200;
+    @apply w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-surface-50 text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent transition-all duration-200;
   }
   
   .card {
@@ -87,7 +87,7 @@
   }
   
   .type-card-selected {
-    @apply border-brand-400 bg-brand-50/50 border-l-4 border-l-brand-500;
+    @apply border-brand-400 bg-brand-50/50 border-l-4 border-brand-500;
   }
   
   .template-card {
@@ -95,7 +95,7 @@
   }
   
   .template-card-selected {
-    @apply border-brand-400 bg-brand-50/50 border-l-4 border-l-brand-500;
+    @apply border-brand-400 bg-brand-50/50 border-l-4 border-brand-500;
   }
   
   .badge {
@@ -123,14 +123,14 @@
   }
   
   .person-card-exact {
-    @apply border-l-4 border-l-green-500;
+    @apply border-l-4 border-green-500;
   }
   
   .person-card-fuzzy {
-    @apply border-l-4 border-l-yellow-500;
+    @apply border-l-4 border-yellow-500;
   }
   
   .person-card-conflict {
-    @apply border-l-4 border-l-red-500;
+    @apply border-l-4 border-red-500;
   }
 }

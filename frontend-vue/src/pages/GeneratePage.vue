@@ -2,7 +2,9 @@
   <div class="grid gap-6 max-w-4xl mx-auto">
     <div v-if="step === 1">
       <div class="card p-6">
-        <div class="text-lg font-semibold mb-4 text-text-primary">第一步：上传素材并智能分类</div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="text-lg font-semibold">第一步：上传素材并智能分类</div>
+        </div>
         
         <div 
           class="upload-zone cursor-pointer mb-4"
@@ -93,17 +95,17 @@
           </div>
         </div>
         
-        <div class="bg-surface-50 rounded-2xl shadow-soft p-6 flex flex-col">
-          <div v-if="selectedTemplate">
-            <div class="mb-5 pb-4 border-b border-gray-200">
-              <h3 class="font-bold text-lg mb-2 text-text-primary">
+        <div class="bg-white rounded-xl shadow-sm p-6 flex flex-col overflow-hidden">
+          <div v-if="selectedTemplate" class="flex flex-col h-full min-h-0">
+            <div class="mb-4 pb-4 border-b flex-shrink-0">
+              <h3 class="font-bold text-lg mb-2">
                 {{ selectedTemplate.meta?.title || (selectedTemplate.meta?.is_system ? '系统默认模板' : selectedTemplate.template_id) }}
               </h3>
-              <div class="text-sm text-text-secondary">
+              <div class="text-sm text-gray-500">
                 包含 {{ selectedTemplate.sections.length }} 个主要章节
               </div>
             </div>
-            <div class="flex-1 overflow-y-auto mb-4 bg-background-50 p-4 rounded-xl border border-gray-200">
+            <div class="flex-1 overflow-y-auto mb-4 bg-gray-50 p-4 rounded-xl border min-h-0">
               <div class="space-y-3 text-sm text-text-secondary">
                 <div v-for="(s, i) in selectedTemplate.sections" :key="i" class="pl-3 border-l-2 border-brand-200">
                   <div class="font-medium text-text-primary">{{ s.title }}</div>
@@ -118,18 +120,23 @@
                 </div>
               </div>
             </div>
-            <button class="btn btn-primary w-full py-3" @click="confirmTemplate">
-              使用此模板生成
-            </button>
+            <div class="flex-shrink-0 pt-4">
+              <button class="btn btn-primary w-full py-3" @click="confirmTemplate">
+                使用此模板生成
+              </button>
+            </div>
           </div>
-          <div v-else class="flex items-center justify-center h-full text-text-muted">请选择左侧模板预览</div>
+          <div v-else class="flex items-center justify-center h-full text-gray-400">请选择左侧模板预览</div>
         </div>
       </div>
     </div>
 
     <div v-if="step === 3" class="space-y-6">
       <div class="card p-6">
-        <div class="text-lg font-semibold mb-4 text-text-primary">第三步：确认素材并生成</div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="text-lg font-semibold">第三步：确认素材并生成</div>
+          <button class="text-gray-500 hover:underline text-sm" @click="resetToStart">重新开始新的生成</button>
+        </div>
         <div class="mb-4">
           <label class="block text-sm font-medium text-text-secondary mb-2">素材内容</label>
           <textarea class="input h-48" v-model="materials" placeholder="请输入或粘贴素材内容" />
@@ -315,7 +322,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, onActivated, computed } from 'vue'
 import { UploadCloud, FileText, X, Loader2 } from 'lucide-vue-next'
 import type { TypeItem, Outline, MatchedPerson, ArticleVersion } from '@/types'
 
@@ -347,15 +354,26 @@ const selectedPeopleCount = computed(() => {
 })
 
 onMounted(() => {
-  fetch('/api/types').then(r => r.json()).then(setAllTypes)
-  fetch('/api/people').then(r => r.json()).then(setAllPeople)
+  console.log('GeneratePage mounted - 组件首次创建')
+  fetch('/api/types').then(r => r.json()).then(data => { allTypes.value = data })
+  fetch('/api/people').then(r => r.json()).then(data => { allPeople.value = data })
 })
 
-watch([() => step.value, () => materials.value, () => allPeople.value], ([newStep, newMaterials, newPeople]) => {
-  if (newStep === 3 && newMaterials && Object.keys(newPeople).length > 0) {
-    matchPeople()
+onActivated(() => {
+  console.log('GeneratePage activated - 组件从缓存中恢复')
+  console.log('当前步骤:', step.value)
+  console.log('素材内容长度:', materials.value.length)
+  console.log('已选择文件数:', selectedFiles.value.length)
+})
+
+watch(
+  () => step.value,
+  (newStep) => {
+    if (newStep === 3 && materials.value && Object.keys(allPeople.value).length > 0) {
+      matchPeople()
+    }
   }
-}, { immediate: true })
+)
 
 const handleFileChange = (e: Event) => {
   const target = e.target as HTMLInputElement
@@ -442,6 +460,8 @@ const confirmTemplate = () => {
 }
 
 const matchPeople = async () => {
+  if (checkingConflicts.value) return
+  
   try {
     const matchRes = await fetch('/api/match-people', {
       method: 'POST',
@@ -689,5 +709,21 @@ const handleModify = async () => {
   } finally {
     modifying.value = false
   }
+}
+
+const resetToStart = () => {
+  step.value = 1
+  files.value = null
+  predictedType.value = null
+  parsedText.value = ''
+  availableTemplates.value = []
+  selectedTemplate.value = null
+  materials.value = ''
+  customTitle.value = ''
+  output.value = ''
+  articleId.value = ''
+  articleVersions.value = []
+  matchedPeople.value = []
+  modificationRequest.value = ''
 }
 </script>

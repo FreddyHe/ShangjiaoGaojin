@@ -143,9 +143,15 @@ const loadTemplates = async (typeId: string) => {
 }
 
 const loadOutline = async (typeId: string, templateId: string) => {
+  console.log('loadOutline called:', typeId, templateId)
   const res = await fetch(`/api/outline/${typeId}/${templateId}`)
+  console.log('loadOutline response status:', res.status)
   if (res.ok) {
-    outline.value = await res.json()
+    const data = await res.json()
+    console.log('outline loaded:', data)
+    outline.value = data
+  } else {
+    console.error('loadOutline failed:', res.status)
   }
 }
 
@@ -165,9 +171,9 @@ watch(selectedTypeId, async (newVal) => {
   }
 })
 
-watch([selectedTypeId, selectedTemplateId], async ([typeId, templateId]) => {
+watch([() => selectedTypeId.value, () => selectedTemplateId.value], ([typeId, templateId]) => {
   if (typeId && templateId) {
-    await loadOutline(typeId, templateId)
+    loadOutline(typeId, templateId)
   }
 })
 
@@ -324,6 +330,7 @@ onMounted(() => {
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import type { OutlineSection } from '@/types'
 
 export default defineComponent({
   components: {
@@ -339,7 +346,7 @@ export default defineComponent({
         <div class="section-card border-gray-200">
           <div class="flex items-center gap-2 mb-3">
             <div class="w-1 h-4 bg-gray-300 rounded-full"></div>
-            <input class="input font-bold text-text-primary" :value="section.title" @input="$emit('update-title', ($event.target as HTMLInputElement).value)" placeholder="标题" />
+            <input class="input font-bold text-text-primary" :value="section.title" @input="$emit('update-title', $event.target.value)" placeholder="标题" />
           </div>
           <div class="mt-3 grid gap-2">
             <div
@@ -351,7 +358,7 @@ export default defineComponent({
               <input
                 class="input text-sm"
                 :value="b"
-                @input="$emit('update-bullet', j, ($event.target as HTMLInputElement).value)"
+                @input="$emit('update-bullet', j, $event.target.value)"
                 :placeholder="'要点 ' + (j+1)"
               />
             </div>
