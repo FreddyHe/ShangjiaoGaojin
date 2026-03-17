@@ -88,6 +88,8 @@ export interface ConflictCheckResult {
   has_conflict: boolean
   material_info?: string
   reason?: string
+  error?: string
+  confidence?: number
 }
 
 export interface MatchedPerson {
@@ -101,6 +103,8 @@ export interface MatchedPerson {
     hasConflict: boolean
     materialInfo?: string
     reason?: string
+    error?: string
+    confidence?: number
   }
   userOverride?: {
     name?: string

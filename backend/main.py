@@ -15,7 +15,7 @@ from pypdf import PdfReader
 from dotenv import load_dotenv
 import markdown
 # from xhtml2pdf import pisa
-# from io import BytesIO
+from io import BytesIO
 # from reportlab.pdfbase import pdfmetrics
 # from reportlab.pdfbase.ttfonts import TTFont
 from urllib.parse import quote
@@ -76,7 +76,11 @@ def calculate_mixed_similarity(candidate: str, db_name: str) -> float:
     pinyin_cand = lazy_pinyin(candidate)
     pinyin_db = lazy_pinyin(db_name)
     
-    pinyin_similarity_x = levenshtein_ratio(pinyin_cand, pinyin_db)
+    # 优化：拼接为字符串，再转为字符列表做字符级比较
+    # 这样 "chengshijun" 和 "chengsijun" 的编辑距离只有1（删除 h），而不是列表级的1
+    pinyin_str_cand = ''.join(pinyin_cand)
+    pinyin_str_db = ''.join(pinyin_db)
+    pinyin_similarity_x = levenshtein_ratio(list(pinyin_str_cand), list(pinyin_str_db))
 
     # 3. 按照公式取平均值
     final_score = (pinyin_similarity_x + text_similarity_y) / 2
@@ -266,6 +270,8 @@ class ConflictCheckResult(BaseModel):
     has_conflict: bool
     material_info: Optional[str] = None
     reason: Optional[str] = None
+    error: Optional[str] = None
+    confidence: Optional[float] = None
 
 GENERIC_OUTLINE_SECTIONS = [
     {"title": "标题", "bullets": ["简洁明了，突出核心事件"]},
@@ -384,7 +390,6 @@ def read_docx_bytes(b: bytes) -> str:
     return text
 
 def read_pdf_bytes(b: bytes) -> str:
-    from io import BytesIO
     reader = PdfReader(BytesIO(b))
     pages = []
     for p in reader.pages:
@@ -687,6 +692,19 @@ def match_people(req: PersonMatchRequest):
     materials = req.materials
     people_db = req.people_db
     
+    # ========== 预处理：建立索引 ==========
+    # 精确匹配集合
+    db_name_set = set(people_db.keys())
+    
+    # 按姓氏（首字符）分组的倒排索引
+    surname_index = {}
+    for db_name in people_db:
+        first_char = db_name[0] if db_name else ''
+        if first_char not in surname_index:
+            surname_index[first_char] = []
+        surname_index[first_char].append(db_name)
+    # ========== 预处理结束 ==========
+    
     # 1. 提取候选词 (包含原素材里的错别字)
     # 例如：materials="程仕军开会", candidates=["程仕", "程仕军"]
     candidates = extract_candidates(materials)
@@ -707,17 +725,56 @@ def match_people(req: PersonMatchRequest):
     # 2. 【逻辑3：以库为主的变种】
     # 因为我们提取了候选词，现在拿每一个候选词去和数据库的所有人比对
     for cand in candidates:
+        # ========== 精确匹配快速通道 ==========
+        if cand in db_name_set and cand not in matched_db_names:
+            # 精确命中，直接加入结果，跳过模糊匹配
+            # 仍然查找相似名字供用户参考
+            similar_names = []
+            first_char = cand[0] if cand else ''
+            group = surname_index.get(first_char, [])
+            for other_name in group:
+                if other_name != cand:
+                    score = calculate_mixed_similarity(cand, other_name)
+                    if score >= 0.5:
+                        similar_names.append({'name': other_name, 'similarity': score})
+            similar_names.sort(key=lambda x: x['similarity'], reverse=True)
+            similar_names = similar_names[:5]
+
+            all_matches.append({
+                'match_type': 'exact',
+                'material_name': cand,
+                'db_name': cand,
+                'similarity': 1.0,
+                'db_info': people_db[cand],
+                'similar_names': similar_names if similar_names else None
+            })
+            matched_db_names.add(cand)
+            continue  # 跳过后续模糊匹配
+        # ========== 精确匹配快速通道结束 ==========
+        
         best_match_name = None
         best_score = 0.0
         all_similarities = []  # 存储所有相似度，用于查找相似名字
         
-        for db_name, db_info in people_db.items():
+        # ========== 使用倒排索引缩小比对范围 ==========
+        first_char = cand[0] if cand else ''
+        is_chinese_cand = all('\u4e00' <= c <= '\u9fff' for c in cand)
+        
+        if is_chinese_cand:
+            # 中文候选词：只和同姓的数据库名字比较
+            candidates_to_compare = surname_index.get(first_char, [])
+        else:
+            # 英文名字：仍然遍历全库
+            candidates_to_compare = list(people_db.keys())
+
+        for db_name in candidates_to_compare:
+            db_info = people_db[db_name]
             # 长度差异太大的不比对（例如 2个字 vs 4个字）
             if abs(len(cand) - len(db_name)) > 1:
                 continue
             
             # 判断是否为中文名字
-            is_chinese = all('\u4e00' <= c <= '\u9fff' for c in cand) and all('\u4e00' <= c <= '\u9fff' for c in db_name)
+            is_chinese = is_chinese_cand and all('\u4e00' <= c <= '\u9fff' for c in db_name)
             
             if is_chinese:
                 # 使用混合评分（拼音 + 字形）
@@ -731,6 +788,7 @@ def match_people(req: PersonMatchRequest):
             if score > best_score:
                 best_score = score
                 best_match_name = db_name
+        # ========== 倒排索引优化结束 ==========
         
         # 3. 阈值判定和相似名字查找
         # 降低阈值到 0.65，以便捕获更多可能的匹配（如"程仕军"vs"程四军"）
@@ -820,9 +878,14 @@ def check_conflict(req: ConflictCheckRequest):
         f"请执行以下任务：\n"
         f"1. 提取素材中关于 '{req.name}' 的职位/身份信息（即使信息不完整也要提取）\n"
         f"2. 判断素材中提取的职位/身份信息与数据库中的描述是否存在事实冲突？\n"
-        f"3. 如果冲突，请返回冲突原因；如果不冲突，请说明一致。\n\n"
+        f"3. 如果冲突，请给出具体的冲突证据（引用素材和数据库中的原文）\n"
+        f"4. 给出你对判断结果的置信度（0到1之间的小数，1表示非常确定）\n\n"
         f"请以JSON格式返回，格式如下：\n"
-        f'{{"has_conflict": true/false, "material_info": "素材中提取的职位信息（必须返回，即使信息不完整）", "reason": "冲突原因或一致性说明"}}'
+        f'{{"has_conflict": true/false, '
+        f'"material_info": "素材中提取的职位信息（必须返回，即使信息不完整）", '
+        f'"reason": "冲突原因或一致性说明", '
+        f'"evidence": {{"material_quote": "素材中的原文片段", "db_quote": "数据库中的对应信息"}}, '
+        f'"confidence": 0.95}}'
     )
     
     try:
@@ -835,17 +898,38 @@ def check_conflict(req: ConflictCheckRequest):
         content = resp.choices[0].message.content or "{}"
         data = json.loads(content)
         
+        # ========== 结果校验 ==========
+        has_conflict = data.get("has_conflict", False)
+        confidence = data.get("confidence", 0.5)
+        evidence = data.get("evidence", {})
+        
+        # 校验1：如果声称有冲突但没有给出证据，降低置信度
+        if has_conflict and not evidence.get("material_quote"):
+            confidence = min(confidence, 0.3)
+        
+        # 校验2：如果声称有冲突但 reason 为空，降低置信度
+        if has_conflict and not data.get("reason"):
+            confidence = min(confidence, 0.3)
+        
+        # 校验3：置信度过低时，标记为不确定（而非直接报冲突）
+        if has_conflict and confidence < 0.5:
+            reason_suffix = "（置信度较低，建议人工核实）"
+            data["reason"] = (data.get("reason", "") + reason_suffix).strip()
+        # ========== 校验结束 ==========
+        
         return ConflictCheckResult(
-            has_conflict=data.get("has_conflict", False),
+            has_conflict=has_conflict,
             material_info=data.get("material_info"),
-            reason=data.get("reason")
+            reason=data.get("reason"),
+            confidence=round(confidence, 2)
         )
     except Exception as e:
         print(f"Error checking conflict: {e}")
-        # Fallback: return no conflict if LLM fails
+        # 用 error 字段传递错误，而不是伪装成"无冲突"
         return ConflictCheckResult(
             has_conflict=False,
-            reason=f"检测过程出错: {str(e)}"
+            reason=None,
+            error=f"冲突检测失败: {str(e)}"
         )
 
 @app.get("/api/types", response_model=List[TypeWithStats])
@@ -1316,6 +1400,7 @@ def get_article_history_api(article_id: str):
 
 @app.get("/api/articles/{article_id}/download/docx")
 def download_docx(article_id: str):
+    from io import BytesIO
     path = ARTICLES_DIR / f"{article_id}.json"
     if not path.exists():
         raise HTTPException(status_code=404, detail="article not found")

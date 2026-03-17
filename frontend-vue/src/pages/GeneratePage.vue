@@ -180,6 +180,13 @@
                 <div class="pl-2">{{ person.dbInfo }}</div>
               </div>
               
+              <!-- 检测失败警告 -->
+              <div v-if="person.conflict?.error" class="mt-3 p-3 bg-gray-100 border border-gray-300 rounded-xl">
+                <div class="text-xs font-semibold text-gray-700 mb-1">⚠️ 冲突检测未完成</div>
+                <div class="text-xs text-gray-600">{{ person.conflict.error }}</div>
+                <div class="text-xs text-gray-500 mt-1">请人工核对此人物的信息是否正确</div>
+              </div>
+              
               <div v-if="person.conflict?.hasConflict" class="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl">
                 <div class="text-xs font-semibold text-red-800 mb-2">⚠️ 检测到信息冲突</div>
                 <div v-if="person.conflict.materialInfo" class="text-xs text-red-700 mb-2">
@@ -187,6 +194,9 @@
                 </div>
                 <div class="text-xs text-red-600 mb-3">
                   {{ person.conflict.reason }}
+                  <span v-if="person.conflict.confidence !== undefined" class="ml-2 text-xs text-red-400">
+                    (置信度: {{ Math.round(person.conflict.confidence * 100) }}%)
+                  </span>
                 </div>
                 <div class="space-y-2">
                   <label class="flex items-center gap-2 text-xs text-text-primary cursor-pointer">
@@ -459,6 +469,31 @@ const confirmTemplate = () => {
   step.value = 3
 }
 
+// 并发控制：限制同时进行的 Promise 数量
+async function asyncPool<T>(
+  poolLimit: number,
+  items: any[],
+  iteratorFn: (item: any) => Promise<T>
+): Promise<T[]> {
+  const results: T[] = []
+  const executing: Set<Promise<void>> = new Set()
+  
+  for (const [index, item] of items.entries()) {
+    const p = Promise.resolve().then(() => iteratorFn(item)).then(result => {
+      results[index] = result
+    })
+    const e: Promise<void> = p.then(() => { executing.delete(e) })
+    executing.add(e)
+    
+    if (executing.size >= poolLimit) {
+      await Promise.race(executing)
+    }
+  }
+  
+  await Promise.all(executing)
+  return results
+}
+
 const matchPeople = async () => {
   if (checkingConflicts.value) return
   
@@ -476,8 +511,10 @@ const matchPeople = async () => {
     const matches = await matchRes.json()
     
     checkingConflicts.value = true
-    const matchedWithConflicts: MatchedPerson[] = await Promise.all(
-      matches.map(async (match: any) => {
+    const matchedWithConflicts: MatchedPerson[] = await asyncPool(
+      3,  // 最多同时 3 个请求
+      matches,
+      async (match: any) => {
         const nameIndex = materials.value.indexOf(match.material_name)
         if (nameIndex === -1) {
           return {
@@ -508,11 +545,18 @@ const matchPeople = async () => {
         let conflict = undefined
         if (conflictRes.ok) {
           const conflictData = await conflictRes.json()
-          if (conflictData.has_conflict) {
+          if (conflictData.error) {
+            // 检测失败，标记为错误状态
+            conflict = {
+              hasConflict: false,
+              error: conflictData.error
+            }
+          } else if (conflictData.has_conflict) {
             conflict = {
               hasConflict: true,
               materialInfo: conflictData.material_info,
-              reason: conflictData.reason
+              reason: conflictData.reason,
+              confidence: conflictData.confidence
             }
           }
         }
@@ -527,7 +571,7 @@ const matchPeople = async () => {
           conflict: conflict,
           selected: true
         }
-      })
+      }
     )
     
     matchedPeople.value = matchedWithConflicts
@@ -542,14 +586,63 @@ const handleConflictChange = (index: number, override: { name?: string; info?: s
   matchedPeople.value[index].userOverride = override
 }
 
-const handleSimilarNameChange = (index: number, similar: { name: string; similarity: number }) => {
+const handleSimilarNameChange = async (index: number, similar: { name: string; similarity: number }) => {
+  const person = matchedPeople.value[index]
+  const newDbInfo = allPeople.value[similar.name] || person.dbInfo
+
+  // 先更新基本信息
   matchedPeople.value[index] = {
-    ...matchedPeople.value[index],
+    ...person,
     dbName: similar.name,
-    dbInfo: allPeople.value[similar.name] || matchedPeople.value[index].dbInfo,
+    dbInfo: newDbInfo,
     matchType: 'fuzzy',
     similarity: similar.similarity,
-    userOverride: undefined
+    userOverride: undefined,
+    conflict: undefined
+  }
+
+  // 重新触发冲突检测
+  try {
+    const nameToSearch = person.materialName
+    const nameIndex = materials.value.indexOf(nameToSearch)
+    if (nameIndex === -1) return
+
+    const contextStart = Math.max(0, nameIndex - 100)
+    const contextEnd = Math.min(materials.value.length, nameIndex + nameToSearch.length + 100)
+    const context = materials.value.substring(contextStart, contextEnd)
+
+    const conflictRes = await fetch('/api/check-conflict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: similar.name,
+        db_info: newDbInfo,
+        material_context: context
+      })
+    })
+
+    if (conflictRes.ok) {
+      const conflictData = await conflictRes.json()
+      if (conflictData.error) {
+        matchedPeople.value[index].conflict = {
+          hasConflict: false,
+          error: conflictData.error
+        }
+      } else if (conflictData.has_conflict) {
+        matchedPeople.value[index].conflict = {
+          hasConflict: true,
+          materialInfo: conflictData.material_info,
+          reason: conflictData.reason,
+          confidence: conflictData.confidence
+        }
+      }
+    }
+  } catch (e) {
+    console.error('Error re-checking conflict after name switch:', e)
+    matchedPeople.value[index].conflict = {
+      hasConflict: false,
+      error: '切换名字后冲突检测失败，请人工核实'
+    }
   }
 }
 
@@ -565,6 +658,9 @@ const run = async () => {
       .filter(p => p.selected)
       .sort((a, b) => b.similarity - a.similarity)
     
+    // 收集所有需要替换的名字对，按 materialName 长度从长到短排序
+    const replacements: Array<{ from: string; to: string }> = []
+    
     sortedMatchedPeople.forEach(person => {
       const name = person.userOverride?.name || person.dbName
       let info: string
@@ -578,13 +674,22 @@ const run = async () => {
         knowledge_base[name] = info
       }
       
+      // 收集替换对，而不是立即替换
       if (person.materialName !== name) {
-        const escapedMaterialName = person.materialName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-        processedMaterials = processedMaterials.replace(
-          new RegExp(escapedMaterialName, 'g'),
-          name
-        )
+        replacements.push({ from: person.materialName, to: name })
       }
+    })
+    
+    // 按 from 长度从长到短排序，避免短名字替换掉长名字的一部分
+    replacements.sort((a, b) => b.from.length - a.from.length)
+    
+    // 执行替换
+    replacements.forEach(({ from, to }) => {
+      const escapedFrom = from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      processedMaterials = processedMaterials.replace(
+        new RegExp(escapedFrom, 'g'),
+        to
+      )
     })
     
     const res = await fetch('/api/generate', {

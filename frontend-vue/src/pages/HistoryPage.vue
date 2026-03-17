@@ -47,7 +47,7 @@
               <FileText :size="16" />
               <span>Word</span>
             </a>
-            <a
+            <!-- <a
               :href="`/api/articles/${selectedArticle.id}/download/pdf`"
               target="_blank"
               class="btn bg-purple-50 text-purple-600 hover:bg-purple-100 border-purple-200 flex items-center gap-1.5"
@@ -55,7 +55,7 @@
             >
               <File :size="16" />
               <span>PDF</span>
-            </a>
+            </a> -->
             <button
               v-if="!editing"
               @click="handleEdit"
