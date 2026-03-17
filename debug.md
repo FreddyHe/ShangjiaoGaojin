@@ -30,15 +30,16 @@
 ## 二、关键路径和配置
 
 ### 前端路径
-- **项目根目录**：`d:\BaiduSyncdisk\Downloads\project-上交高金\frontend-vue`
+- **项目根目录**：`/www/wwwroot/ShangjiaoGaojin/frontend-vue`
 - **源码目录**：`src/`
 - **页面目录**：`src/pages/`
 - **组件目录**：`src/components/`
 - **类型定义**：`src/types/`
 - **配置文件**：`vite.config.ts`
+- **构建输出**：`dist/`
 
 ### 后端路径
-- **项目根目录**：`d:\BaiduSyncdisk\Downloads\project-上交高金\backend`
+- **项目根目录**：`/www/wwwroot/ShangjiaoGaojin/backend`
 - **主程序**：`main.py`
 - **数据目录**：`data/`
   - `data/articles/` - 文章存储
@@ -48,17 +49,29 @@
 
 ### 配置信息
 - **前端开发服务器**：`http://localhost:5174`
-- **后端 API 服务器**：`http://localhost:8002`
+- **后端 API 服务器**：`http://127.0.0.1:8002`
 - **API 代理**：Vite 配置了 `/api` 代理到后端
-- **环境变量**：`SERVER_PORT=8002`
+- **环境变量文件**：`backend/.env`
+  - `OPENAI_API_KEY`：OpenAI API 密钥
+  - `OPENAI_BASE_URL`：API 基础 URL（可选）
+  - `OPENAI_MODEL`：模型名称，默认 gpt-4o-mini
+  - `SERVER_HOST`：服务器监听地址，默认 0.0.0.0
+  - `SERVER_PORT`：服务器端口，默认 8002
+
+### Nginx 配置
+- **配置文件**：`/etc/aa_nginx/aa_nginx.conf`
+- **前端静态文件**：`/www/wwwroot/ShangjiaoGaojin/frontend-vue/dist`
+- **监听端口**：80
+- **API 代理**：`/api` 代理到 `http://127.0.0.1:8002`
 
 ## 三、服务启动方法
 
 ### 启动后端服务
-```powershell
-cd "d:\BaiduSyncdisk\Downloads\project-上交高金\backend"
-$env:SERVER_PORT="8002"
-python main.py
+```bash
+cd /www/wwwroot/ShangjiaoGaojin/backend
+source /opt/miniconda3/etc/profile.d/conda.sh
+conda activate newsapp
+nohup python main.py > /var/log/newsapp.log 2>&1 &
 ```
 
 后端启动成功后会显示：
@@ -69,9 +82,14 @@ INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8002 (Press CTRL+C to quit)
 ```
 
-### 启动前端服务
-```powershell
-cd "d:\BaiduSyncdisk\Downloads\project-上交高金\frontend-vue"
+### 启动 Nginx 服务
+```bash
+/usr/sbin/aa_nginx -c /etc/aa_nginx/aa_nginx.conf
+```
+
+### 前端开发模式（可选）
+```bash
+cd /www/wwwroot/ShangjiaoGaojin/frontend-vue
 npm run dev
 ```
 
@@ -83,9 +101,14 @@ npm run dev
 
 ### 重启服务
 如果需要重启后端：
-1. 查找占用端口的进程：`netstat -ano | findstr :8002`
-2. 杀死进程：`taskkill /F /PID <PID>`
+1. 查找占用端口的进程：`netstat -tlnp | grep 8002`
+2. 杀死进程：`kill -9 <PID>`
 3. 重新启动后端服务
+
+如果需要重启 Nginx：
+```bash
+/usr/sbin/aa_nginx -s reload
+```
 
 ## 四、已解决的问题记录
 
@@ -245,6 +268,25 @@ npm run dev
 - 保持组件状态，避免重新创建
 
 **修改文件**：`frontend-vue/src/App.vue`
+
+### 12. ExtractPage.vue 大纲提取后无法编辑和保存到模板
+**问题描述**：大纲提取页面（ExtractPage.vue）提取完之后只是把结果显示出来，存到了 localStorage，但没有提供编辑和保存到模板的功能。用户无法在提取后修改大纲内容并保存为模板。
+
+**根本原因**：
+- ExtractPage.vue 只实现了提取功能，缺少编辑和保存功能
+- 没有复用 TemplatesPage.vue 中的 SectionEditor 组件编辑逻辑
+- 缺少"保存到模板"按钮和相关 API 调用
+
+**解决方案**：
+- 重写 ExtractPage.vue，添加完整的编辑功能
+- 复用 TemplatesPage.vue 中的 SectionEditor 组件的编辑逻辑
+- 每个 section 的标题、要点、子章节都可以编辑
+- 可以添加/删除 section 和 bullets
+- 底部添加"保存到模板"按钮，调用 PUT /api/outline/{type_id}/{template_id} 保存大纲
+- 保存时使用提取结果中的 type_id 和用户输入的 template_id
+- 去掉 localStorage 和不需要的 SectionView 组件
+
+**修改文件**：`frontend-vue/src/pages/ExtractPage.vue`
 
 ## 五、当前待解决的问题
 

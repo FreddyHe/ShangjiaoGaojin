@@ -14,10 +14,10 @@ from docx.shared import Pt
 from pypdf import PdfReader
 from dotenv import load_dotenv
 import markdown
-from xhtml2pdf import pisa
-from io import BytesIO
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
+# from xhtml2pdf import pisa
+# from io import BytesIO
+# from reportlab.pdfbase import pdfmetrics
+# from reportlab.pdfbase.ttfonts import TTFont
 from urllib.parse import quote
 from pypinyin import lazy_pinyin
 
@@ -1365,97 +1365,98 @@ def download_docx(article_id: str):
         headers={"Content-Disposition": f"attachment; filename*=UTF-8''{encoded_filename}"}
     )
 
-@app.get("/api/articles/{article_id}/download/pdf")
-def download_pdf(article_id: str):
-    path = ARTICLES_DIR / f"{article_id}.json"
-    if not path.exists():
-        raise HTTPException(status_code=404, detail="article not found")
-    article = Article(**json.loads(path.read_text(encoding="utf-8")))
-    
-    font_registered = False
-    font_family = "Helvetica"
-    
-    font_candidates = [
-        "C:/Windows/Fonts/simhei.ttf",
-        "C:/Windows/Fonts/msyh.ttf",
-        "C:/Windows/Fonts/simkai.ttf",
-        "C:/Windows/Fonts/simfang.ttf",
-        "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
-        "/usr/share/fonts/truetype/noto/NotoSansSC-Regular.otf",
-    ]
-    
-    for font_path in font_candidates:
-        if os.path.exists(font_path):
-            try:
-                pdfmetrics.registerFont(TTFont('ChineseFont', font_path))
-                font_family = 'ChineseFont'
-                font_registered = True
-                print(f"[PDF] Registered font from {font_path}")
-                break
-            except Exception as e:
-                print(f"[PDF] Failed to register {font_path}: {e}")
-                continue
-    
-    if not font_registered:
-        print("[PDF] WARNING: No Chinese font found! PDF will show tofu blocks.")
-    
-    html_content = markdown.markdown(article.content)
-    
-    full_html = f"""
-    <html>
-    <head>
-    <meta charset="utf-8">
-    <style>
-        @page {{
-            size: A4;
-            margin: 2cm;
-        }}
-        body {{
-            font-family: "{font_family}";
-            font-size: 12px;
-            line-height: 1.8;
-            color: #333;
-        }}
-        h1 {{
-            text-align: center;
-            margin-bottom: 20px;
-            font-family: "{font_family}";
-            font-size: 18px;
-        }}
-        h2 {{
-            font-family: "{font_family}";
-            font-size: 15px;
-            margin-top: 15px;
-        }}
-        h3 {{
-            font-family: "{font_family}";
-            font-size: 13px;
-        }}
-        p {{ margin-bottom: 10px; }}
-    </style>
-    </head>
-    <body>
-        <h1>{article.title}</h1>
-        {html_content}
-    </body>
-    </html>
-    """
-    
-    result = BytesIO()
-    pdf = pisa.CreatePDF(BytesIO(full_html.encode("utf-8")), result, encoding='utf-8')
-    
-    if pdf.err:
-        raise HTTPException(status_code=500, detail="PDF generation failed")
-        
-    result.seek(0)
-    filename = f"{article.title}.pdf"
-    encoded_filename = quote(filename)
-    
-    return StreamingResponse(
-        result, 
-        media_type="application/pdf",
-        headers={"Content-Disposition": f"attachment; filename*=UTF-8''{encoded_filename}"}
-    )
+# @app.get("/api/articles/{article_id}/download/pdf")
+# def download_pdf(article_id: str):
+#     path = ARTICLES_DIR / f"{article_id}.json"
+#     if not path.exists():
+#         raise HTTPException(status_code=404, detail="article not found")
+#     article = Article(**json.loads(path.read_text(encoding="utf-8")))
+#     
+#     font_registered = False
+#     font_family = "Helvetica"
+#     
+#     font_candidates = [
+#         "C:/Windows/Fonts/simhei.ttf",
+#         "C:/Windows/Fonts/msyh.ttf",
+#         "C:/Windows/Fonts/simkai.ttf",
+#         "C:/Windows/Fonts/simfang.ttf",
+#         "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
+#         "/usr/share/fonts/truetype/noto/NotoSansSC-Regular.otf",
+#     ]
+#     
+#     for font_path in font_candidates:
+#         if os.path.exists(font_path):
+#             try:
+#                 pdfmetrics.registerFont(TTFont('ChineseFont', font_path))
+#                 font_family = 'ChineseFont'
+#                 font_registered = True
+#                 print(f"[PDF] Registered font from {font_path}")
+#                 break
+#             except Exception as e:
+#                 print(f"[PDF] Failed to register {font_path}: {e}")
+#                 continue
+#     
+#     if not font_registered:
+#         print("[PDF] WARNING: No Chinese font found! PDF will show tofu blocks.")
+#     
+#     html_content = markdown.markdown(article.content)
+#     
+#     full_html = f"""
+#     <html>
+#     <head>
+#     <meta charset="utf-8">
+#     <style>
+#         @page {{
+#             size: A4;
+#             margin: 2cm;
+#         }}
+#         body {{
+#             font-family: "{font_family}";
+#             font-size: 12px;
+#             line-height: 1.8;
+#             color: #333;
+#         }}
+#         h1 {{
+#             text-align: center;
+#             margin-bottom: 20px;
+#             font-family: "{font_family}";
+#             font-size: 18px;
+#         }}
+#         h2 {{
+#             font-family: "{font_family}";
+#             font-size: 15px;
+#             margin-top: 15px;
+#         }}
+#         h3 {{
+#             font-family: "{font_family}";
+#             font-size: 13px;
+#         }}
+#         p {{ margin-bottom: 10px; }}
+#     </style>
+#     </head>
+#     <body>
+#         <h1>{article.title}</h1>
+#         {html_content}
+#     </body>
+#     </html>
+#     """
+#     
+#     result = BytesIO()
+#     pdf = pisa.CreatePDF(BytesIO(full_html.encode("utf-8")), result, encoding='utf-8')
+#     
+#     if pdf.err:
+#         raise HTTPException(status_code=500, detail="PDF generation failed")
+#         
+#     result.seek(0)
+#     filename = f"{article.title}.pdf"
+#     encoded_filename = quote(filename)
+#     
+#     return StreamingResponse(
+#         result, 
+#         media_type="application/pdf",
+#         headers={"Content-Disposition": f"attachment; filename*=UTF-8''{encoded_filename}"}
+#     )
+
 
 
 @app.put("/api/articles/{article_id}", response_model=Article)
