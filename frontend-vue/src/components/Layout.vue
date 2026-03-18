@@ -62,7 +62,7 @@ const navs = [
   { path: '/templates', label: '模板管理', icon: LayoutDashboard },
   { path: '/extract', label: '大纲提取', icon: FileText },
   { path: '/generate', label: '稿件生成', icon: PenTool },
-  // { path: '/history', label: '历史记录', icon: History },
+  { path: '/history', label: '历史记录', icon: History },
   { path: '/settings', label: '系统设置', icon: Settings },
 ]
 
