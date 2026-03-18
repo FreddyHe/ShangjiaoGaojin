@@ -111,7 +111,6 @@ const settings = ref<Settings>({
   copyright_text: '',
   openai_model: 'gpt-4o-mini'
 })
-const loading = ref(false)
 const saving = ref(false)
 const showKeys = ref({
   api: false,

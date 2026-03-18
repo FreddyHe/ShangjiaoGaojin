@@ -117,3 +117,16 @@ export interface ArticleVersion {
   id: string
   content: string
 }
+
+export interface UserProfile {
+  userId: string
+  role: 'admin' | 'user'
+  name: string
+  nickname: string
+  email: string
+  phone?: string
+  avatarDataUrl?: string
+  registeredAt: number
+  lastLoginAt: number
+  lastLoginLocation: string
+}

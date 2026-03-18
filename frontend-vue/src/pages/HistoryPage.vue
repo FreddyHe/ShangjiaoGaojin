@@ -112,7 +112,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import MarkdownIt from 'markdown-it'
-import { FileText, File, Edit3, Save, X, Trash2 } from 'lucide-vue-next'
+import { FileText, Edit3, Save, X, Trash2 } from 'lucide-vue-next'
 import type { Article } from '@/types'
 
 const articles = ref<Article[]>([])

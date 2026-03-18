@@ -51,6 +51,13 @@ cd /www/wwwroot/ShangjiaoGaojin/frontend-vue && npm run build
 **原因**：没有 `<keep-alive>` 时，从 GeneratePage 切换到其他页面再回来，所有步骤进度和数据会丢失。
 **规则**：不要删除 App.vue 中的 `<keep-alive>` 包裹。
 
+### P-014: markdown-it 在 TS 下缺少类型声明
+**原因**：项目未安装 `@types/markdown-it`。
+**规则**：添加 `src/types/markdown-it.d.ts` 声明占位，避免 vue-tsc 报错。
+
+### P-015: 避免在模板中直接用 `$refs.fileInput?.click()`
+**原因**：`$refs` 在模板推断为 `{}`，`click` 不存在导致 TS 报错。
+**规则**：用 `const fileInput = ref<HTMLInputElement|null>(null)` 并在模板中 `@click="fileInput?.click()"`。
 ---
 
 ## 🟢 后端相关

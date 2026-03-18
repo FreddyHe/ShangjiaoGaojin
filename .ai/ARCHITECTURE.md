@@ -10,6 +10,105 @@
 | 数据存储 | JSON 文件 | 无数据库，所有数据以 JSON 文件存储在 `backend/data/` |
 | 部署 | 阿里云 ECS + Nginx | 静态文件由 Nginx 提供，API 反向代理到后端 |
 
+## 一键启动（完整流程）
+
+### 全新环境首次启动
+
+```bash
+# ========== 1. 后端 ==========
+cd /www/wwwroot/ShangjiaoGaojin/backend
+
+# 激活 conda 环境
+source /opt/miniconda3/etc/profile.d/conda.sh
+conda activate newsapp
+
+# 确认环境变量已配置（首次需编辑 .env）
+cat .env
+# 至少需要 OPENAI_API_KEY=sk-xxx
+
+# 启动后端（后台运行）
+nohup python main.py > /var/log/newsapp.log 2>&1 &
+
+# 验证后端
+sleep 2 && curl -s http://127.0.0.1:8002/api/settings | head -c 100
+# 应返回 JSON
+
+# ========== 2. 前端构建 ==========
+cd /www/wwwroot/ShangjiaoGaojin/frontend-vue
+
+npm install    # 首次需要安装依赖
+npm run build  # 构建到 dist/
+
+# 验证构建产物
+ls -la dist/index.html
+# 应显示最新时间戳
+
+# ========== 3. Nginx ==========
+# 设置临时目录权限（aa_nginx 的已知问题，必须先执行）
+mkdir -p /var/lib/aa_nginx/tmp/{client_body,proxy,fastcgi,scgi,uwsgi}
+chown -R nginx:nginx /var/lib/aa_nginx/tmp/
+chmod -R 700 /var/lib/aa_nginx/tmp/
+
+# 启动 Nginx
+/usr/sbin/aa_nginx -c /etc/aa_nginx/aa_nginx.conf
+
+# 验证外网访问
+curl -I http://47.102.216.195/
+# 应返回 HTTP/1.1 200 OK
+```
+
+### 日常重启（复制粘贴即可）
+
+```bash
+# ---------- 重启后端 ----------
+kill -9 $(netstat -tlnp 2>/dev/null | grep :8002 | awk '{print $7}' | cut -d/ -f1) 2>/dev/null
+sleep 2
+cd /www/wwwroot/ShangjiaoGaojin/backend
+source /opt/miniconda3/etc/profile.d/conda.sh
+conda activate newsapp
+nohup python main.py > /var/log/newsapp.log 2>&1 &
+sleep 2 && curl -s http://127.0.0.1:8002/api/types | head -c 50
+
+# ---------- 重启 Nginx ----------
+fuser -k 80/tcp 2>/dev/null; sleep 2
+mkdir -p /var/lib/aa_nginx/tmp/{client_body,proxy,fastcgi,scgi,uwsgi}
+chown -R nginx:nginx /var/lib/aa_nginx/tmp/
+chmod -R 700 /var/lib/aa_nginx/tmp/
+/usr/sbin/aa_nginx -c /etc/aa_nginx/aa_nginx.conf && echo "Nginx 启动成功"
+```
+
+### 前端改代码后更新
+
+```bash
+cd /www/wwwroot/ShangjiaoGaojin/frontend-vue
+npm run build && echo "构建完成，刷新浏览器即可（Ctrl+F5 强制刷新）"
+```
+
+### 本地开发模式（前端热更新）
+
+```bash
+# 终端 1：后端
+cd /www/wwwroot/ShangjiaoGaojin/backend
+source /opt/miniconda3/etc/profile.d/conda.sh && conda activate newsapp
+python main.py
+
+# 终端 2：前端（Vite 开发服务器，自动代理 /api 到后端）
+cd /www/wwwroot/ShangjiaoGaojin/frontend-vue
+npm run dev
+# 访问 http://localhost:5174/
+```
+
+### 状态检查一览
+
+```bash
+echo "===== 后端 =====" && netstat -tlnp 2>/dev/null | grep :8002
+echo "===== Nginx =====" && ss -tlnp | grep :80
+echo "===== 后端API =====" && curl -s http://127.0.0.1:8002/api/types | head -c 80
+echo "===== 外网 =====" && curl -sI http://47.102.216.195/ | head -3
+echo "===== 磁盘 =====" && df -h / | tail -1
+echo "===== 数据量 =====" && ls /www/wwwroot/ShangjiaoGaojin/backend/data/articles/ 2>/dev/null | wc -l && echo "篇文章"
+```
+
 ## 目录结构
 
 ```
@@ -17,14 +116,19 @@ ShangjiaoGaojin/
 ├── frontend-vue/                  # 前端项目
 │   ├── src/
 │   │   ├── components/            # 通用组件 (Layout, FileUpload, Badge, Toast 等)
+│   │   │   ├── UserMenu.vue       # 顶部头像菜单（个人中心 / 退出登录）
+│   │   │   ├── AvatarCropModal.vue# 头像裁剪弹窗（上传后裁剪、预览、保存）
 │   │   ├── pages/                 # 页面组件
 │   │   │   ├── GeneratePage.vue   # 核心：三步式稿件生成（上传→选模板→生成）
 │   │   │   ├── TemplatesPage.vue  # 模板管理（三栏布局：类型→模板列表→编辑器）
 │   │   │   ├── ExtractPage.vue    # 大纲提取（上传稿件→AI提取→编辑→保存）
 │   │   │   ├── HistoryPage.vue    # 历史记录（列表+详情，支持编辑和导出）
 │   │   │   ├── SettingsPage.vue   # 系统设置（API Key、模型、基础信息）
-│   │   │   └── UploadPage.vue     # 文件上传解析
+│   │   │   ├── UploadPage.vue     # 文件上传解析
+│   │   │   └── ProfilePage.vue    # 个人中心（资料、安全、统计、绑定，占位）
 │   │   ├── types/index.ts         # 所有 TypeScript 类型定义
+│   │   ├── types/markdown-it.d.ts # markdown-it 类型声明占位（避免 vue-tsc 报错）
+│   │   ├── lib/profile.ts         # 本地用户资料存储工具（localStorage）
 │   │   ├── App.vue                # 根组件（使用 keep-alive 保持页面状态）
 │   │   ├── main.ts                # 入口 + 路由配置
 │   │   └── index.css              # Tailwind + 自定义组件样式

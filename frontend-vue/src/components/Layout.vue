@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-amber-50/30 flex flex-col">
-    <header class="bg-white h-16 flex items-center px-6 sticky top-0 z-10 border-b border-gray-100">
+    <header class="bg-white h-16 flex items-center px-6 sticky top-0 z-10 border-b border-gray-100 justify-between gap-6">
       <div class="flex items-center gap-3">
         <div v-if="settings.logo_url" class="h-9 w-9 object-contain">
           <img :src="settings.logo_url" alt="Logo" class="h-9 w-9 object-contain" />
@@ -10,6 +10,7 @@
         </div>
         <span class="font-bold text-xl text-gray-900 tracking-tight">{{ settings.system_name || '新闻稿智能体' }}</span>
       </div>
+      <UserMenu />
     </header>
 
     <div class="flex flex-1 overflow-hidden">
@@ -45,6 +46,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { LayoutDashboard, FileText, PenTool, History, Settings } from 'lucide-vue-next'
+import UserMenu from './UserMenu.vue'
 
 interface SettingsType {
   system_name: string

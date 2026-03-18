@@ -5,7 +5,11 @@
       <div class="grid grid-cols-2 gap-2">
         <input class="input text-sm" v-model="newId" placeholder="ID" />
         <input class="input text-sm" v-model="newName" placeholder="名称" />
-        <button class="btn btn-primary col-span-2 text-sm" @click="addType">新增类型</button>
+        <button
+          class="btn btn-primary col-span-2 text-sm"
+          @click="addType"
+          :disabled="!newId.trim() || !newName.trim()"
+        >新增类型</button>
       </div>
       <div class="flex-1 overflow-y-auto grid gap-3">
         <div
@@ -108,7 +112,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
-import type { TypeItem, Outline, TemplateItem, OutlineSection } from '@/types'
+import type { TypeItem, Outline, TemplateItem } from '@/types'
 
 const types = ref<TypeItem[]>([])
 const selectedTypeId = ref('')
@@ -178,18 +182,28 @@ watch([() => selectedTypeId.value, () => selectedTemplateId.value], ([typeId, te
 })
 
 const addType = async () => {
-  if (!newId.value.trim() || !newName.value.trim()) return
-  const res = await fetch('/api/types', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id: newId.value.trim(), name: newName.value.trim() })
-  })
-  if (res.ok) {
-    newId.value = ''
-    newName.value = ''
-    await loadTypes()
-  } else {
-    alert('新增失败')
+  const id = newId.value.trim()
+  const name = newName.value.trim()
+  if (!id || !name) {
+    alert('请填写完整的ID和名称')
+    return
+  }
+  try {
+    const res = await fetch('/api/types', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, name })
+    })
+    if (res.ok) {
+      newId.value = ''
+      newName.value = ''
+      await loadTypes()
+    } else {
+      const data = await res.json().catch(() => ({}))
+      alert(`新增失败: ${data.detail || res.status}`)
+    }
+  } catch (e) {
+    alert('网络错误，新增失败')
   }
 }
 

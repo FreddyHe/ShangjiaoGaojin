@@ -19,6 +19,10 @@
     {
       "id": "research",
       "name": "研究成果文稿"
+    },
+    {
+      "id": "report",
+      "name": "汇报"
     }
   ]
 }

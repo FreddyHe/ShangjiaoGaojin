@@ -9,6 +9,7 @@ import GeneratePage from './pages/GeneratePage.vue'
 import HistoryPage from './pages/HistoryPage.vue'
 import SettingsPage from './pages/SettingsPage.vue'
 import UploadPage from './pages/UploadPage.vue'
+import ProfilePage from './pages/ProfilePage.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -20,6 +21,7 @@ const router = createRouter({
     { path: '/generate', component: GeneratePage },
     { path: '/history', component: HistoryPage },
     { path: '/settings', component: SettingsPage },
+    { path: '/profile', component: ProfilePage },
   ]
 })
 

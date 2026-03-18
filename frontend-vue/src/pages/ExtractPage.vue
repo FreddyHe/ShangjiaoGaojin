@@ -219,7 +219,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { UploadCloud, FileText, X, Loader2 } from 'lucide-vue-next'
-import type { Outline, OutlineSection } from '@/types'
+import type { Outline } from '@/types'
 
 const selectedFiles = ref<File[]>([])
 const loading = ref(false)

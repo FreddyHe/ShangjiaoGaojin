@@ -12,7 +12,7 @@
           @dragover.prevent="isDragging = true"
           @dragleave.prevent="isDragging = false"
           @drop.prevent="handleDrop"
-          @click="$refs.fileInput?.click()"
+          @click="fileInput?.click()"
         >
           <div class="flex flex-col items-center gap-3">
             <UploadCloud :size="48" class="text-text-muted" />

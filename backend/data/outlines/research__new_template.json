@@ -1,0 +1,29 @@
+{
+  "type_id": "research",
+  "type_name": "研究成果文稿",
+  "template_id": "new_template",
+  "sections": [
+    {
+      "title": "背景",
+      "bullets": [],
+      "children": null,
+      "description": null,
+      "word_count": null,
+      "granularity": null
+    },
+    {
+      "title": "标题",
+      "bullets": [],
+      "children": null,
+      "description": null,
+      "word_count": null,
+      "granularity": null
+    }
+  ],
+  "meta": {
+    "is_system": false,
+    "is_favorite": false,
+    "created_at": 1773823067183.0,
+    "title": null
+  }
+}
