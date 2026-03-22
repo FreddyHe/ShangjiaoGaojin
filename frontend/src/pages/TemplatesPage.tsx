@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 type TypeItem = { id: string; name: string; template_count: number }
 type OutlineSection = { title: string; bullets?: string[]; children?: OutlineSection[] }
-type OutlineMeta = { is_system: boolean; is_favorite: boolean; created_at: number; title?: string }
+type OutlineMeta = { is_favorite: boolean; created_at: number; title?: string }
 type Outline = { type_id: string; type_name: string; template_id?: string; sections: OutlineSection[]; meta?: OutlineMeta }
 type TemplateItem = { template_id: string; meta?: OutlineMeta; sections_summary?: string[] }
 
@@ -45,11 +45,8 @@ export default function TemplatesPage() {
     const res = await fetch(`/api/outlines/${typeId}`)
     if (res.ok) {
       const data = await res.json()
-      // Sort: System first, then Favorites, then others
       const list = (data.templates || []) as TemplateItem[]
       list.sort((a, b) => {
-        if (a.meta?.is_system && !b.meta?.is_system) return -1
-        if (!a.meta?.is_system && b.meta?.is_system) return 1
         if (a.meta?.is_favorite && !b.meta?.is_favorite) return -1
         if (!a.meta?.is_favorite && b.meta?.is_favorite) return 1
         return 0
@@ -206,21 +203,15 @@ export default function TemplatesPage() {
                      >
                          <div className="flex justify-between items-start mb-1">
                             <span className="font-medium text-sm truncate" title={t.template_id}>
-                                {t.meta?.title || (t.template_id === 'default' ? '系统默认模板' : t.template_id)}
+                                {t.meta?.title || t.template_id}
                             </span>
                             <div className="flex gap-1">
-                                {t.meta?.is_system ? (
-                                    <span className="text-[10px] bg-blue-100 text-blue-600 px-1 rounded">系统</span>
-                                ) : (
-                                    <>
-                                        <button onClick={(e) => { e.stopPropagation(); toggleFavorite(t.template_id) }} className={`text-lg leading-none ${t.meta?.is_favorite ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-500'}`}>
-                                            ★
-                                        </button>
-                                        <button onClick={(e) => { e.stopPropagation(); deleteTemplate(selectedTypeId, t.template_id) }} className="text-xs text-red-500 hover:text-red-600">
-                                            删除
-                                        </button>
-                                    </>
-                                )}
+                                <button onClick={(e) => { e.stopPropagation(); toggleFavorite(t.template_id) }} className={`text-lg leading-none ${t.meta?.is_favorite ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-500'}`}>
+                                    ★
+                                </button>
+                                <button onClick={(e) => { e.stopPropagation(); deleteTemplate(selectedTypeId, t.template_id) }} className="text-xs text-red-500 hover:text-red-600">
+                                    删除
+                                </button>
                             </div>
                         </div>
                          <div className="text-xs text-gray-500 line-clamp-2">
@@ -238,10 +229,40 @@ export default function TemplatesPage() {
                              type_name: types.find(x => x.id === selectedTypeId)?.name || '',
                              template_id: name,
                              sections: [], // Empty
-                             meta: { is_system: false, is_favorite: false, created_at: Date.now() }
+                             meta: { is_favorite: false, created_at: Date.now() }
                          })
                      }
                  }}>+ 新建空白模板</button>
+                 <button className="btn w-full mt-2 text-sm" onClick={() => {
+                     const input = document.createElement('input')
+                     input.type = 'file'
+                     input.accept = '.json'
+                     input.onchange = (e) => {
+                         const file = (e.target as HTMLInputElement).files?.[0]
+                         if (!file) return
+                         const reader = new FileReader()
+                         reader.onload = (ev) => {
+                             try {
+                                 const data = JSON.parse(ev.target?.result as string)
+                                 const name = prompt('请输入导入的模板名称 (ID)', file.name.replace('.json', ''))
+                                 if (name) {
+                                     setSelectedTemplateId('')
+                                     setOutline({
+                                         type_id: selectedTypeId,
+                                         type_name: types.find(x => x.id === selectedTypeId)?.name || '',
+                                         template_id: name,
+                                         sections: data.sections || data,
+                                         meta: { is_favorite: false, created_at: Date.now(), title: data.meta?.title || name }
+                                     })
+                                 }
+                             } catch (err) {
+                                 alert('解析 JSON 文件失败')
+                             }
+                         }
+                         reader.readAsText(file)
+                     }
+                     input.click()
+                 }}>+ 导入JSON模板</button>
              </div>
          )}
       </div>
@@ -254,25 +275,26 @@ export default function TemplatesPage() {
            <>
              <div className="flex items-center justify-between gap-4 mb-4 pb-4 border-b">
                <div className="flex items-center gap-2">
-                  <div className="font-bold text-lg">{outline.meta?.title || (outline.template_id === 'default' ? '系统默认模板' : outline.template_id)}</div>
-                  {outline.meta?.is_system && <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded">系统内置</span>}
+                   <div className="font-bold text-lg">{outline.meta?.title || outline.template_id}</div>
                </div>
-               <div className="flex items-center gap-2">
-                 {!outline.meta?.is_system && (
-                    <button className="btn text-sm" onClick={() => {
+               <div className="flex gap-2">
+                   <button className="btn text-sm" onClick={() => {
                         const title = prompt('修改模板显示名称', outline.meta?.title || '')
                         if (title !== null) {
-                            setOutline({...outline, meta: {...outline.meta!, title}})
+                             setOutline({...outline, meta: {...outline.meta!, title}})
                         }
-                    }}>重命名</button>
-                 )}
-                 <button className="btn text-sm" onClick={() => {
-                    const name = prompt('另存为新模板 (ID)', outline.template_id + '_copy')
-                    if(name) {
-                        setOutline({...outline, template_id: name, meta: { ...outline.meta!, is_system: false, is_favorite: false }})
-                        alert('已切换为新模板ID，请保存')
-                    }
-                 }}>另存为</button>
+                   }}>修改名称</button>
+                   <button className="btn text-sm" onClick={() => {
+                        const name = prompt('另存为新模板 (ID)', outline.template_id + '_copy')
+                        if (name) {
+                            setOutline({
+                                ...outline, 
+                                template_id: name,
+                                meta: { ...outline.meta!, is_favorite: false }
+                            })
+                            alert('已切换为新模板ID，请保存')
+                        }
+                   }}>另存为</button>
                </div>
              </div>
              

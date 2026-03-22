@@ -1,21 +1,21 @@
 <template>
   <div class="grid grid-cols-[280px_320px_1fr] gap-8 h-[calc(100vh-100px)]">
-    <div class="card p-5 flex flex-col gap-5 overflow-hidden">
-      <div class="font-bold text-lg text-text-primary">类型管理</div>
-      <div class="grid grid-cols-2 gap-2">
-        <input class="input text-sm" v-model="newId" placeholder="ID" />
-        <input class="input text-sm" v-model="newName" placeholder="名称" />
+    <div class="card p-6 flex flex-col gap-5 overflow-hidden">
+      <div class="font-bold text-xl tracking-tight text-text-primary mb-2">类型管理</div>
+      <div class="grid grid-cols-2 gap-3">
+        <input class="input text-sm" v-model="newId" placeholder="ID (字母数字)" />
+        <input class="input text-sm" v-model="newName" placeholder="类型名称" />
         <button
-          class="btn btn-primary col-span-2 text-sm"
+          class="btn btn-primary col-span-2 text-sm py-2"
           @click="addType"
           :disabled="!newId.trim() || !newName.trim()"
-        >新增类型</button>
+        >+ 新增类型</button>
       </div>
       <div class="flex-1 overflow-y-auto grid gap-3">
         <div
           v-for="t in types"
           :key="t.id"
-          class="type-card border-gray-200 bg-surface-50"
+          class="type-card"
           :class="selectedTypeId === t.id ? 'type-card-selected' : ''"
           @click="setSelectedTypeId(t.id)"
         >
@@ -31,38 +31,39 @@
       </div>
     </div>
 
-    <div class="card p-5 flex flex-col gap-5 overflow-hidden">
-      <div class="font-bold text-lg text-text-primary">模板列表</div>
-      <div v-if="!selectedTypeId" class="text-text-muted text-sm">请先选择类型</div>
-      <div v-else class="flex-1 overflow-y-auto grid gap-3">
+    <div class="card p-6 flex flex-col gap-5 overflow-hidden">
+      <div class="font-bold text-xl tracking-tight text-text-primary mb-2">模板列表</div>
+      <div v-if="selectedTypeDescription" class="text-sm text-text-secondary bg-brand-50/50 p-4 rounded-xl border border-brand-100 leading-relaxed">
+        <span class="font-medium text-brand-700 block mb-1">类型说明：</span>
+        {{ selectedTypeDescription }}
+      </div>
+      <div v-if="!selectedTypeId" class="text-text-muted text-sm flex items-center justify-center h-32 bg-background-50 rounded-xl border border-dashed border-background-200">← 请先选择类型</div>
+      <div v-else class="flex-1 overflow-y-auto grid gap-3 pr-1">
         <div
           v-for="t in templates"
           :key="t.template_id"
-          class="template-card border-gray-200 bg-surface-50"
+          class="template-card"
           :class="selectedTemplateId === t.template_id ? 'template-card-selected' : ''"
           @click="setSelectedTemplateId(t.template_id)"
         >
           <div class="flex justify-between items-start mb-2">
             <span class="font-medium text-sm truncate text-text-primary" :title="t.template_id">
-              {{ t.meta?.title || (t.template_id === 'default' ? '系统默认模板' : t.template_id) }}
+              {{ t.meta?.title || t.template_id }}
             </span>
             <div class="flex gap-1">
-              <span v-if="t.meta?.is_system" class="badge badge-system">系统</span>
-              <template v-else>
-                <button
-                  @click.stop="toggleFavorite(t.template_id)"
-                  class="text-lg leading-none transition-all duration-200"
-                  :class="t.meta?.is_favorite ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-500'"
-                >
-                  ★
-                </button>
-                <button
-                  @click.stop="deleteTemplate(selectedTypeId, t.template_id)"
-                  class="text-xs text-red-500 hover:text-red-600"
-                >
-                  删除
-                </button>
-              </template>
+              <button
+                @click.stop="toggleFavorite(t.template_id)"
+                class="text-lg leading-none transition-all duration-200"
+                :class="t.meta?.is_favorite ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-500'"
+              >
+                ★
+              </button>
+              <button
+                @click.stop="deleteTemplate(selectedTypeId, t.template_id)"
+                class="text-xs text-red-500 hover:text-red-600"
+              >
+                删除
+              </button>
             </div>
           </div>
           <div class="text-xs text-text-secondary line-clamp-2">
@@ -70,25 +71,29 @@
           </div>
         </div>
         <button class="btn w-full mt-2 text-sm" @click="createNewTemplate">+ 新建空白模板</button>
+        <button class="btn w-full mt-2 text-sm" @click="importJsonTemplate">+ 导入JSON模板</button>
       </div>
     </div>
 
-    <div class="card p-6 flex flex-col overflow-hidden">
-      <div v-if="!outline" class="flex items-center justify-center h-full text-text-muted">请选择模板或新建</div>
+    <div class="card p-8 flex flex-col overflow-hidden">
+      <div v-if="!outline" class="flex flex-col items-center justify-center h-full text-text-muted gap-4">
+        <div class="w-16 h-16 rounded-full bg-background-100 flex items-center justify-center text-2xl border border-background-200 shadow-sm">📝</div>
+        <span>请选择模板或新建空白模板</span>
+      </div>
       <template v-else>
-        <div class="flex items-center justify-between gap-4 mb-5 pb-4 border-b border-gray-200">
-          <div class="flex items-center gap-2">
-            <div class="font-bold text-lg text-text-primary">{{ outline.meta?.title || (outline.template_id === 'default' ? '系统默认模板' : outline.template_id) }}</div>
-            <span v-if="outline.meta?.is_system" class="badge badge-system">系统内置</span>
+        <div class="flex items-center justify-between gap-4 mb-6 pb-5 border-b border-background-200">
+          <div class="flex items-center gap-3">
+            <div class="font-bold text-2xl tracking-tight text-text-primary">{{ outline.meta?.title || outline.template_id }}</div>
           </div>
-          <div class="flex items-center gap-2">
-            <button v-if="!outline.meta?.is_system" class="btn text-sm" @click="renameTemplate">重命名</button>
+          <div class="flex gap-2">
+            <button class="btn text-sm" @click="renameTemplate">修改名称</button>
             <button class="btn text-sm" @click="saveAsTemplate">另存为</button>
+            <button class="btn btn-primary text-sm shadow-sm" @click="saveOutline">保存修改</button>
           </div>
         </div>
 
-        <div class="flex-1 overflow-y-auto">
-          <div class="grid gap-4">
+        <div class="flex-1 overflow-y-auto pr-2">
+          <div class="grid gap-5">
             <SectionEditor
               v-for="(section, index) in outline.sections"
               :key="index"
@@ -98,12 +103,12 @@
               @update-bullet="(j, v) => updateBullet(index, j, v)"
               @add-child="() => addChild(index)"
             />
-            <button class="btn btn-primary w-max" @click="addSection">添加一级标题</button>
+            <button class="btn btn-primary w-max mt-2" @click="addSection">+ 添加一级标题</button>
           </div>
         </div>
 
-        <div class="pt-5 border-t border-gray-200 mt-5 flex justify-end">
-          <button class="btn btn-primary" @click="saveOutline">保存当前模板</button>
+        <div class="pt-6 border-t border-background-200 mt-6 flex justify-end">
+          <button class="btn btn-primary px-8 py-3 text-base bg-gradient-to-r from-brand-500 to-brand-600 hover:shadow-glow" @click="saveOutline">保存当前模板</button>
         </div>
       </template>
     </div>
@@ -111,7 +116,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import type { TypeItem, Outline, TemplateItem } from '@/types'
 
 const types = ref<TypeItem[]>([])
@@ -121,6 +126,11 @@ const selectedTemplateId = ref('')
 const outline = ref<Outline | null>(null)
 const newId = ref('')
 const newName = ref('')
+
+const selectedTypeDescription = computed(() => {
+  const t = types.value.find(x => x.id === selectedTypeId.value)
+  return t?.description || ''
+})
 
 const loadTypes = async () => {
   const res = await fetch('/api/types')
@@ -136,8 +146,6 @@ const loadTemplates = async (typeId: string) => {
     const data = await res.json()
     const list = (data.templates || []) as TemplateItem[]
     list.sort((a, b) => {
-      if (a.meta?.is_system && !b.meta?.is_system) return -1
-      if (!a.meta?.is_system && b.meta?.is_system) return 1
       if (a.meta?.is_favorite && !b.meta?.is_favorite) return -1
       if (!a.meta?.is_favorite && b.meta?.is_favorite) return 1
       return 0
@@ -272,9 +280,40 @@ const createNewTemplate = () => {
       type_name: types.value.find(x => x.id === selectedTypeId.value)?.name || '',
       template_id: name,
       sections: [],
-      meta: { is_system: false, is_favorite: false, created_at: Date.now() }
+      meta: { is_favorite: false, created_at: Date.now() }
     }
   }
+}
+
+const importJsonTemplate = () => {
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = '.json'
+  input.onchange = (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target?.result as string)
+        const name = prompt('请输入导入的模板名称 (ID)', file.name.replace('.json', ''))
+        if (name) {
+          selectedTemplateId.value = ''
+          outline.value = {
+            type_id: selectedTypeId.value,
+            type_name: types.value.find(x => x.id === selectedTypeId.value)?.name || '',
+            template_id: name,
+            sections: data.sections || data,
+            meta: { is_favorite: false, created_at: Date.now(), title: data.meta?.title || name }
+          }
+        }
+      } catch (err) {
+        alert('解析 JSON 文件失败')
+      }
+    }
+    reader.readAsText(file)
+  }
+  input.click()
 }
 
 const renameTemplate = () => {
@@ -292,7 +331,7 @@ const saveAsTemplate = () => {
     outline.value = {
       ...outline.value,
       template_id: name,
-      meta: { ...outline.value.meta!, is_system: false, is_favorite: false }
+      meta: { ...outline.value.meta!, is_favorite: false }
     }
     alert('已切换为新模板ID，请保存')
   }
@@ -357,31 +396,32 @@ export default defineComponent({
       },
       emits: ['update-title', 'add-bullet', 'update-bullet', 'add-child'],
       template: `
-        <div class="section-card border-gray-200">
-          <div class="flex items-center gap-2 mb-3">
-            <div class="w-1 h-4 bg-gray-300 rounded-full"></div>
-            <input class="input font-bold text-text-primary" :value="section.title" @input="$emit('update-title', $event.target.value)" placeholder="标题" />
+        <div class="section-card border-background-200 shadow-sm relative group overflow-hidden">
+          <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-200 group-hover:bg-brand-400 transition-colors"></div>
+          <div class="flex items-center gap-3 mb-4 pl-2">
+            <div class="w-1.5 h-5 bg-brand-500 rounded-full shadow-sm"></div>
+            <input class="input font-bold text-text-primary text-lg bg-transparent border-transparent hover:border-background-200 focus:bg-surface-50 focus:border-brand-400 px-2 py-1" :value="section.title" @input="$emit('update-title', $event.target.value)" placeholder="章节标题" />
           </div>
-          <div class="mt-3 grid gap-2">
+          <div class="mt-3 grid gap-2.5 pl-4">
             <div
               v-for="(b, j) in (section.bullets || [])"
               :key="j"
-              class="flex items-start gap-2"
+              class="flex items-center gap-2 group/bullet"
             >
-              <span class="text-text-muted mt-2">•</span>
+              <div class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></div>
               <input
-                class="input text-sm"
+                class="input text-sm py-2 bg-transparent border-transparent hover:border-background-200 focus:bg-surface-50 focus:border-brand-400"
                 :value="b"
                 @input="$emit('update-bullet', j, $event.target.value)"
                 :placeholder="'要点 ' + (j+1)"
               />
             </div>
-            <div class="flex gap-3 mt-2">
-              <button class="text-xs text-brand-600 hover:text-brand-700 hover:underline transition-colors" @click="$emit('add-bullet')">+ 添加要点</button>
-              <button class="text-xs text-brand-600 hover:text-brand-700 hover:underline transition-colors" @click="$emit('add-child')">+ 添加子标题</button>
+            <div class="flex gap-4 mt-2 pl-4">
+              <button class="text-xs font-medium text-brand-600 hover:text-brand-700 hover:bg-brand-50 px-2 py-1 rounded transition-colors flex items-center gap-1" @click="$emit('add-bullet')"><span class="text-lg leading-none">+</span> 添加要点</button>
+              <button class="text-xs font-medium text-brand-600 hover:text-brand-700 hover:bg-brand-50 px-2 py-1 rounded transition-colors flex items-center gap-1" @click="$emit('add-child')"><span class="text-lg leading-none">+</span> 添加子标题</button>
             </div>
           </div>
-          <div v-if="(section.children||[]).length" class="mt-4 grid gap-3 ml-6 border-l border-gray-200 pl-4">
+          <div v-if="(section.children||[]).length" class="mt-5 grid gap-4 ml-6 border-l-2 border-background-200 pl-5">
             <SectionEditor
               v-for="(c, k) in (section.children||[])"
               :key="k"

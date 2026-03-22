@@ -1,46 +1,46 @@
 <template>
   <div class="relative" ref="rootEl">
     <button
-      class="flex items-center gap-3 pl-2 pr-3 py-1.5 rounded-full hover:bg-gray-100 transition-colors"
+      class="flex items-center gap-3 pl-2 pr-3 py-1.5 rounded-full hover:bg-background-50 transition-colors border border-transparent hover:border-background-200"
       @click="toggle"
       aria-label="用户菜单"
     >
-      <div class="h-9 w-9 rounded-full overflow-hidden bg-orange-100 flex items-center justify-center border border-orange-200">
+      <div class="h-9 w-9 rounded-full overflow-hidden bg-brand-50 flex items-center justify-center border border-brand-200 shadow-sm">
         <img v-if="profile.avatarDataUrl" :src="profile.avatarDataUrl" alt="Avatar" class="h-full w-full object-cover" />
-        <span v-else class="text-orange-700 font-semibold">{{ initials }}</span>
+        <span v-else class="text-brand-700 font-semibold">{{ initials }}</span>
       </div>
       <div class="hidden sm:flex flex-col items-start leading-tight">
         <div class="text-sm font-semibold text-text-primary max-w-32 truncate">{{ profile.nickname || profile.name || '未登录' }}</div>
         <div class="text-xs text-text-muted">{{ roleLabel }}</div>
       </div>
-      <ChevronDown :size="16" class="text-text-tertiary" />
+      <ChevronDown :size="16" class="text-text-tertiary ml-1" />
     </button>
 
     <Transition
       enter-active-class="transition-all duration-200 ease-out"
-      enter-from-class="opacity-0 translate-y-2"
-      enter-to-class="opacity-100 translate-y-0"
+      enter-from-class="opacity-0 translate-y-2 scale-95"
+      enter-to-class="opacity-100 translate-y-0 scale-100"
       leave-active-class="transition-all duration-150 ease-in"
-      leave-from-class="opacity-100 translate-y-0"
-      leave-to-class="opacity-0 translate-y-2"
+      leave-from-class="opacity-100 translate-y-0 scale-100"
+      leave-to-class="opacity-0 translate-y-2 scale-95"
     >
       <div
         v-if="open"
-        class="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-medium border border-gray-100 overflow-hidden z-20"
+        class="absolute right-0 mt-3 w-52 bg-surface-50 rounded-2xl shadow-medium border border-background-200 overflow-hidden z-30"
       >
         <button
-          class="w-full px-4 py-3 text-left text-sm text-text-primary hover:bg-gray-50 transition-colors flex items-center gap-2"
+          class="w-full px-5 py-3.5 text-left text-sm text-text-primary hover:bg-background-50 transition-colors flex items-center gap-3"
           @click="goProfile"
         >
           <User :size="16" class="text-text-tertiary" />
           个人中心
         </button>
-        <div class="h-px bg-gray-100"></div>
+        <div class="h-px bg-background-200 mx-3"></div>
         <button
-          class="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2"
+          class="w-full px-5 py-3.5 text-left text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center gap-3"
           @click="logout"
         >
-          <LogOut :size="16" />
+          <LogOut :size="16" class="text-red-500" />
           退出登录
         </button>
       </div>

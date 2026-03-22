@@ -1,9 +1,29 @@
 <template>
-  <div class="grid gap-6 max-w-4xl mx-auto">
-    <div v-if="step === 1">
-      <div class="card p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div class="text-lg font-semibold">第一步：上传素材并智能分类</div>
+  <div class="grid gap-8 max-w-5xl mx-auto">
+    <!-- Steps Indicator -->
+    <div class="flex items-center justify-center mb-4">
+      <div class="flex items-center gap-4 text-sm font-medium">
+        <div :class="step >= 1 ? 'text-brand-600' : 'text-text-muted'" class="flex items-center gap-2 transition-colors">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center border-2" :class="step >= 1 ? 'border-brand-500 bg-brand-50' : 'border-background-300'">1</div>
+          <span>上传素材</span>
+        </div>
+        <div class="w-12 h-px" :class="step >= 2 ? 'bg-brand-500' : 'bg-background-300'"></div>
+        <div :class="step >= 2 ? 'text-brand-600' : 'text-text-muted'" class="flex items-center gap-2 transition-colors">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center border-2" :class="step >= 2 ? 'border-brand-500 bg-brand-50' : 'border-background-300'">2</div>
+          <span>选择模板</span>
+        </div>
+        <div class="w-12 h-px" :class="step >= 3 ? 'bg-brand-500' : 'bg-background-300'"></div>
+        <div :class="step >= 3 ? 'text-brand-600' : 'text-text-muted'" class="flex items-center gap-2 transition-colors">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center border-2" :class="step >= 3 ? 'border-brand-500 bg-brand-50' : 'border-background-300'">3</div>
+          <span>确认生成</span>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="step === 1" class="space-y-6">
+      <div class="card p-8">
+        <div class="flex items-center justify-between mb-6">
+          <div class="text-xl font-bold text-text-primary tracking-tight">上传素材并智能分类</div>
         </div>
         
         <div 
@@ -58,25 +78,31 @@
         </button>
       </div>
       
-      <div v-if="predictedType" class="card p-6 bg-brand-50/50 border-brand-200 border">
-        <div class="font-semibold mb-4 text-brand-800">分析结果</div>
-        <div class="mb-4">
-          <label class="block text-sm text-text-secondary mb-2">系统推荐类型</label>
-          <select class="input" v-model="predictedType.id" @change="handleTypeChange">
+      <div v-if="predictedType" class="card p-8 bg-gradient-to-br from-brand-50 to-white border-brand-200 border shadow-sm">
+        <div class="font-bold text-xl mb-6 text-text-primary tracking-tight">分析结果</div>
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-text-secondary mb-2 pl-1">系统推荐类型</label>
+          <select class="input bg-white font-medium text-brand-700 border-brand-200 focus:ring-brand-400/50" v-model="predictedType.id" @change="handleTypeChange">
             <option v-for="t in allTypes" :key="t.id" :value="t.id">{{ t.name }}</option>
           </select>
+          <div v-if="predictedType.description" class="mt-3 p-3 bg-white rounded-xl border border-background-200 text-sm text-text-secondary leading-relaxed">
+            {{ predictedType.description }}
+          </div>
         </div>
-        <button class="btn btn-primary w-full" @click="loadTemplates">确认类型并选择模板</button>
+        <button class="btn btn-primary w-full py-3 text-lg shadow-sm hover:shadow-glow" @click="loadTemplates">确认类型并选择模板</button>
       </div>
     </div>
 
-    <div v-if="step === 2" class="h-[calc(100vh-8rem)] flex flex-col gap-4">
+    <div v-if="step === 2" class="h-[calc(100vh-14rem)] flex flex-col gap-6">
       <div class="flex items-center gap-4">
-        <button class="text-text-secondary hover:text-text-primary hover:underline transition-colors" @click="step = 1">← 返回上传</button>
-        <div class="font-bold text-xl text-text-primary">第二步：选择生成模板 ({{ predictedType?.name }})</div>
+        <button class="text-text-secondary hover:text-brand-600 hover:bg-brand-50 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1" @click="step = 1">
+          <span class="text-lg">←</span> 返回修改素材
+        </button>
+        <div class="font-bold text-2xl text-text-primary tracking-tight">选择生成模板</div>
+        <div class="px-3 py-1 bg-brand-100 text-brand-700 rounded-full text-sm font-medium">{{ predictedType?.name }}</div>
       </div>
-      <div class="flex-1 grid grid-cols-[320px_1fr] gap-6 overflow-hidden">
-        <div class="bg-surface-50 rounded-2xl shadow-soft overflow-y-auto p-4 space-y-2">
+      <div class="flex-1 grid grid-cols-[340px_1fr] gap-8 overflow-hidden">
+        <div class="bg-surface-50 rounded-2xl shadow-soft border border-background-200 overflow-y-auto p-5 space-y-3">
           <div
             v-for="t in availableTemplates"
             :key="t.template_id"
@@ -85,12 +111,11 @@
             :class="selectedTemplate?.template_id === t.template_id ? 'bg-brand-50/50 border-brand-400 border-l-4 border-l-brand-500' : 'bg-surface-50 border-gray-200'"
           >
             <div class="flex items-center justify-between mb-2">
-              <span class="font-medium truncate text-text-primary">{{ t.meta?.title || (t.meta?.is_system ? '系统默认模板' : t.template_id) }}</span>
+              <span class="font-medium truncate text-text-primary">{{ t.meta?.title || t.template_id }}</span>
               <span v-if="t.meta?.is_favorite" class="text-yellow-500">★</span>
             </div>
             <div class="flex gap-2 text-xs">
-              <span v-if="t.meta?.is_system" class="badge badge-system">系统</span>
-              <span v-else class="badge badge-custom">自定义</span>
+              <span class="badge badge-custom">自定义</span>
             </div>
           </div>
         </div>
@@ -99,7 +124,7 @@
           <div v-if="selectedTemplate" class="flex flex-col h-full min-h-0">
             <div class="mb-4 pb-4 border-b flex-shrink-0">
               <h3 class="font-bold text-lg mb-2">
-                {{ selectedTemplate.meta?.title || (selectedTemplate.meta?.is_system ? '系统默认模板' : selectedTemplate.template_id) }}
+                {{ selectedTemplate.meta?.title || selectedTemplate.template_id }}
               </h3>
               <div class="text-sm text-gray-500">
                 包含 {{ selectedTemplate.sections.length }} 个主要章节
@@ -131,11 +156,16 @@
       </div>
     </div>
 
-    <div v-if="step === 3" class="space-y-6">
-      <div class="card p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div class="text-lg font-semibold">第三步：确认素材并生成</div>
-          <button class="text-gray-500 hover:underline text-sm" @click="resetToStart">重新开始新的生成</button>
+    <div v-if="step === 3" class="space-y-8">
+      <div class="card p-8">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-4">
+            <button class="text-text-secondary hover:text-brand-600 hover:bg-brand-50 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1" @click="step = 2">
+              <span class="text-lg">←</span> 返回模板
+            </button>
+            <div class="text-2xl font-bold tracking-tight text-text-primary">确认素材并生成</div>
+          </div>
+          <button class="text-brand-600 hover:text-brand-700 hover:bg-brand-50 px-4 py-2 rounded-xl transition-colors text-sm font-medium" @click="resetToStart">重新开始</button>
         </div>
         <div class="mb-4">
           <label class="block text-sm font-medium text-text-secondary mb-2">素材内容</label>
@@ -158,6 +188,9 @@
               <div class="flex items-center justify-between mb-3">
                 <label class="flex items-center gap-3">
                   <input type="checkbox" v-model="person.selected" class="w-4 h-4 rounded" />
+                  <div v-if="peopleMeta[person.dbName]?.avatar" class="w-8 h-8 rounded-full overflow-hidden border border-brand-200">
+                    <img :src="peopleMeta[person.dbName].avatar" class="w-full h-full object-cover" />
+                  </div>
                   <span class="font-medium text-text-primary">
                     <template v-if="person.matchType === 'fuzzy' && person.materialName !== person.dbName">
                       <span>
@@ -169,6 +202,16 @@
                       {{ person.dbName }}
                     </template>
                   </span>
+                  <a
+                    v-if="peopleMeta[person.dbName]?.url"
+                    :href="peopleMeta[person.dbName].url"
+                    target="_blank"
+                    class="text-brand-500 hover:text-brand-700 transition-colors"
+                    title="访问官网主页"
+                    @click.stop
+                  >
+                    <ExternalLink :size="14" />
+                  </a>
                 </label>
                 <span class="badge" :class="person.matchType === 'exact' && person.similarity >= 0.99 ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'">
                   相似度: {{ Math.round(person.similarity * 100) }}%
@@ -333,7 +376,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onActivated, computed } from 'vue'
-import { UploadCloud, FileText, X, Loader2 } from 'lucide-vue-next'
+import { UploadCloud, FileText, X, Loader2, ExternalLink } from 'lucide-vue-next'
 import type { TypeItem, Outline, MatchedPerson, ArticleVersion } from '@/types'
 
 const step = ref<1 | 2 | 3>(1)
@@ -354,6 +397,7 @@ const modificationRequest = ref('')
 const modifying = ref(false)
 const articleVersions = ref<ArticleVersion[]>([])
 const allPeople = ref<Record<string, string>>({})
+const peopleMeta = ref<Record<string, any>>({})
 const matchedPeople = ref<MatchedPerson[]>([])
 const checkingConflicts = ref(false)
 const isDragging = ref(false)
@@ -367,6 +411,7 @@ onMounted(() => {
   console.log('GeneratePage mounted - 组件首次创建')
   fetch('/api/types').then(r => r.json()).then(data => { allTypes.value = data })
   fetch('/api/people').then(r => r.json()).then(data => { allPeople.value = data })
+  fetch('/api/people/meta').then(r => r.json()).then(data => { peopleMeta.value = data }).catch(e => console.error(e))
 })
 
 onActivated(() => {
@@ -449,12 +494,10 @@ const loadTemplates = async () => {
       type_name: predictedType.value!.name
     })) as Outline[]
     list.sort((a, b) => {
-      if (a.meta?.is_system && !b.meta?.is_system) return -1
-      if (!a.meta?.is_system && b.meta?.is_system) return 1
-      if (a.meta?.is_favorite && !b.meta?.is_favorite) return -1
-      if (!a.meta?.is_favorite && b.meta?.is_favorite) return 1
-      return 0
-    })
+        if (a.meta?.is_favorite && !b.meta?.is_favorite) return -1
+        if (!a.meta?.is_favorite && b.meta?.is_favorite) return 1
+        return 0
+      })
     availableTemplates.value = list
     if (list.length > 0) selectedTemplate.value = list[0]
     step.value = 2

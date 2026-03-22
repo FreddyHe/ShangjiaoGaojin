@@ -18,8 +18,14 @@ import markdown
 from io import BytesIO
 # from reportlab.pdfbase import pdfmetrics
 # from reportlab.pdfbase.ttfonts import TTFont
+import asyncio
+import aiohttp
 from urllib.parse import quote
 from pypinyin import lazy_pinyin
+import requests
+from bs4 import BeautifulSoup
+import time
+import shutil
 
 COMMON_SURNAMES = set("赵钱孙李周吴郑王冯陈褚卫蒋沈韩杨朱秦尤许何吕施张孔曹严华金魏陶姜戚谢邹喻柏水窦章云苏潘葛奚范彭郎鲁韦昌马苗凤花方俞任袁柳酆鲍史唐费廉岑薛雷贺倪汤滕殷罗毕郝安常乐于时傅皮卞齐康伍余元卜顾孟平黄和穆萧尹姚邵湛汪祁毛禹狄米贝明臧计伏成戴谈宋茅庞熊纪舒屈项祝董梁杜阮蓝闵席季麻强贾路娄危江童颜郭梅盛林刁钟徐邱骆高夏蔡田樊胡凌霍虞万支柯昝管卢莫经房裘缪干解应宗丁宣邓郁单杭洪包诸左石崔吉钮龚程嵇邢滑裴陆荣翁荀羊於惠甄曲家封芮羿储晋汲邴糜松井段富巫乌焦巴弓牧隗山谷车侯宓蓬全郗班仰秋仲伊宫宁仇栾暴甘钭厉戎祖武符刘景詹束龙叶幸司韶郜黎蓟薄印宿白怀蒲台从鄂索咸籍赖卓蔺屠蒙池乔阴郁胥能苍双闻莘党翟谭贡劳逄姬申扶堵冉宰郦雍却璩桑桂濮牛寿通边扈燕冀郟浦尚农温别庄晏柴瞿阎充慕连茹习宦艾鱼容向古易慎戈廖庾终暨居衡步都耿满弘匡国文寇广禄阙东欧沃利蔚越夔隆师巩厍聂晁勾敖融冷訾辛阚那简饶空曾毋沙乜养鞠须丰巢关蒯相查后荆红游竺权逯盖益桓公")
 
@@ -192,6 +198,7 @@ app.add_middleware(
 class TypeItem(BaseModel):
     id: str
     name: str
+    description: Optional[str] = None
 
 class OutlineSection(BaseModel):
     title: str
@@ -202,7 +209,6 @@ class OutlineSection(BaseModel):
     granularity: Optional[str] = None
 
 class OutlineMeta(BaseModel):
-    is_system: bool = False
     is_favorite: bool = False
     created_at: float = 0
     title: Optional[str] = None
@@ -667,23 +673,272 @@ def generalize_sections(sections: List[OutlineSection], type_name: str) -> List[
     except Exception:
         return sections
 
-# Load people knowledge base
-PEOPLE_FILE = DATA_DIR / "people.json"
+# Knowledge Base Management
+KNOWLEDGE_FILES = {
+    "people": DATA_DIR / "people.json",
+    "brands": DATA_DIR / "brands.json",
+    "courses": DATA_DIR / "courses.json",
+    "research": DATA_DIR / "research.json",
+    "alumni": DATA_DIR / "alumni.json",
+}
 
-def load_people() -> Dict[str, str]:
-    """Load people knowledge base from file"""
-    try:
-        if PEOPLE_FILE.exists():
-            data = json.loads(PEOPLE_FILE.read_text(encoding="utf-8"))
-            return data.get("people", {})
+def load_knowledge(category: str) -> Dict[str, str]:
+    """Load knowledge base from file"""
+    file_path = KNOWLEDGE_FILES.get(category)
+    if not file_path or not file_path.exists():
         return {}
+    try:
+        data = json.loads(file_path.read_text(encoding="utf-8"))
+        if category == "people" and "people" in data:
+            return data["people"]
+        return data
     except Exception:
         return {}
 
+def load_people_meta() -> Dict[str, Dict[str, str]]:
+    """Load people metadata (avatar, url)"""
+    meta_path = DATA_DIR / "people_meta.json"
+    if meta_path.exists():
+        try:
+            return json.loads(meta_path.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return {}
+
+def save_people_meta(meta_data: Dict[str, Dict[str, str]]):
+    """Save people metadata"""
+    meta_path = DATA_DIR / "people_meta.json"
+    meta_path.write_text(json.dumps(meta_data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+def save_knowledge(category: str, data: Dict[str, str]):
+    """Save knowledge base to file and create a history backup"""
+    file_path = KNOWLEDGE_FILES.get(category)
+    if not file_path:
+        raise ValueError(f"Unknown category: {category}")
+    
+    # Create history backup
+    history_dir = DATA_DIR / "history" / category
+    history_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = int(time.time())
+    history_path = history_dir / f"{timestamp}.json"
+    
+    save_data = {"people": data} if category == "people" else data
+    
+    # Save backup
+    if file_path.exists():
+        shutil.copy2(file_path, history_path)
+        
+    # Save new data
+    file_path.write_text(json.dumps(save_data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+@app.get("/api/knowledge/{category}/history")
+def get_knowledge_history(category: str):
+    """Get history versions for a category"""
+    history_dir = DATA_DIR / "history" / category
+    if not history_dir.exists():
+        return []
+    
+    versions = []
+    for file_path in history_dir.glob("*.json"):
+        try:
+            timestamp = int(file_path.stem)
+            versions.append({
+                "timestamp": timestamp,
+                "time_str": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp)),
+                "file": file_path.name
+            })
+        except ValueError:
+            pass
+    return sorted(versions, key=lambda x: x["timestamp"], reverse=True)
+
+@app.post("/api/knowledge/{category}/rollback/{timestamp}")
+def rollback_knowledge(category: str, timestamp: int):
+    """Rollback knowledge base to a specific version"""
+    history_dir = DATA_DIR / "history" / category
+    history_path = history_dir / f"{timestamp}.json"
+    
+    if not history_path.exists():
+        raise HTTPException(status_code=404, detail="History version not found")
+        
+    file_path = KNOWLEDGE_FILES.get(category)
+    if not file_path:
+        raise HTTPException(status_code=400, detail=f"Unknown category: {category}")
+        
+    # Create a backup of current state before rollback
+    current_backup_path = history_dir / f"{int(time.time())}_pre_rollback.json"
+    if file_path.exists():
+        shutil.copy2(file_path, current_backup_path)
+        
+    # Rollback
+    shutil.copy2(history_path, file_path)
+    return {"status": "success", "message": "Rollback successful"}
+
+@app.get("/api/knowledge/{category}", response_model=Dict[str, str])
+def get_knowledge(category: str):
+    """Get all items from a knowledge category"""
+    if category not in KNOWLEDGE_FILES:
+        raise HTTPException(status_code=404, detail="Category not found")
+    return load_knowledge(category)
+
+@app.get("/api/people/meta", response_model=Dict[str, Dict[str, str]])
+def get_people_meta_api():
+    """Get metadata for people"""
+    return load_people_meta()
+
+@app.post("/api/knowledge/{category}")
+def update_knowledge(category: str, data: Dict[str, str]):
+    """Update all items in a knowledge category"""
+    if category not in KNOWLEDGE_FILES:
+        raise HTTPException(status_code=404, detail="Category not found")
+    save_knowledge(category, data)
+    return {"status": "success"}
+
+import asyncio
+import aiohttp
+
+async def fetch_profile(session, name, title, profile_url, avatar_url, headers):
+    try:
+        async with session.get(profile_url, headers=headers, timeout=10) as profile_resp:
+            profile_resp.raise_for_status()
+            text = await profile_resp.text()
+            profile_soup = BeautifulSoup(text, 'html.parser')
+            
+            intro_div = profile_soup.find('div', class_='saifProfessor_substance_r')
+            if not intro_div:
+                intro_div = profile_soup.find('div', class_='saifProfessor_substance')
+                
+            intro_text = ""
+            if intro_div:
+                p_tags = intro_div.find_all('p')
+                if p_tags:
+                    for p in p_tags:
+                        p_text = p.get_text(strip=True)
+                        if len(p_text) > 30:
+                            intro_text += p_text + " "
+                            if len(intro_text) > 300:
+                                break
+                                
+                if not intro_text:
+                    text_content = intro_div.get_text(separator=' ', strip=True)
+                    if len(text_content) > 50:
+                        intro_text = text_content[:500] + "..." if len(text_content) > 500 else text_content
+            
+            final_desc = intro_text.strip() if intro_text.strip() else title
+            if final_desc != title:
+                final_desc = f"{title}, {final_desc}"
+                
+            return name, final_desc, profile_url, avatar_url
+    except Exception as e:
+        print(f"Error scraping profile for {name}: {e}")
+        return name, title, profile_url, avatar_url
+
+@app.post("/api/knowledge/sync/faculty")
+async def sync_faculty_knowledge():
+    """Scrape faculty data from SAIF website and stream progress"""
+    base_url = "https://www.saif.sjtu.edu.cn"
+    categories = {
+        "全职教授": "/faculty-research/full-time-professor",
+        "访问教授": "/faculty-research/special-term-professor",
+        "兼职教授": "/faculty-research/adjunct-professor",
+        "兼聘教授": "/faculty-research/affiliated-professor"
+    }
+    
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
+    
+    async def event_generator():
+        try:
+            # Load existing people to not overwrite manually added non-faculty people
+            existing_people = load_knowledge("people")
+            existing_meta = load_people_meta()
+            new_people = {}
+            new_meta = {}
+            
+            yield json.dumps({"status": "progress", "message": "正在获取教授列表..."}) + "\n"
+            
+            professors_to_fetch = []
+            
+            # Step 1: Get all links sequentially (this is fast)
+            for category, path in categories.items():
+                url = base_url + path
+                response = requests.get(url, headers=headers, timeout=10)
+                response.raise_for_status()
+                
+                soup = BeautifulSoup(response.text, 'html.parser')
+                items = soup.find_all('li', class_='saifProfessor_list2-item')
+                
+                for item in items:
+                    link_tag = item.find('a')
+                    if not link_tag or 'href' not in link_tag.attrs:
+                        continue
+                    
+                    href = link_tag['href']
+                    profile_url = href if href.startswith("http") else base_url + href
+                    
+                    img_tag = item.find('img')
+                    avatar_url = ""
+                    if img_tag and 'src' in img_tag.attrs:
+                        src = img_tag['src']
+                        avatar_url = src if src.startswith("http") else base_url + src
+
+                    name_tag = item.find('p', class_='name')
+                    title_tag = item.find('p', class_='desc')
+                    
+                    if name_tag and title_tag:
+                        name = name_tag.get_text(strip=True)
+                        title = title_tag.get_text(strip=True)
+                        professors_to_fetch.append((name, title, profile_url, avatar_url))
+            
+            total = len(professors_to_fetch)
+            yield json.dumps({"status": "progress", "message": f"共找到 {total} 位教授，开始并行获取详情..."}) + "\n"
+            
+            # Step 2: Fetch profiles in parallel
+            completed = 0
+            connector = aiohttp.TCPConnector(limit=10) # Limit concurrent connections
+            async with aiohttp.ClientSession(connector=connector) as session:
+                tasks = [fetch_profile(session, name, title, url, avatar_url, headers) for name, title, url, avatar_url in professors_to_fetch]
+                
+                for coro in asyncio.as_completed(tasks):
+                    name, desc, prof_url, avatar_url = await coro
+                    new_people[name] = desc
+                    new_meta[name] = {
+                        "url": prof_url,
+                        "avatar": avatar_url
+                    }
+                    completed += 1
+                    
+                    # Update progress every 5 professors to avoid too many events
+                    if completed % 5 == 0 or completed == total:
+                        yield json.dumps({
+                            "status": "progress", 
+                            "message": f"正在处理进度 ({completed}/{total})...",
+                            "progress": completed / total * 100
+                        }) + "\n"
+                                
+            # Merge new people into existing (updating descriptions for scraped ones)
+            existing_people.update(new_people)
+            save_knowledge("people", existing_people)
+            
+            # Update meta
+            existing_meta.update(new_meta)
+            save_people_meta(existing_meta)
+            
+            yield json.dumps({
+                "status": "success", 
+                "message": f"成功同步了 {len(new_people)} 位教授的数据。",
+                "count": len(new_people)
+            }) + "\n"
+            
+        except Exception as e:
+            yield json.dumps({"status": "error", "message": f"同步失败: {str(e)}"}) + "\n"
+
+    return StreamingResponse(event_generator(), media_type="application/x-ndjson")
+
 @app.get("/api/people", response_model=Dict[str, str])
 def get_people():
-    """Get all people from knowledge base"""
-    return load_people()
+    """Get all people from knowledge base (backward compatibility)"""
+    return load_knowledge("people")
 
 @app.post("/api/match-people", response_model=List[PersonMatchResult])
 def match_people(req: PersonMatchRequest):
@@ -954,15 +1209,7 @@ def add_type(item: TypeItem):
 def get_outline(type_id: str):
     path = outline_path(type_id, "default")
     if not path.exists():
-        # Fallback to generic outline if file doesn't exist
-        types = load_types()
-        type_name = next((t.name for t in types if t.id == type_id), type_id)
-        return Outline(
-            type_id=type_id,
-            type_name=type_name,
-            template_id="default",
-            sections=_sections_from_json(GENERIC_OUTLINE_SECTIONS)
-        )
+        raise HTTPException(status_code=404, detail="outline not found")
     data = json.loads(path.read_text(encoding="utf-8"))
     if "template_id" not in data:
         data["template_id"] = "default"
@@ -981,16 +1228,6 @@ def put_outline(type_id: str, outline: Outline):
 def get_outline_with_template(type_id: str, template_id: str):
     path = outline_path(type_id, template_id)
     if not path.exists():
-        # Fallback to generic outline if file doesn't exist, but only for default template
-        if template_id == "default":
-            types = load_types()
-            type_name = next((t.name for t in types if t.id == type_id), type_id)
-            return Outline(
-                type_id=type_id,
-                type_name=type_name,
-                template_id="default",
-                sections=_sections_from_json(GENERIC_OUTLINE_SECTIONS)
-            )
         raise HTTPException(status_code=404, detail="outline not found")
     data = json.loads(path.read_text(encoding="utf-8"))
     if "template_id" not in data:
@@ -1038,15 +1275,6 @@ def list_outlines(type_id: str):
             print(f"Error loading outline {p.name}: {e}")
             import traceback
             traceback.print_exc()
-    
-    # 2. If no default template exists (and list might be empty), allow virtual default
-    if not any(r["template_id"] == "default" for r in results):
-        results.insert(0, {
-            "template_id": "default",
-            "meta": {"is_system": True, "title": "系统默认模板"},
-            "sections": GENERIC_OUTLINE_SECTIONS,
-            "sections_summary": [s["title"] for s in GENERIC_OUTLINE_SECTIONS]
-        })
         
     return {"templates": results}
 
@@ -1054,21 +1282,7 @@ def list_outlines(type_id: str):
 def toggle_favorite(type_id: str, template_id: str):
     path = outline_path(type_id, template_id)
     if not path.exists():
-        # If it's the virtual default, create it first
-        if template_id == "default":
-            types = load_types()
-            type_name = next((t.name for t in types if t.id == type_id), type_id)
-            outline = Outline(
-                type_id=type_id,
-                type_name=type_name,
-                template_id="default",
-                sections=_sections_from_json(GENERIC_OUTLINE_SECTIONS),
-                meta=OutlineMeta(is_system=True)
-            )
-            ensure_dirs()
-            path.write_text(json.dumps(outline.model_dump(), ensure_ascii=False, indent=2), encoding="utf-8")
-        else:
-            raise HTTPException(status_code=404, detail="template not found")
+        raise HTTPException(status_code=404, detail="template not found")
     
     data = json.loads(path.read_text(encoding="utf-8"))
     meta = data.get("meta", {})
@@ -1079,10 +1293,6 @@ def toggle_favorite(type_id: str, template_id: str):
 
 @app.delete("/api/outline/{type_id}/{template_id}")
 def delete_template(type_id: str, template_id: str):
-    # Cannot delete system default template
-    if template_id == "default":
-        raise HTTPException(status_code=400, detail="cannot delete default template")
-    
     path = outline_path(type_id, template_id)
     if not path.exists():
         raise HTTPException(status_code=404, detail="template not found")
@@ -1575,5 +1785,5 @@ if __name__ == "__main__":
     ensure_dirs()
     import uvicorn
     host = os.getenv("SERVER_HOST", "127.0.0.1")
-    port = int(os.getenv("SERVER_PORT", "8000"))
+    port = int(os.getenv("SERVER_PORT", "8002"))
     uvicorn.run(app, host=host, port=port)
