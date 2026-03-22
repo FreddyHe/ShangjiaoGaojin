@@ -1,43 +1,48 @@
 <template>
   <div class="max-w-4xl mx-auto space-y-8">
-    <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-bold text-text-primary">系统设置</h1>
+    <div class="flex items-center justify-between pb-6 border-b border-background-200">
+      <div>
+        <h1 class="text-3xl font-bold text-text-primary tracking-tight">系统设置</h1>
+        <div class="text-sm text-text-muted mt-2">管理系统全局配置与底层大模型参数</div>
+      </div>
       <button
         @click="handleSave"
         :disabled="saving"
-        class="btn btn-primary flex items-center gap-2"
+        class="btn btn-primary px-8 py-2.5 bg-gradient-to-r from-brand-500 to-brand-600 shadow-sm hover:shadow-glow flex items-center gap-2"
       >
         <Save :size="18" />
-        {{ saving ? '保存中...' : '保存设置' }}
+        <span class="font-medium">{{ saving ? '保存中...' : '保存设置' }}</span>
       </button>
     </div>
 
-    <div class="card p-8 space-y-8">
+    <div class="card p-8 space-y-10 border border-background-200 shadow-sm">
       <div>
-        <div class="flex items-center gap-3 mb-6 pb-3 border-b border-gray-200">
-          <Settings2 :size="24" class="text-brand-600" />
-          <h2 class="text-lg font-semibold text-text-primary">基础设置</h2>
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-background-200">
+          <div class="p-2 bg-brand-50 text-brand-600 rounded-xl">
+            <Settings2 :size="24" />
+          </div>
+          <h2 class="text-xl font-bold text-text-primary tracking-tight">基础设置</h2>
         </div>
         <div class="grid gap-6 md:grid-cols-2">
           <div>
-            <label class="block text-sm font-medium text-text-secondary mb-2">系统名称</label>
+            <label class="block text-sm font-medium text-text-secondary mb-2 pl-1">系统名称</label>
             <input
-              class="input"
+              class="input bg-white"
               v-model="settings.system_name"
               placeholder="新闻稿智能体"
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-text-secondary mb-2">Logo URL (可选)</label>
+            <label class="block text-sm font-medium text-text-secondary mb-2 pl-1">Logo URL (可选)</label>
             <div class="relative">
               <input
-                class="input pr-10"
+                class="input bg-white pr-10"
                 v-model="settings.logo_url"
                 placeholder="http://..."
               />
               <button
                 @click="toggleApiKeyVisibility('logo')"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-brand-600 transition-colors p-1"
               >
                 <Eye :size="18" v-if="!showKeys.logo" />
                 <EyeOff :size="18" v-else />
@@ -45,9 +50,9 @@
             </div>
           </div>
           <div class="md:col-span-2">
-            <label class="block text-sm font-medium text-text-secondary mb-2">版权信息</label>
+            <label class="block text-sm font-medium text-text-secondary mb-2 pl-1">版权信息</label>
             <input
-              class="input"
+              class="input bg-white"
               v-model="settings.copyright_text"
               placeholder="© 2024 Press Release Assistant"
             />
@@ -56,23 +61,25 @@
       </div>
 
       <div>
-        <div class="flex items-center gap-3 mb-6 pb-3 border-b border-gray-200">
-          <Bot :size="24" class="text-brand-600" />
-          <h2 class="text-lg font-semibold text-text-primary">模型设置 (OpenAI Compatible)</h2>
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-background-200">
+          <div class="p-2 bg-brand-50 text-brand-600 rounded-xl">
+            <Bot :size="24" />
+          </div>
+          <h2 class="text-xl font-bold text-text-primary tracking-tight">模型设置 <span class="text-sm font-normal text-text-muted ml-2">OpenAI Compatible</span></h2>
         </div>
         <div class="grid gap-6">
           <div>
-            <label class="block text-sm font-medium text-text-secondary mb-2">API Key</label>
+            <label class="block text-sm font-medium text-text-secondary mb-2 pl-1">API Key</label>
             <div class="relative">
               <input
                 :type="showKeys.api ? 'text' : 'password'"
-                class="input pr-10"
+                class="input bg-white pr-10 font-mono text-sm"
                 v-model="settings.openai_api_key"
                 placeholder="sk-..."
               />
               <button
                 @click="toggleApiKeyVisibility('api')"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-brand-600 transition-colors p-1"
               >
                 <Eye :size="18" v-if="!showKeys.api" />
                 <EyeOff :size="18" v-else />
@@ -80,17 +87,17 @@
             </div>
           </div>
           <div>
-            <label class="block text-sm font-medium text-text-secondary mb-2">Base URL (可选)</label>
+            <label class="block text-sm font-medium text-text-secondary mb-2 pl-1">Base URL (可选)</label>
             <input
-              class="input"
+              class="input bg-white font-mono text-sm"
               v-model="settings.openai_base_url"
               placeholder="https://api.openai.com/v1"
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-text-secondary mb-2">模型名称</label>
+            <label class="block text-sm font-medium text-text-secondary mb-2 pl-1">模型名称</label>
             <input
-              class="input"
+              class="input bg-white font-mono text-sm"
               v-model="settings.openai_model"
               placeholder="gpt-4o-mini"
             />

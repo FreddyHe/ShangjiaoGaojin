@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 type OutlineSection = { title: string; bullets?: string[]; children?: OutlineSection[] }
-type OutlineMeta = { is_system?: boolean; is_favorite?: boolean; title?: string; created_at?: number }
+type OutlineMeta = { is_favorite?: boolean; title?: string; created_at?: number }
 type Outline = { type_id: string; type_name: string; template_id: string; sections: OutlineSection[]; meta?: OutlineMeta }
 type TypeItem = { id: string; name: string }
 
@@ -185,10 +185,8 @@ export default function GeneratePage() {
           type_id: predictedType.id,
           type_name: predictedType.name
       })) as Outline[]
-      // Sort: System > Favorite > Default
+      // Sort: Favorite > Default
       list.sort((a, b) => {
-        if (a.meta?.is_system && !b.meta?.is_system) return -1
-        if (!a.meta?.is_system && b.meta?.is_system) return 1
         if (a.meta?.is_favorite && !b.meta?.is_favorite) return -1
         if (!a.meta?.is_favorite && b.meta?.is_favorite) return 1
         return 0
@@ -475,12 +473,11 @@ export default function GeneratePage() {
                         }`}
                     >
                         <div className="flex items-center justify-between mb-1">
-                            <span className="font-medium truncate">{t.meta?.title || (t.meta?.is_system ? '系统默认模板' : t.template_id)}</span>
+                            <span className="font-medium truncate">{t.meta?.title || t.template_id}</span>
                             {t.meta?.is_favorite && <span className="text-yellow-500">★</span>}
                         </div>
                         <div className="flex gap-2 text-xs">
-                            {t.meta?.is_system && <span className="bg-blue-100 text-blue-700 px-1.5 rounded">系统</span>}
-                            {!t.meta?.is_system && <span className="bg-gray-100 text-gray-600 px-1.5 rounded">自定义</span>}
+                            <span className="bg-gray-100 text-gray-600 px-1.5 rounded">自定义</span>
                         </div>
                     </div>
                 ))}
@@ -492,7 +489,7 @@ export default function GeneratePage() {
                     <>
                         <div className="mb-4 pb-4 border-b">
                             <h3 className="font-bold text-lg mb-2">
-                                {selectedTemplate.meta?.title || (selectedTemplate.meta?.is_system ? '系统默认模板' : selectedTemplate.template_id)}
+                                {selectedTemplate.meta?.title || selectedTemplate.template_id}
                             </h3>
                             <div className="text-sm text-gray-500">
                                 包含 {selectedTemplate.sections.length} 个主要章节
@@ -524,7 +521,7 @@ export default function GeneratePage() {
       <div className="card p-6">
         <div className="mb-4 flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-2 rounded">
             <span className="font-semibold">当前模板:</span>
-            <span>{selectedTemplate?.meta?.title || (selectedTemplate?.meta?.is_system ? '系统默认模板' : selectedTemplate?.template_id)}</span>
+            <span>{selectedTemplate?.meta?.title || selectedTemplate?.template_id}</span>
         </div>
         
         <div className="mb-4">

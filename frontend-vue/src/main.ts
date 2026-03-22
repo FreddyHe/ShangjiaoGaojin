@@ -10,6 +10,7 @@ import HistoryPage from './pages/HistoryPage.vue'
 import SettingsPage from './pages/SettingsPage.vue'
 import UploadPage from './pages/UploadPage.vue'
 import ProfilePage from './pages/ProfilePage.vue'
+import KnowledgePage from './pages/KnowledgePage.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -19,6 +20,7 @@ const router = createRouter({
     { path: '/templates', component: TemplatesPage },
     { path: '/extract', component: ExtractPage },
     { path: '/generate', component: GeneratePage },
+    { path: '/knowledge', component: KnowledgePage },
     { path: '/history', component: HistoryPage },
     { path: '/settings', component: SettingsPage },
     { path: '/profile', component: ProfilePage },

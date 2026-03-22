@@ -1,6 +1,7 @@
 export interface TypeItem {
   id: string
   name: string
+  description?: string
   template_count?: number
 }
 
@@ -14,10 +15,9 @@ export interface OutlineSection {
 }
 
 export interface OutlineMeta {
-  is_system?: boolean
   is_favorite?: boolean
-  created_at?: number
   title?: string
+  created_at?: number
 }
 
 export interface Outline {

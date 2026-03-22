@@ -4,23 +4,23 @@
 
 @layer components {
   .btn {
-    @apply px-5 py-2.5 rounded-xl border border-gray-200 bg-surface-50 text-text-primary font-medium transition-all duration-300 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm active:scale-[0.98];
+    @apply px-5 py-2.5 rounded-xl border border-background-200 bg-surface-50 text-text-primary font-medium transition-all duration-300 hover:bg-background-50 hover:border-background-300 hover:shadow-sm active:scale-[0.98] flex items-center justify-center gap-2;
   }
   
   .btn-primary {
-    @apply px-5 py-2.5 rounded-xl border border-brand-500 bg-brand-500 text-white font-medium transition-all duration-300 hover:bg-brand-600 hover:border-brand-600 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98];
+    @apply px-5 py-2.5 rounded-xl border border-transparent bg-brand-500 text-white font-medium transition-all duration-300 hover:bg-brand-600 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] flex items-center justify-center gap-2 shadow-sm;
   }
   
   .btn:disabled {
-    @apply opacity-50 cursor-not-allowed hover:translate-y-0 hover:shadow-sm;
+    @apply opacity-50 cursor-not-allowed hover:translate-y-0 hover:shadow-none hover:bg-surface-50 active:scale-100;
   }
   
   .input {
-    @apply w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-surface-50 text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent transition-all duration-200;
+    @apply w-full px-4 py-2.5 rounded-xl border border-background-200 bg-surface-50 text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-brand-400/50 focus:border-brand-400 transition-all duration-200 shadow-sm hover:border-background-300;
   }
   
   .card {
-    @apply bg-surface-50 rounded-2xl shadow-soft border-0;
+    @apply bg-surface-50 rounded-2xl shadow-soft border border-background-200/60 backdrop-blur-sm;
   }
   
   .line-clamp-2 {
@@ -83,54 +83,67 @@
   }
   
   .type-card {
-    @apply p-4 rounded-xl border cursor-pointer transition-all duration-300 hover:shadow-md hover:-translate-y-0.5;
+    @apply p-4 rounded-xl border border-background-200 bg-surface-50 cursor-pointer transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 hover:border-brand-300;
   }
   
   .type-card-selected {
-    @apply border-brand-400 bg-brand-50/50 border-l-4 border-brand-500;
+    @apply p-4 border-brand-400 bg-brand-50/50 shadow-sm relative;
+  }
+  
+  .type-card-selected::before {
+    content: '';
+    @apply absolute left-0 top-0 bottom-0 w-1 bg-brand-500 rounded-l-xl;
   }
   
   .template-card {
-    @apply p-4 rounded-xl border cursor-pointer transition-all duration-300 hover:shadow-md hover:-translate-y-0.5;
+    @apply p-4 rounded-xl border border-background-200 bg-surface-50 cursor-pointer transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 hover:border-brand-300;
   }
   
   .template-card-selected {
-    @apply border-brand-400 bg-brand-50/50 border-l-4 border-brand-500;
+    @apply p-4 border-brand-400 bg-brand-50/50 shadow-sm relative;
+  }
+  
+  .template-card-selected::before {
+    content: '';
+    @apply absolute left-0 top-0 bottom-0 w-1 bg-brand-500 rounded-l-xl;
   }
   
   .badge {
-    @apply px-2.5 py-1 rounded-full text-xs font-medium;
+    @apply px-2.5 py-1 rounded-full text-xs font-medium tracking-wide shadow-sm border border-transparent;
   }
   
   .badge-system {
-    @apply bg-blue-100 text-blue-700;
+    @apply bg-blue-50 text-blue-700 border-blue-200/60;
   }
   
   .badge-custom {
-    @apply bg-gray-100 text-gray-600;
+    @apply bg-background-100 text-text-secondary border-background-200;
   }
   
   .upload-zone {
-    @apply border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center transition-all duration-300 hover:border-brand-400 hover:bg-brand-50/30;
+    @apply border-2 border-dashed border-background-300 rounded-2xl p-10 text-center transition-all duration-300 hover:border-brand-400 hover:bg-brand-50/30 bg-surface-50 shadow-inner;
   }
   
   .section-card {
-    @apply border rounded-xl p-4 bg-surface-50 transition-all duration-300 hover:shadow-sm;
+    @apply border border-background-200 rounded-xl p-5 bg-surface-50 transition-all duration-300 hover:shadow-md hover:border-brand-200;
   }
   
   .person-card {
-    @apply bg-surface-50 p-4 rounded-xl border transition-all duration-300 hover:shadow-sm;
+    @apply bg-surface-50 p-5 rounded-xl border border-background-200 transition-all duration-300 hover:shadow-md relative overflow-hidden;
   }
   
-  .person-card-exact {
-    @apply border-l-4 border-green-500;
+  .person-card-exact::before {
+    content: '';
+    @apply absolute left-0 top-0 bottom-0 w-1 bg-green-500;
   }
   
-  .person-card-fuzzy {
-    @apply border-l-4 border-yellow-500;
+  .person-card-fuzzy::before {
+    content: '';
+    @apply absolute left-0 top-0 bottom-0 w-1 bg-yellow-500;
   }
   
-  .person-card-conflict {
-    @apply border-l-4 border-red-500;
+  .person-card-conflict::before {
+    content: '';
+    @apply absolute left-0 top-0 bottom-0 w-1 bg-red-500;
   }
 }
