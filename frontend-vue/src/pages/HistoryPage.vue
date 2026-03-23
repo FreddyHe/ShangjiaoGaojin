@@ -36,67 +36,66 @@
 
     <div class="bg-surface-50 rounded-2xl shadow-soft h-full overflow-hidden flex flex-col border border-background-200">
       <div v-if="selectedArticle" class="flex flex-col h-full">
-        <div class="p-6 border-b border-background-200 flex justify-between items-center bg-background-50/50 flex-shrink-0">
-          <div>
-            <div class="font-bold text-2xl text-text-primary tracking-tight mb-2">{{ selectedArticle.title }}</div>
-            <div class="text-sm text-text-secondary flex items-center gap-4">
-              <span class="flex items-center gap-1.5"><span class="text-text-tertiary">生成时间:</span> {{ formatDate(selectedArticle.created_at) }}</span>
-              <span class="flex items-center gap-1.5"><span class="text-text-tertiary">类型:</span> {{ selectedArticle.type_name }}</span>
+        <div class="p-6 border-b border-background-200 flex flex-wrap lg:flex-nowrap justify-between items-start lg:items-center gap-4 bg-background-50/50 flex-shrink-0">
+          <div class="min-w-0 flex-1">
+            <div class="font-bold text-2xl text-text-primary tracking-tight mb-2 truncate" :title="selectedArticle.title">{{ selectedArticle.title }}</div>
+            <div class="text-sm text-text-secondary flex flex-wrap items-center gap-x-4 gap-y-2">
+              <span class="flex items-center gap-1.5 whitespace-nowrap"><span class="text-text-tertiary">生成时间:</span> {{ formatDate(selectedArticle.created_at) }}</span>
+              <span class="flex items-center gap-1.5 whitespace-nowrap"><span class="text-text-tertiary">类型:</span> {{ selectedArticle.type_name }}</span>
             </div>
           </div>
-          <div class="flex gap-3">
+          <div class="flex flex-wrap gap-2 lg:gap-3 flex-shrink-0">
+            <button 
+              @click="previewArticle(selectedArticle.title, selectedArticle.content)"
+              class="btn py-2 px-3 lg:px-4 bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 flex items-center gap-1.5 lg:gap-2 whitespace-nowrap"
+              title="网页预览"
+            >
+              <ExternalLink :size="16" class="flex-shrink-0" />
+              <span class="font-medium text-sm lg:text-base">网页预览</span>
+            </button>
             <a
               :href="`/api/articles/${selectedArticle.id}/download/docx`"
               target="_blank"
-              class="btn py-2 px-4 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-300 border-indigo-200 flex items-center gap-2"
+              class="btn py-2 px-3 lg:px-4 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-300 border-indigo-200 flex items-center gap-1.5 lg:gap-2 whitespace-nowrap"
               title="下载 Word 文档"
             >
-              <FileText :size="16" />
-              <span class="font-medium">Word</span>
+              <FileText :size="16" class="flex-shrink-0" />
+              <span class="font-medium text-sm lg:text-base">Word</span>
             </a>
-            <!-- <a
-              :href="`/api/articles/${selectedArticle.id}/download/pdf`"
-              target="_blank"
-              class="btn py-2 px-4 bg-purple-50 text-purple-700 hover:bg-purple-100 hover:border-purple-300 border-purple-200 flex items-center gap-2"
-              title="下载 PDF 文档"
-            >
-              <File :size="16" />
-              <span class="font-medium">PDF</span>
-            </a> -->
             <button
               v-if="!editing"
               @click="handleEdit"
-              class="btn py-2 px-4 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-300 border-blue-200 flex items-center gap-2"
+              class="btn py-2 px-3 lg:px-4 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-300 border-blue-200 flex items-center gap-1.5 lg:gap-2 whitespace-nowrap"
               title="编辑内容"
             >
-              <Edit3 :size="16" />
-              <span class="font-medium">修改</span>
+              <Edit3 :size="16" class="flex-shrink-0" />
+              <span class="font-medium text-sm lg:text-base">修改</span>
             </button>
             <template v-if="editing">
               <button
                 @click="handleSave"
-                class="btn py-2 px-4 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-300 border-emerald-200 flex items-center gap-2"
+                class="btn py-2 px-3 lg:px-4 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-300 border-emerald-200 flex items-center gap-1.5 lg:gap-2 whitespace-nowrap"
                 title="保存修改"
               >
-                <Save :size="16" />
-                <span class="font-medium">保存</span>
+                <Save :size="16" class="flex-shrink-0" />
+                <span class="font-medium text-sm lg:text-base">保存</span>
               </button>
               <button
                 @click="editing = false"
-                class="btn py-2 px-4 bg-surface-50 text-text-secondary hover:bg-background-50 hover:border-background-300 border-background-200 flex items-center gap-2"
+                class="btn py-2 px-3 lg:px-4 bg-surface-50 text-text-secondary hover:bg-background-50 hover:border-background-300 border-background-200 flex items-center gap-1.5 lg:gap-2 whitespace-nowrap"
                 title="取消编辑"
               >
-                <X :size="16" />
-                <span class="font-medium">取消</span>
+                <X :size="16" class="flex-shrink-0" />
+                <span class="font-medium text-sm lg:text-base">取消</span>
               </button>
             </template>
             <button
               @click="handleDelete(selectedArticle.id)"
-              class="btn py-2 px-4 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:border-rose-300 border-rose-200 flex items-center gap-2"
+              class="btn py-2 px-3 lg:px-4 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:border-rose-300 border-rose-200 flex items-center gap-1.5 lg:gap-2 whitespace-nowrap"
               title="删除记录"
             >
-              <Trash2 :size="16" />
-              <span class="font-medium">删除</span>
+              <Trash2 :size="16" class="flex-shrink-0" />
+              <span class="font-medium text-sm lg:text-base">删除</span>
             </button>
           </div>
         </div>
@@ -120,7 +119,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import MarkdownIt from 'markdown-it'
-import { FileText, Edit3, Save, X, Trash2 } from 'lucide-vue-next'
+import { FileText, Edit3, Save, X, Trash2, ExternalLink } from 'lucide-vue-next'
 import type { Article } from '@/types'
 
 const articles = ref<Article[]>([])
@@ -226,6 +225,23 @@ const handleSave = async () => {
   } catch (e) {
     alert('保存失败: ' + (e as Error).message)
   }
+}
+
+const previewArticle = (title: string, content: string) => {
+  let previewTitle = title;
+  if (!previewTitle) {
+    const lines = content.split('\n');
+    if (lines.length > 0 && lines[0].trim().length > 0) {
+      previewTitle = lines[0].replace(/^#\s*/, '').trim();
+    } else {
+      previewTitle = '生成文稿预览';
+    }
+  }
+  
+  localStorage.setItem('preview_title', previewTitle);
+  localStorage.setItem('preview_content', content);
+  
+  window.open('/template.html', '_blank');
 }
 
 watch(selectedId, () => {

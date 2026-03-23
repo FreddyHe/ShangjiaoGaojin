@@ -1,0 +1,55 @@
+//大事记内容
+function dsj_con(year){
+      $.ajax({
+        type:'POST',
+        url:'/index/dsj_con',
+        data:{year:year},
+        dataType:'json',
+        success:function(r){     
+            $('#dsj_html').html(r.data);
+            $('#ftop').css('top','0px');
+            var st_num = $(this).parents("li").index();
+            $(".saif_time_axis_banner_explainBox .saif_time_axis_banner_explain").eq(st_num).addClass("saif_sign").siblings(".saif_time_axis_banner_explain").removeClass("saif_sign");
+            $(".saif_time_axis_banner_explainBox .saif_time_axis_banner_explain").eq(st_num).addClass("current").siblings(".saif_time_axis_banner_explain").removeClass("current");   
+            if($(".saif_time_axis_banner_explainBox .saif_time_axis_banner_explain").hasClass("saif_sign")){
+            $("saif_time_axis_banner_explainBox .saif_time_axis_banner_explain.saif_sign").height($(".saif_sign .saif_time_axis_banner_explain_ul").height())
+            $(".saif_time_axis_banner_explainBox .saif_sign .verticalLine").height($(".saif_time_axis_banner_explainBox .saif_sign .saif_time_axis_banner_explain_ul").height()+52);}   
+            clickN = 0;
+            liH = 0;
+        }
+    });
+}
+//加载更多教授
+professor_page =2;
+function professor_more(catid){
+     $.ajax({
+        type:'POST',
+        url:'/index/professor_more',
+        data:{catid:catid,page:professor_page},
+        dataType:'json',
+        success:function(r){
+            if(r.info==0){
+              $('.show_more').hide();
+            }
+            professor_page++;
+            $('#profess_list').append(r.data);
+        }
+    });
+}
+
+//获取上月
+function localmymonth(year,month){
+ $(".calAdd .calendar_paul").addClass("current");  
+   $.ajax({
+        type:'POST',
+        url:'/ajax/localmymonth',
+        data:{year:year,month:month},
+        dataType:'json',
+        success:function(r){
+            localmycalendar(r.year, r.month)
+            $('.pp_month_box').html(r.monthen);
+            $('.arrow_paul_left').attr('onclick',r.prev);
+            $('.arrow_paul_right').attr('onclick',r.next);
+        }
+    });
+}

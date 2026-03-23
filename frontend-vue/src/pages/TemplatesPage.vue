@@ -2,7 +2,7 @@
   <div class="grid grid-cols-[280px_320px_1fr] gap-8 h-[calc(100vh-100px)]">
     <div class="card p-6 flex flex-col gap-5 overflow-hidden">
       <div class="font-bold text-xl tracking-tight text-text-primary mb-2">类型管理</div>
-      <div class="grid grid-cols-2 gap-3">
+      <div v-if="auth.isAdmin.value" class="grid grid-cols-2 gap-3">
         <input class="input text-sm" v-model="newId" placeholder="ID (字母数字)" />
         <input class="input text-sm" v-model="newName" placeholder="类型名称" />
         <button
@@ -25,7 +25,7 @@
           </div>
           <div class="flex justify-between items-center mt-2">
             <span class="text-xs text-text-muted">{{ t.id }}</span>
-            <button class="text-xs text-red-500 hover:text-red-600 hover:underline" @click.stop="deleteType(t.id)">删除</button>
+            <button v-if="auth.isAdmin.value" class="text-xs text-red-500 hover:text-red-600 hover:underline" @click.stop="deleteType(t.id)">删除</button>
           </div>
         </div>
       </div>
@@ -59,6 +59,7 @@
                 ★
               </button>
               <button
+                v-if="auth.isAdmin.value"
                 @click.stop="deleteTemplate(selectedTypeId, t.template_id)"
                 class="text-xs text-red-500 hover:text-red-600"
               >
@@ -94,15 +95,138 @@
 
         <div class="flex-1 overflow-y-auto pr-2">
           <div class="grid gap-5">
-            <SectionEditor
+            <div
               v-for="(section, index) in outline.sections"
               :key="index"
-              :section="section"
-              @update-title="(v) => updateSectionTitle(index, v)"
-              @add-bullet="() => addBullet(index)"
-              @update-bullet="(j, v) => updateBullet(index, j, v)"
-              @add-child="() => addChild(index)"
-            />
+              class="section-card border-background-200 shadow-sm relative group overflow-hidden"
+            >
+              <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-200 group-hover:bg-brand-400 transition-colors"></div>
+              <!-- Section 标题 -->
+              <div class="flex items-center gap-3 mb-4 pl-2">
+                <div class="w-1.5 h-5 bg-brand-500 rounded-full shadow-sm"></div>
+                <input
+                  class="input font-bold text-text-primary text-lg bg-transparent border-transparent hover:border-background-200 focus:bg-surface-50 focus:border-brand-400 px-2 py-1 flex-1"
+                  :value="section.title"
+                  @input="updateSectionTitle(index, ($event.target as HTMLInputElement).value)"
+                  placeholder="章节标题"
+                />
+                <button
+                  @click="removeSection(index)"
+                  class="p-2 text-text-muted hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
+                  title="删除章节"
+                >
+                  <X :size="18" />
+                </button>
+              </div>
+
+              <!-- Description -->
+              <div class="mb-4 pl-4">
+                <input
+                  class="input text-sm bg-background-50"
+                  :value="section.description || ''"
+                  @input="updateSectionField(index, 'description', ($event.target as HTMLInputElement).value)"
+                  placeholder="章节描述/写作指引（可选）"
+                />
+              </div>
+
+              <!-- Word count & Granularity -->
+              <div class="flex flex-wrap gap-4 mb-4 pl-4">
+                <div class="flex items-center gap-2 bg-background-50 px-3 py-1.5 rounded-lg border border-background-200">
+                  <span class="text-xs text-text-tertiary font-medium">字数要求</span>
+                  <input
+                    class="input text-sm bg-transparent border-transparent hover:border-background-200 focus:bg-white focus:border-brand-400 py-0.5 px-2 w-32 h-auto min-h-0"
+                    :value="section.word_count || ''"
+                    @input="updateSectionField(index, 'word_count', ($event.target as HTMLInputElement).value)"
+                    placeholder="如 100-150字"
+                  />
+                </div>
+                <div class="flex items-center gap-2 bg-background-50 px-3 py-1.5 rounded-lg border border-background-200">
+                  <span class="text-xs text-text-tertiary font-medium">颗粒度</span>
+                  <input
+                    class="input text-sm bg-transparent border-transparent hover:border-background-200 focus:bg-white focus:border-brand-400 py-0.5 px-2 w-24 h-auto min-h-0"
+                    :value="section.granularity || ''"
+                    @input="updateSectionField(index, 'granularity', ($event.target as HTMLInputElement).value)"
+                    placeholder="如 高/中/低"
+                  />
+                </div>
+              </div>
+
+              <!-- Bullets -->
+              <div class="mt-4 grid gap-2.5 pl-4">
+                <div
+                  v-for="(b, j) in (section.bullets || [])"
+                  :key="j"
+                  class="flex items-center gap-2 group/bullet"
+                >
+                  <div class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></div>
+                  <input
+                    class="input text-sm flex-1 py-2 bg-transparent border-transparent hover:border-background-200 focus:bg-surface-50 focus:border-brand-400"
+                    :value="b"
+                    @input="updateBullet(index, j, ($event.target as HTMLInputElement).value)"
+                    :placeholder="'要点 ' + (j+1)"
+                  />
+                  <button
+                    @click="removeBullet(index, j)"
+                    class="p-1.5 text-text-muted hover:text-red-500 hover:bg-red-50 rounded transition-colors flex-shrink-0 opacity-0 group-hover/bullet:opacity-100"
+                  >
+                    <X :size="14" />
+                  </button>
+                </div>
+              </div>
+
+              <!-- Children sections -->
+              <div v-if="(section.children || []).length > 0" class="mt-5 ml-6 border-l-2 border-background-200 pl-5 grid gap-4">
+                <div
+                  v-for="(child, ci) in section.children"
+                  :key="ci"
+                  class="bg-surface-50 rounded-xl p-4 border border-background-200 shadow-sm relative group/child"
+                >
+                  <div class="flex items-center gap-3 mb-3">
+                    <input
+                      class="input text-sm font-bold flex-1 bg-transparent border-transparent hover:border-background-200 focus:bg-white focus:border-brand-400 px-2 py-1"
+                      :value="child.title"
+                      @input="updateChildTitle(index, ci, ($event.target as HTMLInputElement).value)"
+                      placeholder="子章节标题"
+                    />
+                    <button
+                      @click="removeChild(index, ci)"
+                      class="p-1.5 text-text-muted hover:text-red-500 hover:bg-red-50 rounded transition-colors flex-shrink-0"
+                    >
+                      <X :size="14" />
+                    </button>
+                  </div>
+                  <div
+                    v-for="(cb, cj) in (child.bullets || [])"
+                    :key="cj"
+                    class="flex items-center gap-2 mt-2 group/cb"
+                  >
+                    <div class="w-1 h-1 rounded-full bg-text-tertiary"></div>
+                    <input
+                      class="input text-xs flex-1 py-1.5 bg-transparent border-transparent hover:border-background-200 focus:bg-white focus:border-brand-400"
+                      :value="cb"
+                      @input="updateChildBullet(index, ci, cj, ($event.target as HTMLInputElement).value)"
+                      :placeholder="'要点 ' + (cj+1)"
+                    />
+                    <button
+                      @click="removeChildBullet(index, ci, cj)"
+                      class="p-1 text-text-muted hover:text-red-500 hover:bg-red-50 rounded transition-colors flex-shrink-0 opacity-0 group-hover/cb:opacity-100"
+                    >
+                      <X :size="12" />
+                    </button>
+                  </div>
+                  <button
+                    class="text-xs font-medium text-brand-600 hover:text-brand-700 hover:bg-brand-50 px-2 py-1 rounded transition-colors flex items-center gap-1 mt-3"
+                    @click="addChildBullet(index, ci)"
+                  ><span class="text-lg leading-none">+</span> 添加子要点</button>
+                </div>
+              </div>
+
+              <!-- Add buttons -->
+              <div class="flex gap-4 mt-5 pl-4">
+                <button class="text-xs font-medium text-brand-600 hover:text-brand-700 hover:bg-brand-50 px-2 py-1 rounded transition-colors flex items-center gap-1" @click="addBullet(index)"><span class="text-lg leading-none">+</span> 添加要点</button>
+                <button class="text-xs font-medium text-brand-600 hover:text-brand-700 hover:bg-brand-50 px-2 py-1 rounded transition-colors flex items-center gap-1" @click="addChild(index)"><span class="text-lg leading-none">+</span> 添加子章节</button>
+              </div>
+            </div>
             <button class="btn btn-primary w-max mt-2" @click="addSection">+ 添加一级标题</button>
           </div>
         </div>
@@ -117,8 +241,11 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from 'vue'
+import { X } from 'lucide-vue-next'
 import type { TypeItem, Outline, TemplateItem } from '@/types'
+import { useAuth } from '@/composables/useAuth'
 
+const auth = useAuth()
 const types = ref<TypeItem[]>([])
 const selectedTypeId = ref('')
 const templates = ref<TemplateItem[]>([])

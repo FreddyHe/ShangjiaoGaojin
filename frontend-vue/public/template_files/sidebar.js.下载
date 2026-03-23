@@ -1,0 +1,17 @@
+$(function () {
+    // 侧边栏
+    // 微信二维码
+    $('#toTop').on('click', function () {
+        $("html,body").animate({ scrollTop: '0px' }, 500);
+    })
+
+    // $(window).scroll(function () {
+    //     let scrollTop = $(window).scrollTop()
+    //     let height = $(window).height()
+    //     if (scrollTop > height / 2) {
+    //         $('.sidebar').addClass('active')
+    //     } else {
+    //         $('.sidebar').removeClass('active')
+    //     }
+    // })
+})

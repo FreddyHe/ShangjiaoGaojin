@@ -21,7 +21,7 @@
           <span>刷新</span>
         </button>
         <button
-          v-if="activeCategory === 'people'"
+          v-if="activeCategory === 'people' && false"
           @click="syncFaculty"
           :disabled="syncing"
           class="btn bg-brand-50 border border-brand-200 text-brand-700 hover:bg-brand-100 px-4 py-2.5 shadow-sm flex items-center gap-2"

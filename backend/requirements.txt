@@ -13,3 +13,4 @@ pypinyin==0.51.0
 requests
 beautifulsoup4
 aiohttp
+PyJWT==2.8.0

@@ -1,0 +1,174 @@
+$(function(){
+
+/*小导航下拉开始*/
+
+$(".nav_secondary_substance_new li").hover(function(){
+
+    $(this).children('p').show();
+
+    $(this).siblings("li").children('p').hide();
+
+},function(){
+
+    $(".nav_secondary_substance_new li p").hide();
+
+});
+
+
+
+	$(".zlxz_new li").hover(function(){//alert(1)
+    //$(this).find("a").css("color","#fff");
+    $(this).find("img").toggle();
+})
+
+
+
+
+$(".nav_secondary_substance_new_new>li").hover(function(){
+
+    $(this).find(".topA").toggleClass("current");
+
+})
+
+$(".navU_new_new a").each(function(index,element){
+
+    $(element).css("background","url(../images/dashedT_p.jpg) no-repeat 10px top #8e001a")
+
+})
+
+$(".navU_new a").hover(function(){
+
+    var num = $(this).index();
+
+    $(this).parents(".navU_new").find("a").eq(num+1).css("background","#8e001a");
+
+},function(){
+
+    var num = $(this).index();
+
+    $(this).parents(".navU_new").find("a").eq(num+1).css("background","url(../images/dashedT_p.jpg) no-repeat 10px top #8e001a");
+
+})
+
+/*小导航下拉结束*/
+
+	
+
+/*tab切换   开始*/
+
+/*$(function(){
+	$(".zlxz_new li").hover(function(){//alert(1)
+    //$(this).find("a").css("color","#fff");
+    $(this).find("img").toggle();
+})
+})
+*//*tab切换   结束*/
+
+	
+
+})
+
+
+
+
+
+/*$(function(){
+
+	$(".enroll_list_bottom.current .mf_dropDown_l").height($(".enroll_list_bottom.current .mf_dropDown_r").height()+36);
+
+	$(".enroll_list_top_r_btn").click(function(){
+
+	$(this).parents(".enroll_list_top").siblings(".enroll_list_bottom").slideToggle(800);
+
+	$(this).parents("li").siblings("li").find(".enroll_list_bottom").slideUp(800);
+
+	$(this).parents("li").find(".enroll_list_top").toggleClass("current");
+
+	$(this).parents("li").siblings().find(".enroll_list_top").removeClass("current");
+
+
+
+	var mf_dropDown_rH = $(this).parents(".enroll_list_top").siblings(".enroll_list_bottom").find(".mf_dropDown_r").height()+36;
+
+	$(this).parents(".enroll_list_top").siblings(".enroll_list_bottom").find(".mf_dropDown_l").height(mf_dropDown_rH);
+
+})
+
+})*/
+
+
+
+
+
+$(function(){
+
+	$('.cls-dot').hover(function(){
+
+		$('.cls-dot').removeClass('current');
+
+		$(this).addClass('current');
+
+	})
+
+	
+
+	
+
+	
+
+	/*saif动态开始*/
+
+$(".a_btn1_box .a_btn1").click(function(){//alert(1)
+
+    var num = $(this).index();
+
+    $(".trendAndRep2 .information_t_box .information_t").eq(num).addClass("current").siblings(".information_t").removeClass("current");
+
+})
+
+
+
+
+
+$('.div2_l_a').hover(function(e) {
+
+        $(this).find('.read_demail').stop().slideToggle(500);
+
+    });
+
+
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

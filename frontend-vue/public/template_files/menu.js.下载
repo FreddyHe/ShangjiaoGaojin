@@ -1,0 +1,13 @@
+
+
+// ÒÆ¶¯¶Ë²Ëµ¥ÇÐ»»
+$('.n24-header-menu .m-nav-change-btn').click(function () {
+    $(this).toggleClass('active')
+    $('.n24-m-header-nav-wrap').slideToggle()
+})
+
+$('.n24-m-header-nav-wrap .n24-header-menu-dropdown-list-wrap').click(function () {
+    $(this).toggleClass('on')
+    $(this).find('.n24-header-menu-dropdown-list-inner').slideToggle()
+})
+
