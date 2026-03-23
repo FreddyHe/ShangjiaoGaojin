@@ -10,7 +10,7 @@
         <span v-else class="text-brand-700 font-semibold">{{ initials }}</span>
       </div>
       <div class="hidden sm:flex flex-col items-start leading-tight">
-        <div class="text-sm font-semibold text-text-primary max-w-32 truncate">{{ profile.nickname || profile.name || '未登录' }}</div>
+        <div class="text-sm font-semibold text-text-primary max-w-32 truncate">{{ profile.nickname || auth.username || '未登录' }}</div>
         <div class="text-xs text-text-muted">{{ roleLabel }}</div>
       </div>
       <ChevronDown :size="16" class="text-text-tertiary ml-1" />
@@ -52,9 +52,11 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ChevronDown, LogOut, User } from 'lucide-vue-next'
-import { getStoredProfile, clearStoredSession } from '@/lib/profile'
+import { getStoredProfile } from '@/lib/profile'
+import { useAuth } from '@/composables/useAuth'
 
 const router = useRouter()
+const auth = useAuth()
 
 const open = ref(false)
 const rootEl = ref<HTMLElement | null>(null)
@@ -66,12 +68,12 @@ const reloadProfile = () => {
 }
 
 const initials = computed(() => {
-  const s = (profile.value.nickname || profile.value.name || 'U').trim()
+  const s = (profile.value.nickname || auth.username.value || profile.value.name || 'U').trim()
   return s.slice(0, 1).toUpperCase()
 })
 
 const roleLabel = computed(() => {
-  return profile.value.role === 'admin' ? '管理员' : '普通用户'
+  return auth.role.value === 'admin' ? '系统管理员' : '普通用户'
 })
 
 const toggle = () => {
@@ -89,8 +91,7 @@ const goProfile = () => {
 
 const logout = () => {
   close()
-  clearStoredSession()
-  router.push('/templates')
+  auth.logout()
 }
 
 const onClickOutside = (e: MouseEvent) => {

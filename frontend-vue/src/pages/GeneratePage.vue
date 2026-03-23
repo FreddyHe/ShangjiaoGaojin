@@ -336,7 +336,16 @@
             <div class="text-lg font-semibold text-text-primary">
               {{ index === 0 ? '原始生成版本' : '修改版本 ' + index }}
             </div>
-            <div class="text-xs text-text-muted">版本 ID: {{ version.id.substring(0, 8) }}...</div>
+            <div class="flex items-center gap-3">
+              <div class="text-xs text-text-muted">版本 ID: {{ version.id.substring(0, 8) }}...</div>
+              <button 
+                class="btn bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 text-xs px-3 py-1 rounded-md flex items-center gap-1 transition-colors"
+                @click="previewArticle(version.content)"
+              >
+                <ExternalLink :size="14" />
+                网页预览
+              </button>
+            </div>
           </div>
           <div class="mt-2 text-text-secondary leading-relaxed">
             {{ version.content }}
@@ -366,6 +375,15 @@
       </div>
       
       <div v-if="output && articleVersions.length === 0" class="card p-6 whitespace-pre-wrap bg-surface-50 shadow-medium border-t-4 border-t-brand-500">
+        <div class="flex items-center justify-end mb-2">
+          <button 
+            class="btn bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 text-xs px-3 py-1 rounded-md flex items-center gap-1 transition-colors"
+            @click="previewArticle(output)"
+          >
+            <ExternalLink :size="14" />
+            网页预览
+          </button>
+        </div>
         <div class="text-text-secondary leading-relaxed">
           {{ output }}
         </div>
@@ -873,5 +891,22 @@ const resetToStart = () => {
   articleVersions.value = []
   matchedPeople.value = []
   modificationRequest.value = ''
+}
+
+const previewArticle = (content: string) => {
+  let title = customTitle.value;
+  if (!title) {
+    const lines = content.split('\n');
+    if (lines.length > 0 && lines[0].trim().length > 0) {
+      title = lines[0].replace(/^#\s*/, '').trim();
+    } else {
+      title = '生成文稿预览';
+    }
+  }
+  
+  localStorage.setItem('preview_title', title);
+  localStorage.setItem('preview_content', content);
+  
+  window.open('/template.html', '_blank');
 }
 </script>

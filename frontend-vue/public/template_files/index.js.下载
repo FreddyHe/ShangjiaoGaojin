@@ -1,0 +1,191 @@
+// JavaScript Document
+$(function () {
+
+    // tab切换
+    $('.tab-changes-tit .change-tit-item').on('click', function () {
+        let index = $(this).index() / 2
+        // $(this).css('color', '#171d8f').siblings().css('color', '#333')
+        $(this).addClass('active').siblings().removeClass('active')
+        $('.tab-changes .tab-change-item').eq(index).siblings().css('display', 'none')
+        $('.tab-changes .tab-change-item').eq(index).css('display', 'block')
+    })
+    if ($('.tab-changes-tit .change-tit-item')[0]) {
+        $('.tab-changes-tit .change-tit-item')[0].click()
+    }
+
+    /*轮播图*/
+
+    /*声明变量组*/
+    var scroll = $(".scroll");
+    var scrolllis = $(".scroll ul li");
+    var scrollul = $(".scroll ul");
+    var scrollols = $(".scroll ol li");
+    var $key = 0;  /*控制图片的播放张数*/
+    var $circle = 0; /*控制小圆点*/
+    var W = $(document).width() + 17; // 获取屏幕的宽度 17是滚动条的像素
+    var defaultWidth = 0
+    if (W <= 1920) {
+        defaultWidth = W
+    } else {
+        defaultWidth = 1920
+    }
+    var H = $(window).height(); // 获取屏幕的高度
+    var scale = 1920 / 530;// 图片宽高比
+    scrolllis.width(W);  //把屏幕的宽度给 li
+    // 按照图片的宽高比调整banner高度
+    // 图片比例 1920*760px
+    $(".scroll ul li img").height(W / scale); // 测试版用这个
+    $(".scroll ul li").height(W / scale);
+    $(".scroll ul").height(W / scale);
+    $(".scroll").height(W / scale);
+
+    // $(".scroll ul li").height(H-243); // 正式版得用这个
+    // $(".scroll ul").height(H-243);
+    // $(".scroll").height(H-243);
+    $(window).resize(function () {
+
+        W = $(window).width()// 图片宽高比
+        if (W >= 1920) {
+            W = defaultWidth
+        }
+        $(document).ready(function () {
+            // scrolllis.width(W)
+            scrolllis.width(W)
+            $(".scroll ul li img").height(W / scale);
+            $(".scroll ul li").height(W / scale);
+            $(".scroll ul").height(W / scale);
+            $(".scroll").height(W / scale);
+            $(".arrow").width(W * 0.6)
+            // scrolllis.eq(-1).width(W)
+            $(".scroll ul li").each(function (el, index) {
+                $(this).width(W)
+                // console.log($(this));
+            })
+        })
+    })
+
+    // banner轮播图
+
+    /* 克隆第一个*/
+    $(".scroll ul").append($(".scroll ul li:first").clone(true));
+    /*生成ol 小圆点*/
+    scroll.append($("<ol></ol>"));
+    for (var i = 0; i < scrolllis.length; i++) {
+        $(".scroll ol").append($("<li></li>"));
+    }
+
+    $(".scroll ol li:first").attr("class", "current");   //第一个里是current
+
+    /*右侧按钮*/
+    $(".S-right").on("click", function () {
+        /*alert(11);*/
+        $key++;
+        if ($key > scrolllis.length) {
+            $key = 1;
+            scrollul.css("left", 0);
+        }
+        play();
+        $circle++;
+        $circle > $(".scroll ol li").length - 1 ? $circle = 0 : $circle;
+        circle();
+    })
+    /*左侧按钮*/
+    $(".S-left").on("click", function () {
+        $key--;
+        if ($key < 0) {
+            $key = scrolllis.length - 1;
+            scrollul.css("left", -scrolllis.length * W);
+        }
+        play();
+        $circle--;
+        $circle < 0 ? $circle = scrolllis.length - 1 : $circle;
+        circle();
+    })
+
+    /*点击小点实现轮播*/
+    $(".scroll ol li").on("click", function () {
+        $(this).addClass("current").siblings().removeClass();
+        var olNum = $(this).index();
+        $key = olNum;
+        $circle = olNum;
+
+        play();
+    })
+
+
+    /*播放模块开始*/
+    function play() {
+        scrollul.stop().animate({ "left": -$key * W }, 500);
+    }
+
+
+    function circle() {
+        $(".scroll ol li").eq($circle).addClass("current").siblings().removeClass();
+
+    }
+
+    //定时器
+    timer01 = setInterval(function () {
+        $key++;
+        if ($key > scrolllis.length) {
+            $key = 1;
+            scrollul.css("left", 0);
+        }
+        play();
+        $circle++;
+        $circle > $(".scroll ol li").length - 1 ? $circle = 0 : $circle;
+        circle();
+    }, 4000);
+
+
+    /*屏幕缩放的时候*/
+    $(window).resize(function () {
+        /* 当屏幕缩放的时候，需要从新获取屏幕的宽度*/
+        W = $(window).width(); // 获取屏幕的宽度
+        scrolllis.width(W);  //把屏幕的宽度给 li
+        play();
+    })
+
+
+
+    /*鼠标滑过banner定时器开启和关闭并且显示左右三角*/
+    $('.scroll').hover(function () {
+        clearInterval(timer01);
+
+    }, function () {
+
+        timer01 = setInterval(function () {
+            $key++;
+            if ($key > scrolllis.length) {
+                $key = 1;
+                scrollul.css("left", 0);
+            }
+            play();
+            $circle++;
+            $circle > $(".scroll ol li").length - 1 ? $circle = 0 : $circle;
+            circle();
+        }, 4000);
+    })
+
+    // 获取ol一半的宽度:
+    var olW = -$(".scroll ol").width() / 2;
+    $(".scroll ol").css('margin-left', olW + 'px');
+
+    // $(".S-right").css("margin-left", -olW * 2);
+    // $(".arrow").css("margin-left", olW - 20 + 'px');
+
+
+    $(".scroll ul li").css({ "background-size": "cover", "-webkit-background-size": "cover", "-o-background-size": "cover", "-moz-background-size": "cover", "-ms-background-size": "cover" });
+
+    /*轮播图结束*/
+    /*小窗口位置开始*/
+    $(".buttery_hatch").hover(function () {
+        $(".buttery_hatch").stop().animate({ "right": 0 }, 1000);
+    }, function () {
+        $(".buttery_hatch").stop().animate({ "right": -375 }, 1000);
+    })
+    /*小窗口位置结束*/
+
+
+
+})

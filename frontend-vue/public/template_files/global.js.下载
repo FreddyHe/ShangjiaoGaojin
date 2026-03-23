@@ -1,0 +1,1644 @@
+// JavaScript Document
+$(function () {
+
+    function handleScreen() {
+        const m = detectZoom();
+        console.log('缩放比例：', m + '%')
+        if (m > 150) {
+            // alert('浏览器比例在100%下浏览效果更佳')
+            console.log('浏览器比例在100%下浏览效果更佳')
+            return
+        }
+        document.body.style.zoom = 100 / Number(m);
+    }
+    function detectZoom() {
+        let ratio = 0,
+            screen = window.screen,
+            ua = navigator.userAgent.toLowerCase();
+        if (window.devicePixelRatio !== undefined) {
+            ratio = window.devicePixelRatio;
+        } else if (~ua.indexOf('msie')) {
+            if (screen.deviceXDPI && screen.logicalXDPI) {
+                ratio = screen.deviceXDPI / screen.logicalXDPI;
+            }
+        } else if (window.outerWidth !== undefined && window.innerWidth !== undefined) {
+            ratio = window.outerWidth / window.innerWidth;
+        }
+        if (ratio) {
+            ratio = Math.round(ratio * 100);
+        }
+        return ratio;
+    }
+    // window.onresize = function () {
+    //     handleScreen()
+    // }
+
+    var W = $(window).width();
+    /* ie****************/
+    $(".top_close").click(function () {
+        $(".blank_wrap").fadeOut();
+    })
+    $(".calendar_con_dateTable li:nth-child(7n)").css("margin-right", "0");
+    //$(".school_leader_per_ul li:nth-child(4n)").css("margin-right","0");
+    $(".ProjectInformation_ul>li:nth-child(2n)").css("margin-right", "0");
+    $(".style_pro_find>li:nth-child(2n)").css("margin-right", "0");
+    $(".enter_nav ul li:last-child").css("background", "none");
+    $(".report_book_list li:nth-child(2)").css({ "padding-bottom": "26px", "width": "600px" });
+    $(".nav_secondary_substance>li:last-child").css({ "padding-right": "0", "background": "none" });
+    $(".university li:nth-child(1)").css("width", "227px");
+    $(".university li:nth-child(3)").css("width", "227px");
+    $(".university li:nth-child(5)").css("width", "415px");
+    $(".university li:nth-child(6)").css("width", "415px");
+    $(".university2 li:nth-child(1)").css("width", "227px");
+    $(".university2 li:nth-child(5)").css("width", "227px");
+    $(".university2 li:nth-child(9)").css("width", "227px");
+    $(".university2 li:nth-child(2)").css("width", "234px");
+    $(".university2 li:nth-child(6)").css("width", "234px");
+    $(".university2 li:nth-child(10)").css("width", "234px");
+    $(".university2 li:nth-child(3)").css({ "width": "130px", "margin-right": "50px" });
+    $(".university2 li:nth-child(7)").css({ "width": "130px", "margin-right": "50px" });
+    $(".four_project li:nth-child(2n+1)").css("margin-right", "20px");
+    $(".four_project li:nth-child(3)").css("margin-bottom", "0px");
+    $(".four_project li:nth-child(4)").css("margin-bottom", "0px");
+    $(".company_service_list li:last-child").css("border-bottom", "none");
+    $(".center_activity_ul li:last-child").css("margin-right", "0");
+    $(".honoredGuest li:nth-child(4n)").css("margin-right", "0");
+    $(".recommend_book_list .monthly_ul li:nth-child(5n)").css("width", "148px");
+    $(".pAV_tit li:last-child").css("background", "none");
+    $(".pro_list_ul li:nth-child(2n)").css("margin-right", "0");
+    $(".bless_box_font_list li:nth-child(2n)").css("margin-right", "0");
+    $(".new_student li:last-child").css("margin-right", "0");
+    $(".scroll_banner_in li:last-child").css("margin-right", "0");
+    $(".act_forenotice li:last-child").css("border-bottom", "0");
+
+    $(".search_ra li p:nth-child(5n)").css({ "border-bottom": "1px dashed #cecece", "padding-bottom": "20px", "margin-bottom": "20px" });
+
+
+    $('.cls-dot').hover(function () {
+        $('.cls-dot').removeClass('current');
+        $(this).addClass('current');
+    })
+    /*小屏开始*/
+    if (W < 1236 && W > 960) {
+        $(".report_book_list li:nth-child(2)").css({ "padding-bottom": "26px", "width": "480px" });
+    }
+    /*小屏结束*/
+    /* ie****************/
+    /*返回顶部开始*/
+    var T = 0;
+    $(window).scroll(function (event) {
+        T = $(window).scrollTop();
+        E = $(window).height();
+        if (T > E) {
+            $("#topcontrol").fadeIn();
+        }
+        else {
+            $("#topcontrol").fadeOut();
+        }
+    });
+    $("#topcontrol").click(function (event) {
+        $("body,html").stop().animate({ "scrollTop": 0 }, 1000);
+    });
+    /* 返回顶部结束*/
+    var wH = $(window).height();
+    $(".bgc_gray").css("min-height", wH - 243);
+    $(".magnifier").click(function () {
+        $(".search").fadeIn(800);
+        $(".search_white").fadeIn(800);
+        $(".magnifier_img1").css("display", "none");
+        $(".magnifier_img2").css("display", "block");
+    })
+    /*点击空白隐藏搜索框*/
+    $(document).bind("click", function (e) {
+        var target = $(e.target);
+        if (target.closest(".magnifier,#clickBtn").length == 0) {
+            $(".search").fadeOut(800);
+            $(".search_white").fadeOut(800);
+            $(".magnifier_img1").css("display", "block");
+            $(".magnifier_img2").css("display", "none");
+        };
+        e.stopPropagation();
+    })
+    $(".share_down li a").hover(function () {
+        $(this).find("img").toggle();
+    })
+
+    $(".buttery_hatch_btn div").hover(function () {//alert(1)
+        $(this).find("span").toggle();
+    })
+    $(".list-new").hover(function () {
+        $(".triangle1").toggle();
+    })
+    $(".viewpoint_list").hover(function () {
+        $(".triangle2").toggle();
+    })
+    $(".foreshow_list").hover(function () {
+        $(".triangle3").toggle();
+    })
+    /*bottom nav start*/
+    $(".bottom_nav ul li").hover(function () {
+        var nav_w = $(this).width();
+        $(this).find(".bottom_nav_hover").width(nav_w);
+        $(this).find(".bottom_nav_hover ").toggle();
+
+    })
+    $(".change_color_one").hover(function () {
+        $(this).find("img").toggle();
+    })
+    $(".change_color_two").hover(function () {
+        $(this).find("img").toggle();
+    })
+    $(".footer_inner li").hover(function () {
+        $(this).find("img").toggle();
+    })
+    $(".bottom_nav li").hover(function () {
+        var num_b_li = $(this).index();
+        $(".bottom_nav li").eq(num_b_li - 1).css("background", "none");
+    }, function () {
+        var num_b_li = $(this).index();
+        $(".bottom_nav li").eq(num_b_li - 1).css("background", "url(/resources/portal/images/bottom_de.jpg) no-repeat right 20px");
+    })
+    $(".bottom_nav1 li").hover(function () {
+        var num_b_li = $(this).index();
+        $(".bottom_nav1 li").eq(num_b_li - 1).css("background", "none");
+    }, function () {
+        var num_b_li = $(this).index();
+        $(".bottom_nav1 li").css("background", "url(/resources/portal/images/bottom_de.jpg) no-repeat right 20px");
+    })
+    /*bottom nav end*/
+    /*saif动态开始*/
+    $(".a_btn1_box .a_btn1").click(function () {
+        var num = $(this).index();
+        $(".information_t_box .information_t").eq(num).addClass("current").siblings(".information_t").removeClass("current");
+    })
+    $(".nav_secondary_substance>li").hover(function () {
+        var num_li = $(this).index();
+        $(".nav_secondary_substance>li").eq(num_li - 1).css("background", "none");
+    }, function () {
+        var num_li = $(this).index();
+        if (!$(this).find("a.topA").hasClass("current1")) {
+            // $(".nav_secondary_substance>li").eq(num_li - 1).css("background", "url(/resources/portal/images/second-nav-separate.png) no-repeat right 15px");
+        }
+    })
+    $(".nav_secondary_substance1>li").hover(function () {
+        var num_li = $(this).index();
+        $(".nav_secondary_substance1>li").eq(num_li - 1).css("background", "none");
+    }, function () {
+        var num_li = $(this).index();
+        if (!$(this).find("a").hasClass("current1")) {
+            $(".nav_secondary_substance1 li").eq(num_li - 1).css("background", "url(/resources/portal/images/second-nav-separate.png) no-repeat right 15px");
+        }
+    })
+    for (var s = 0; s < $(".nav_secondary_substance>li").length; s++) {
+        if ($(".nav_secondary_substance>li").eq(s).find("a").hasClass('current1')) {
+            $(".nav_secondary_substance>li").eq(s - 1).css("background", "none");
+        }
+    }
+    /*小导航下拉开始*/
+
+    $(".nav_secondary_substance>li .current").next('p').show()
+    if (!$(".nav_secondary_substance>li .current").next('p').children().length) {
+        $(".nav_secondary_substance>li .current").next('p').css('display', 'none')
+    }
+    if ($(".nav_secondary_substance>li .current").next('p').css('display') == 'block') {
+        $(".nav_secondary_substance").addClass('active')
+    } else {
+        $(".nav_secondary_substance").removeClass('active')
+    }
+
+    // 如果是首页要展示其栏目的第一个导航
+    if (!$(".nav_secondary_substance>li .current").length) {
+        if ($(".nav_secondary_substance>li").eq(0).children('p').length) {
+            $(".nav_secondary_substance>li").eq(0).children('p').css('display', 'block')
+            $(".nav_secondary_substance>li").eq(0).children('a').addClass('current')
+            $(".nav_secondary_substance").addClass('active')
+        }
+    }
+    // 根据二级标题的位置计算该标题下三级标题的位置
+    $(function () {
+        let targrtCurrent = $(".nav_secondary_substance>li .current")
+        let index = $(".nav_secondary_substance>li .current").parents().index()
+        let liLength = $(".nav_secondary_substance>li ").length
+        let baseWidth = 120
+        if ($(window).width() < 1680) {
+            baseWidth = 110
+        }
+        let rightWidth = (liLength - index) * baseWidth
+        let aWidth = $(".nav_secondary_substance>li .current").next('p').width()
+        if (aWidth > rightWidth) {
+            let pRight = (liLength - index - 1) * baseWidth
+            $(".nav_secondary_substance>li .current").next('p').addClass('tRight')
+            $(".nav_secondary_substance>li .current").next('p').css('right', -(pRight - 100))
+        }
+        if (index + 1 === liLength) {
+            $(".nav_secondary_substance>li .current").next('p').css('right', 0)
+        }
+        // 如果是phd项目介绍
+        if ($(targrtCurrent).text() === '校友活动') {
+            $(".nav_secondary_substance>li .current").next('p').css('right', -245)
+        }
+        if ($(targrtCurrent).text() === '校友平台') {
+            $(".nav_secondary_substance>li .current").next('p').css('right', 0)
+        }
+        if ($(targrtCurrent).text() === '项目介绍') {
+            $(".nav_secondary_substance>li .current").next('p').css('right', -345)
+        }
+        if ($(targrtCurrent).text() === '捐赠项目') {
+            $(".nav_secondary_substance>li .current").next('p').css('right', -480)
+            $(".nav_secondary_substance>li .current").next('p').children('a').css('margin', '0 15px')
+        }
+        if ($(targrtCurrent).next('p').attr('catid') == 208) {
+            $(".nav_secondary_substance>li .current").next('p').css('right', -217)
+        }
+        // phd 项目介绍
+        if ($(targrtCurrent).next('p').attr('catid') == 209 || $(targrtCurrent).next('p').attr('catid') == 210) {
+            $(".nav_secondary_substance>li .current").next('p').css('right', 'auto')
+            $(".nav_secondary_substance>li .current").next('p').css('left', -10)
+        }
+        // 海外双学士项目
+        if ($(targrtCurrent).next('p').attr('catid') == 96) {
+            $(".nav_secondary_substance>li .current").next('p').css('right', -18)
+        }
+        // 雇主平台
+        if ($(targrtCurrent).next('p').attr('catid') == 24 || $(targrtCurrent).next('p').attr('catid') == 1146 || $(targrtCurrent).next('p').attr('catid') == 1147) {
+            $(".nav_secondary_substance>li .current").next('p').css('right', -114)
+        }
+
+    })
+
+    // var timer
+    // $(".nav_secondary_substance>li").mouseenter(function () {
+    //     clearTimeout(timer)
+    //     $(this).children('p').show()
+    //     $(this).siblings("li").children('p').hide();
+    // })
+    // $(".nav_secondary_substance>li").mouseleave(function () {
+    //     if ($(this).children('p')) {
+    //         timer = setTimeout(() => {
+    //             $(this).children('p').hide()
+    //         }, 500);
+    //     }
+    // })
+    $(".navU a").each(function (index, element) {
+        //$(element).css("background","url(/resources/portal/images/dashedT.jpg) no-repeat 10px top #c78a14")
+    })
+    $(".navU a").hover(function () {
+        var num = $(this).index();
+        //$(this).parents(".navU").find("a").eq(num+1).css("background","#c78a14");
+    }, function () {
+        var num = $(this).index();
+        //$(this).parents(".navU").find("a").eq(num+1).css("background","url(/resources/portal/images/dashedT.jpg) no-repeat 10px top #c78a14");
+    })
+    /*小导航下拉结束*/
+    $(".saif-cal-prev").hover(function () {
+        $(this).find("img").attr("src", "/resources/portal/images/saif_cal_prev_h.png");
+    }, function () {
+        $(this).find("img").attr("src", "/resources/portal/images/saif-cal-prev.png");
+    })
+    $(".saif-cal-next").hover(function () {
+        $(this).find("img").attr("src", "/resources/portal/images/saif_cal_next_h.png");
+    }, function () {
+        $(this).find("img").attr("src", "/resources/portal/images/saif-cal-next.png");
+    })
+    $(".jryjy a").hover(function () {
+        $(this).find("img").toggle();
+    })
+    $(".attention_saif a").hover(function () {
+        $(".attentionSaif").toggle();
+    })
+
+
+    $(".enter_nav ul li").hover(function () {
+        $(this).children('.navU').show();
+    }, function () {
+
+        $(this).children('.navU').hide();
+    })
+
+    $('.enter_nav li a.a3').hover(function (e) {
+        $('.enter_nav .build_bg2').addClass('current');
+    }, function () {
+        $('.enter_nav .build_bg2').removeClass('current');
+    });
+    $('.enter_nav li a.a4').hover(function (e) {
+        $('.enter_nav .build_bg3').addClass('current');
+    }, function () {
+        $('.enter_nav .build_bg3').removeClass('current');
+
+    });
+    $('.enter_nav li a.a5').hover(function (e) {
+        $('.enter_nav .build_bg4').addClass('current');
+    }, function () {
+        $('.enter_nav .build_bg4').removeClass('current');
+
+    });
+
+
+    /*saif动态结束*/
+    /*国际交流轮播图开始*/
+    /*声明变量组*/
+    var communication = $(".communication");
+    var communication_bannerlis = $(".communication_banner li");
+    var communication_bannerul = $(".communication_banner");
+    var $communication_key = 0;  /*控制图片的播放张数*/
+    var $communication_circle = 0; /*控制小圆点*/
+
+    var comBLW = communication_bannerlis.width();  //把宽度给 li
+    /* 克隆第一个*/
+    $(".communication_banner").append($(".communication_banner li:first").clone(true));
+    /*生成ol 小圆点*/
+    communication.append($("<ol></ol>"));
+    for (var i = 0; i < communication_bannerlis.length; i++) {
+        $(".communication ol").append($("<li></li>"));
+    }
+    $(".communication ol li:first").attr("class", "current");   //第一个里是current
+
+
+    /*点击小点实现轮播*/
+    $(".communication ol li").on("click", function () {
+        $(this).addClass("current").siblings().removeClass("current");
+        var communication_olNum = $(this).index();
+        $communication_key = communication_olNum;
+        $communication_circle = communication_olNum;
+        $(".communicate_banner_explainUl li").eq(communication_olNum).addClass('current').siblings().removeClass("current");
+        communication_play();
+    })
+    /*播放模块开始*/
+    function communication_play() {
+        communication_bannerul.stop().animate({ "left": -$communication_key * comBLW }, 500);
+    }
+
+    function communication_circle() {
+        $(".communication ol li").eq($communication_circle).addClass("current").siblings().removeClass("current");
+    }
+
+    //定时器
+    timer02 = setInterval(function () {
+        if(communication_bannerlis.length > 1){
+            $communication_key++;
+            if ($communication_key > communication_bannerlis.length) {
+                $communication_key = 1;
+                communication_bannerul.css("left", 0);
+            }
+            communication_play();
+            $communication_circle++;
+            $communication_circle > $(".communication ol li").length - 1 ? $communication_circle = 0 : $communication_circle;
+            communication_circle();
+            $(".communicate_banner_explainUl li").eq($communication_circle).addClass("current").siblings().removeClass("current");
+        }
+    }, 4000);
+
+
+
+    /*鼠标滑过banner定时器开启*/
+    $('.communication').hover(function () {
+        clearInterval(timer02);
+
+    }, function () {
+
+        timer02 = setInterval(function () {
+            if(communication_bannerlis.length > 1){
+                $communication_key++;
+                if ($communication_key > communication_bannerlis.length) {
+                    $communication_key = 1;
+                    communication_bannerul.css("left", 0);
+                }
+                communication_play();
+                $communication_circle++;
+                $communication_circle > $(".communication ol li").length - 1 ? $communication_circle = 0 : $communication_circle;
+                communication_circle();
+                $(".communicate_banner_explainUl li").eq($communication_circle).addClass("current").siblings().removeClass("current");
+            }
+        }, 4000);
+    })
+    /*国际交流轮播图结束*/
+    /*合作院校开始*/
+    /*国际交流轮播图开始*/
+    /*声明变量组*/
+    var communication_in = $(".communication_in");
+    var communication_bannerlis_in = $(".communication_banner_in li");
+    var communication_bannerul_in = $(".communication_banner_in");
+    var $communication_key_in = 0;  /*控制图片的播放张数*/
+    var $communication_circle_in = 0; /*控制小圆点*/
+
+    var wOfComm = communication_bannerlis_in.width();  //把宽度给 li
+    /* 克隆第一个*/
+    $(".communication_banner_in").append($(".communication_banner_in li:first").clone(true));
+    /*生成ol 小圆点*/
+    communication_in.append($("<ol></ol>"));
+    for (var i = 0; i < communication_bannerlis_in.length; i++) {
+        $(".communication_in ol").append($("<li></li>"));
+    }
+    $(".communication_in ol li:first").attr("class", "current");   //第一个里是current
+
+
+    /*点击小点实现轮播*/
+    $(".communication_in ol li").on("click", function () {
+        $(this).addClass("current").siblings().removeClass();
+        var communication_olNum_in = $(this).index();
+        /* $(".communicate_banner_explainUl_in li").eq(communication_olNum_in).addClass('current').siblings().removeClass("current");*/
+        $communication_key_in = communication_olNum_in;
+        $communication_circle_in = communication_olNum_in;
+        communication_play_in1();
+
+    })
+    /*播放模块开始*/
+    function communication_play_in1() {
+        communication_bannerul_in.stop().animate({ "left": -$communication_key_in * wOfComm }, 500);
+    }
+
+    function communication_circle_in1() {
+        $(".communication_in ol li").eq($communication_circle_in).addClass("current").siblings().removeClass();
+    }
+
+    //定时器
+    timer03 = setInterval(function () {
+        $communication_key_in++;
+        if ($communication_key_in > communication_bannerlis_in.length) {
+            $communication_key_in = 1;
+            communication_bannerul_in.css("left", 0);
+        }
+        communication_play_in1();
+        $communication_circle_in++;
+        $communication_circle_in > $(".communication_in ol li").length - 1 ? $communication_circle_in = 0 : $communication_circle_in;
+        communication_circle_in1();
+        /* $(".communicate_banner_explainUl_in li").eq($communication_circle_in).fadeIn().siblings().fadeOut();*/
+    }, 4000);
+
+
+
+    /*鼠标滑过banner定时器开启*/
+    $('.communication_in').hover(function () {
+        clearInterval(timer03);
+
+    }, function () {
+
+        timer03 = setInterval(function () {
+            $communication_key_in++;
+            if ($communication_key_in > communication_bannerlis_in.length) {
+                $communication_key_in = 1;
+                communication_bannerul_in.css("left", 0);
+            }
+            communication_play_in1();
+            $communication_circle_in++;
+            $communication_circle_in > $(".communication_in ol li").length - 1 ? $communication_circle_in = 0 : $communication_circle_in;
+            communication_circle_in1();
+            /* $(".communicate_banner_explainUl_in li").eq($communication_circle_in).fadeIn().siblings().fadeOut();*/
+        }, 4000);
+    })
+    var olW = $(".communication_in ol").width();
+    $(".communication_in ol").css("margin-left", -olW / 2);
+    /*国际交流轮播图结束*/
+    $(".institutions_t_box_btn li").click(function () {
+        var num_btn = $(this).index();
+        $(this).find(".byn").addClass("current").parents("li").siblings().find(".byn").removeClass("current");
+        $(".institutions_t>li").eq(num_btn).addClass("current").siblings().removeClass("current");
+        var btn_h = $(".institutions_t>li").eq(num_btn).height();
+        $(".institutions_t").height(btn_h);
+    })
+    /*合作院校结束*/
+    /*就业报告 研究报告 开始*/
+    $(".report_btn1").click(function () {
+        $(".report_btn_ul>li").eq(0).addClass("current").siblings().removeClass("current");
+        $(this).find("a").addClass("current");
+        $(".report_btn2").find("a").removeClass("current");
+        $(".report_btn_ul").height($(".report_btn_ul>li").eq(0).height());
+    })
+    $(".report_btn2").click(function () {
+        $(".report_btn_ul>li").eq(1).addClass("current").siblings().removeClass("current");
+        $(this).find("a").addClass("current");
+        $(".report_btn1").find("a").removeClass("current");
+        $(".report_btn_ul").height($(".report_btn_ul>li").eq(1).height());
+    })
+    $(".copy_box a").hover(function () {
+        $(this).find("img").toggle();
+    })
+    /*就业报告 研究报告 结束*/
+    /*联系我们开始*/
+    /*联系我们结束*/
+    $(".d_video_list li a").hover(function () {
+        $(this).find("img").toggle();
+    })
+    /*教务管理开始*/
+    $(".eduM_box_ul li").each(function (index, element) {
+        $(element).find('.eduM_box_ul_one').css("background", "url(/resources/portal/images/bottomNav/xscx" + index + ".png) no-repeat 50% 50% #171d8f")
+    })
+    $(".eduM_box2_ul li").each(function (index, element) {
+        $(element).find('.eduM_box_ul_one').css("background", "url(/resources/portal/images/bottomNav/xscxT" + index + ".png) no-repeat 50% 50% #171d8f")
+    })
+    $(".ad_system_t input:not(.btn_submit)").focus(function () {
+        $(this).css("border", "1px solid #9e1e2b");
+    })
+    $(".ad_system_t input").blur(function () {
+        $(this).css("border", "1px solid #ababab");
+    })
+    $(".switch_btn div").click(function () {
+        $(this).find("a").addClass("current").parents("div").siblings().find("a").removeClass("current");
+        var switch_num = $(this).index();
+        $(".ad_system_t li").eq(switch_num).addClass("current").siblings().removeClass("current");
+    })
+    /*教务管理结束*/
+    /*职业发展开始*/
+    $(".job_report_con_tit_t a").click(function () {
+        var num = $(this).parents("li").index();
+        if (num == 0) {
+            $(".box_obtain ul").eq(0).show().siblings("ul").hide();
+        }
+        if (num == 2) {
+            $(".box_obtain ul").eq(1).show().siblings("ul").hide();
+        }
+        $(this).addClass("current").parents("li").siblings("li").find("a").removeClass("current");
+    })
+    $(".StudentPlatform_ul li a").hover(function () {
+        $(this).find("img").toggle();
+    })
+
+
+    /*职业发展结束*/
+    /*学生平台开始*/
+    $(".policy_ul li a").hover(function () {
+        $(this).find("img").toggle();
+    })
+    $(".company_service_list li .toggle_pic").hover(function () {
+        $(this).find("img").toggle();
+    })
+    /*推荐书目动画*/
+    $(".recommend_book_list ul li a").hover(function () {
+        $(this).find(".read_demail").stop().animate({ "bottom": 0 }, 100);
+    }, function () {
+        $(this).find(".read_demail").stop().animate({ "bottom": -224 }, 100);
+    })
+
+    /*推荐书目动画*/
+
+
+    /*推荐书目动画2*/
+    $(".div2_l").hover(function () {//alert(1)
+        $(this).find(".read_demail").stop().animate({ "bottom": 0 }, 500);
+    }, function () {
+        $(this).find(".read_demail").stop().animate({ "bottom": 345 }, 500);
+    })
+
+    /*学生平台结束*/
+    /*就业报告开始*/
+    $(".job_noPic a").hover(function () {
+        $(this).find("img").toggle();
+    })
+    /*就业报告结束*/
+    /*关于saif-saif大事记开始*/
+    /*轮播图开始*/
+
+    /*声明变量组*/
+    var saif_time_axis = $(".saif_time_axis");
+    var saif_time_axislis = $(".saif_time_axis ul li");
+    var saif_time_axisul = $(".saif_time_axis ul");
+    var $saif_time_axis_key = 0;  /*控制图片的播放张数*/
+    /*右侧按钮*/
+    $(".saif_time_axis_right").on("click", function () {
+
+        $saif_time_axis_key++;
+        if ($saif_time_axis_key > 0) {
+            $saif_time_axis_key = 0
+            saif_time_axisul.css("right", "0");
+        } else {
+            saif_time_axis_play();
+        }
+    })
+    $(".saif_time_axis_right1").on("click", function () {
+
+        $saif_time_axis_key++;
+        if ($saif_time_axis_key >= 0) {
+            $saif_time_axis_key = 0
+            saif_time_axisul.stop().animate({ "right": "52px" }, 500);
+        } else {
+            saif_time_axis_playy();
+        }
+    })
+    /*左侧按钮*/
+    $(".saif_time_axis_left").on("click", function () {
+        $saif_time_axis_key--;
+        if ($saif_time_axis_key < -(saif_time_axislis.length - 8)) {
+            $saif_time_axis_key = -2;
+            saif_time_axisul.css("right", -((saif_time_axislis.length - 8) * 110));
+
+        } else {
+            saif_time_axis_play();
+        }
+
+    })
+
+    $(".saif_time_axis_left1").on("click", function () {
+        $saif_time_axis_key--;
+        if ($saif_time_axis_key <= -(saif_time_axislis.length - 7)) {
+            $saif_time_axis_key = -1;
+            /* saif_time_axisul.stop().animate({"right":-((saif_time_axislis.length-7)*(110-52))},500);*/
+
+        } else {
+            saif_time_axis_playy();
+        }
+
+    })
+    /*播放模块开始*/
+    function saif_time_axis_play() {
+
+        saif_time_axisul.stop().animate({ "right": $saif_time_axis_key * 110 }, 500);
+    }
+    function saif_time_axis_playy() {
+
+        saif_time_axisul.stop().animate({ "right": $saif_time_axis_key * 110 - 52 }, 500);
+    }
+
+    $(".saif_time_axis_arrow a").hover(function () {
+        $(this).find("img").toggle();
+    })
+    $(".saif_time_axis_banner li a").click(function () {
+        $(this).addClass("current").parents("li").siblings().find("a").removeClass('current');
+    })
+    $(".saif_time_axis_banner").width(saif_time_axislis.length * 110);
+    /*轮播图结束*/
+    /* $(".verticalLine").height($(".saif_time_axis_banner_explain_ul").height());*/
+    /*$(".saif_time_axis_banner_explain").height($(".saif_time_axis_banner_explain_ul").height());*/
+    $(".saif_time_axis_banner_explain_ul li .saif_time_axis_explainBox:last-child").css({ "border-bottom": "0", "margin-bottom": "0" });
+    $(".aacsb_explain li:last-child").css({ "border-bottom": "0", "margin-bottom": "162px" });
+    if ($(".events_time_axis_banner li a").hasClass("current")) {
+        $(".events_time_axis_banner li a.current").parents("li").find(".bl_tri").addClass("current").parents("li").siblings().find(".bl_tri").removeClass("current");
+        $(".events_time_axis_banner li a.current").find("img").css("display", "none");
+        $(".events_time_axis_banner li a.current").find(".quanquan_red").css("display", "inline-block");
+    }
+    $(".events_time_axis_banner li a").click(function (event) {
+        $(this).parents("li").find(".bl_tri").addClass("current").parents("li").siblings().find(".bl_tri").removeClass("current");
+        $(this).addClass("current").parents("li").siblings().find("a").removeClass("current");
+        $(this).parents("li").siblings().find("img").css("display", "inline-block");
+        $(this).parents("li").siblings().find(".quanquan_red").css("display", "none");
+        var abSa_numT = $(this).parents("li").index();
+        $("#saif_axis_box .box_of_time").eq(abSa_numT).addClass("current").siblings().removeClass("current");
+    });
+    $(".events_time_axis_banner li a").hover(function () {
+        if (!$(this).hasClass("current")) {
+            $(this).find("img").toggle();
+        }
+    })
+    $(".saif_bg_line").width($(".events_time_axis_banner").width());
+    $(".events_time_axis_banner li").width($(".saif_time_axis_arrow1").width() / 8);
+    $(".gc_list li:last-child").css("margin-right", "0");
+    /*关于saif-saif大事记结束*/
+
+    $('.joinSaif_titLi4 >div.clearfix').on('click', function () {
+        $(this).find(".joinSaif_play img").toggle();
+        // $(this).parents("li").find('.joinSaif_titLi_in_ex').slideToggle();
+
+        $(this).parents("li").find(".joinSaif_titLi_in_ex").slideToggle();
+        $(this).parents("li").siblings().find(".joinSaif_titLi_in_ex").slideUp();
+        $(this).parents("li").siblings().find(".saif_play_jian").css("display", "none");
+        $(this).parents("li").siblings().find(".saif_play_jia").css("display", "block");
+        var length_font = $(this).parents("li").find(".length_font").width() / 2 + 13;
+        $(this).parents("li").find(".top_zhi").css("left", length_font);
+
+    })
+    var li_innerL = $(".joinSaif_lastLi").find(".joinSaif_titLi_in_ex").height();
+    $(".sp_mab").css("margin-bottom", li_innerL);
+    $(".joinSaif_titLi li").each(function (index, element) {
+        $(element).css("z-index", 10000 - index);
+    })
+    /*关于saif聚合页开始*/
+    if ($(".trendAndRep_tit a").hasClass("current")) {
+        var trendAndRep_bynL1 = $(".trendAndRep_tit .current").width() / 2 - 7;
+        $(".trendAndRep_tit .current").find(".trendAndRep_byn").css("left", trendAndRep_bynL1);
+    }
+    $(".trendAndRep_tit a").click(function () {
+        $(this).find(".trendAndRep_byn").toggle();
+        $(this).siblings().find(".trendAndRep_byn").css("display", "none");
+        var trendAndRep_bynL = $(this).width() / 2 - 7;
+        $(this).find(".trendAndRep_byn").css("left", trendAndRep_bynL);
+    })
+    /*关于saif聚合页结束*/
+    /*论文著作开始*/
+    $(".btn_box a").hover(function () {
+        $(this).addClass("current");
+        $(this).parents("li").siblings().find("a").removeClass("current");
+        /* $(this).siblings(".rular").css("border-bottom","0");
+         $(this).parents("li").siblings().find(".rular").css("border-bottom","1px solid #dadada");*/
+    })
+    if ($(".btn_box a").hasClass("current")) {
+        $(".btn_box .current").siblings(".rular").css("border-bottom", "0");
+        $(".btn_box .current").parents("li").siblings().find(".rular").css("border-bottom", "1px solid #dadada");
+    }
+    $(".btn_box a").hover(function () {
+        var btn_box_num = $(this).parents("li").index();
+        $(".pub_r_box ul").eq(btn_box_num).addClass("current").siblings().removeClass("current");
+        if ($(".btn_box a").hasClass("current")) {
+            $(".btn_box .current").siblings(".rular").css("border-bottom", "0");
+            $(".btn_box .current").parents("li").siblings().find(".rular").css("border-bottom", "1px solid #dadada");
+        }
+    })
+    /*论文著作结束*/
+    /*教授研究开始*/
+    $(".pro_science_fruit_list li:nth-child(3n)").css("margin-right", "0");
+    $(".maybe_num li a").click(function () {
+        var num = $(this).parents("li").index() / 2;
+        $('.maybe_box .maybe_hide').eq(num).show().siblings().hide();
+    })
+    /*教授研究结束*/
+    /*教授团队开始,*/
+    /*指针自适应宽度开始*/
+    if ($(".pro_per_art_two li a").hasClass("current")) {
+        var pro_wei = $(".pro_per_art_two li a.current").width();
+        $(".pro_per_art_two li a.current").find(".sign_red").css("left", pro_wei / 2 - 10);
+        $(".pro_per_art_two li a.current").find(".sign_red").css("display", "block");
+        $(".pro_per_art_two li a.current").parents("li").siblings().find(".sign_red").css("display", "none");
+    }
+    $(".pro_per_art_two li a").click(function () {
+        $(this).addClass("current").parents("li").siblings().find("a").removeClass("current");
+        if ($(".pro_per_art_two li a").hasClass("current")) {
+            var pro_wei = $(".pro_per_art_two li a.current").width();
+            $(".pro_per_art_two li a.current").find(".sign_red").css("left", pro_wei / 2 - 11);
+            $(".pro_per_art_two li a.current").find(".sign_red").css("display", "block");
+            $(".pro_per_art_two li a.current").parents("li").siblings().find(".sign_red").css("display", "none");
+        }
+    })
+    /*指针自适应宽度结束*/
+    /*教授团队结束*/
+    /*教授研究详情开始*/
+    for (var i = 0; i < $(".opinion_rep .fruit_con").length; i++) {
+        $(".scr_bott em").append($("<i></i>"));
+    }
+    $(".scr_bott em i").click(function () {
+        $(this).addClass("current").siblings().removeClass("current");
+        if ($(".scr_bott em i").hasClass("current")) {
+            var scr_bottom_num = $(".scr_bott em .current").index();
+            $(".opinion_rep .fruit_con").eq(scr_bottom_num).addClass("current").siblings().removeClass("current");
+        }
+    })
+    $(".scr_bott em i:first").attr("class", "current");
+    if ($(".scr_bott em i").hasClass("current")) {
+        var scr_bottom_num = $(".scr_bott em .current").index();
+        $(".opinion_rep .fruit_con").eq(scr_bottom_num).addClass("current").siblings().removeClass("current");
+    }
+    $(".pro_switch").click(function () {
+        $(this).find("div").toggle();
+        $(this).parents("li").find(".pro_mien_page_p").toggle();
+        $(this).parents("li").find(".btn_more_box").toggle();
+    })
+    /*教授研究详情结束*/
+    /*教授研究聚合页开始*/
+    $(".pro_find_letters li a").click(function () {
+        $(this).addClass("current").parents("li").siblings().find("a").removeClass("current");
+    })
+    $(".style_pro_find li a").click(function () {
+        $(this).addClass("current").parents("li").siblings().find("a").removeClass("current");
+    })
+    $(".pro_name_list li a").click(function () {
+        $(this).addClass("current").parents("li").siblings().find("a").removeClass("current");
+    })
+    $(".active_calendar_top li a").hover(function () {
+        $(this).parents("li").addClass("current").siblings().removeClass("current");
+        var num = $(this).parents("li").index();
+        $(".change_cal_act").eq(num).show().siblings(".change_cal_act").hide();
+
+    })
+    $(".new_list_pro li:nth-child(2n+1)").css("background", "none");
+    $(".new_list_pro li:nth-child(2n+1):not(.havePic)").css({ "padding-left": "19px", "width": "420px" });
+    $(".new_list_pro li:not(.havePic)").css("line-height", "60px");
+    /*教授研究聚合页结束*/
+    /*校友新闻开始*/
+    $(".sp_sub_mod").hover(function () {
+        $(this).find("img").toggle();
+    })
+    /*校友新闻开始*/
+    /*落户流程开始*/
+    $(".y_line1").height($(".set_flow_list1").height());
+    $(".y_line2").height($(".set_flow_list2").height() - 20);
+    $(".y_line4").height($(".threeAFour").height() + 29);
+    $(".y_line5").height($(".set_flow_list5").height());
+    $(".y_line6").height($(".set_flow_list6").height());
+    $(".y_line7").height($(".set_flow_list7").height());
+    $(".y_line8").height($(".set_flow_list8").height());
+    /*落户流程结束*/
+    /*校友关系毕业班级开始*/
+    $(".gc_list li a").click(function () {
+        $(this).addClass('current').parents("li").siblings().find("a").removeClass("current");
+        $(this).find(".little_tri_box").addClass('current').parents("li").siblings().find(".little_tri_box").removeClass("current");
+        var gc_num = $(this).parents("li").index();
+        $(".gc_list_box>li").eq(gc_num).addClass("current").siblings().removeClass("current");
+    })
+    /*校友关系毕业班级结束*/
+    /*活动论坛开始*/
+    /*轮播图开始*/
+    /*声明变量组*/
+    var communication_act = $(".communication_act");
+    var communication_act_bannerlis = $(".communication_act_banner li");
+    var communication_act_bannerul = $(".communication_act_banner");
+    var $communication_act_key = 0;  /*控制图片的播放张数*/
+    var $communication_act_circle = 0; /*控制小圆点*/
+
+    communication_act_bannerlis.width(622);  //把宽度给 li
+    /* 克隆第一个*/
+    $(".communication_act_banner").append($(".communication_act_banner li:first").clone(true));
+    /*生成ol 小圆点*/
+    communication_act.append($("<ol></ol>"));
+    for (var i = 0; i < communication_act_bannerlis.length; i++) {
+        $(".communication_act ol").append($("<li></li>"));
+    }
+    $(".communication_act ol li:first").attr("class", "current");   //第一个里是current
+
+
+    /*点击小点实现轮播*/
+    $(".communication_act ol li").on("click", function () {
+        $(this).addClass("current").siblings().removeClass();
+        var communication_act_olNum = $(this).index();
+        $(".communicate_banner_explainUl_act li").eq(communication_act_olNum).addClass('current').siblings().removeClass("current");
+        $communication_act_key = communication_act_olNum;
+        communication_act_play();
+    })
+    /*播放模块开始*/
+    function communication_act_play() {
+        communication_act_bannerul.stop().animate({ "left": -$communication_act_key * 622 }, 500);
+    }
+
+    function communication_act_circle() {
+        $(".communication_act ol li").eq($communication_act_circle).addClass("current").siblings().removeClass();
+    }
+
+    //定时器
+    timer08 = setInterval(function () {
+        $communication_act_key++;
+        if ($communication_act_key > communication_act_bannerlis.length) {
+            $communication_act_key = 1;
+            communication_act_bannerul.css("left", 0);
+        }
+        communication_act_play();
+        $communication_act_circle++;
+        $communication_act_circle > $(".communication_act ol li").length - 1 ? $communication_act_circle = 0 : $communication_act_circle;
+        communication_act_circle();
+        $(".communicate_banner_explainUl_act li").eq($communication_act_circle).fadeIn().siblings().fadeOut();
+    }, 4000);
+
+
+
+    /*鼠标滑过banner定时器开启*/
+    $('.communication_act').hover(function () {
+        clearInterval(timer08);
+
+    }, function () {
+
+        timer08 = setInterval(function () {
+            $communication_act_key++;
+            if ($communication_act_key > communication_act_bannerlis.length) {
+                $communication_act_key = 1;
+                communication_act_bannerul.css("left", 0);
+            }
+            communication_act_play();
+            $communication_act_circle++;
+            $communication_act_circle > $(".communication_act ol li").length - 1 ? $communication_act_circle = 0 : $communication_act_circle;
+            communication_act_circle();
+            $(".communicate_banner_explainUl_act li").eq($communication_act_circle).fadeIn().siblings().fadeOut();
+        }, 4000);
+    })
+    /*国际交流轮播图结束*/
+    if ($(".topicActivity li").hasClass("current")) {
+        var topicW = $(".topicActivity li.current").width();
+        $(".topicActivity li.current").find(".line_p_a").width(topicW);
+    }
+    $(".topicActivity li").click(function () {
+        $(this).addClass("current").siblings().removeClass("current");
+        var topicW = $(this).width();
+        $(this).find(".line_p_a").width(topicW);
+    })
+    $(".honoredGuest li").hover(function (event) {
+        $(this).addClass("current").siblings().removeClass("current");
+        var l = $(this).position().left;
+        var r = 880 - l;
+        if (l < r) {
+            $(".honoredGuest li.current .guest_show").css("left", "202px");
+            $(".honoredGuest li.current .guest_show .tri_l").css("left", "-20px");
+        } else {
+            $(".honoredGuest li.current .guest_show").css("right", "202px");
+            $(".honoredGuest li.current .guest_show .tri_l").css("right", "-20px");
+            $(".honoredGuest li.current .guest_show .tri_l").addClass("tri_r");
+        }
+    }, function () {
+        $(this).removeClass("current");
+    })
+    /*活动论坛结束*/
+    /*论坛活动banner开始*/
+    /*轮播图开始*/
+    /*声明变量组*/
+    var scroll_paul = $(".scroll_paul");
+    var scroll_paullis = $(".scroll_paul ul li");
+    var scroll_paulul = $(".scroll_paul ul");
+    var $key_paul = 0;  /*控制图片的播放张数*/
+    var $circle_paul = 0; /*控制小圆点*/
+
+    var scroll_paulW = scroll_paullis.width();  //获取 li宽度
+    /* 克隆第一个*/
+    $(".scroll_paul ul").append($(".scroll_paul ul li:first").clone(true));
+    /*生成ol 小圆点*/
+    scroll_paul.append($("<ol></ol>"));
+    for (var i = 0; i < scroll_paullis.length; i++) {
+        $(".scroll_paul ol").append($("<li></li>"));
+    }
+    $(".scroll_paul ol li:first").attr("class", "current");   //第一个里是current
+
+
+    /*点击小点实现轮播*/
+    $(".scroll_paul ol li").on("click", function () {
+        $(this).addClass("current").siblings().removeClass();
+        var communication_olNum_inn = $(this).index();
+        /*$(".mf_ul li").eq(communication_olNum_in).addClass('current').siblings().removeClass("current");*/
+        $key_paul = communication_olNum_inn;
+        $circle_paul = communication_olNum_inn;
+        play_paul();
+
+    })
+
+    /*播放模块开始*/
+    function play_paul() {
+        scroll_paulul.stop().animate({ "left": -$key_paul * scroll_paulW }, 500);
+    }
+    function paul_o_play() {
+        $(".scroll_paul ol li").eq($circle_paul).addClass("current").siblings().removeClass();
+    }
+    //定时器
+    timer09 = setInterval(function () {
+        $key_paul++;
+        if ($key_paul > scroll_paullis.length) {
+            $key_paul = 1;
+            scroll_paulul.css("left", 0);
+        }
+        play_paul();
+        $circle_paul++;
+        $circle_paul > $(".scroll_paul ol li").length - 1 ? $circle_paul = 0 : $circle_paul;
+        paul_o_play();
+
+    }, 4000);
+
+
+    /*屏幕缩放的时候*/
+    $(window).resize(function () {
+        /* 当屏幕缩放的时候，需要从新获取屏幕的宽度*/
+        scroll_paulW = scroll_paullis.width(); // 获取li的宽度
+        play_paul();
+    })
+    /*鼠标滑过相应三角，相应三角变色*/
+    $('.arrow_paul_left').hover(function () {
+        $('.arrow_paul_left').addClass("arrow_paul_left1");
+    }, function () {
+        $('.arrow_paul_left').removeClass("arrow_paul_left1");
+    }, 1000);
+
+    $('.arrow_paul_right').hover(function () {
+        $('.arrow_paul_right').addClass("arrow_paul_right1");
+
+    }, function () {
+        $('.arrow_paul_right').removeClass("arrow_paul_right1");
+    }, 1000);
+
+
+    /*鼠标滑过banner定时器开启和关闭并且显示左右三角*/
+    $('.scroll_paul').hover(function () {
+        clearInterval(timer09);
+    }, function () {
+        timer09 = setInterval(function () {
+            $key_paul++;
+            if ($key_paul > scroll_paullis.length) {
+                $key_paul = 1;
+                scroll_paulul.css("left", 0);
+            }
+            play_paul();
+            $circle_paul++;
+            $circle_paul > $(".scroll_paul ol li").length - 1 ? $circle_paul = 0 : $circle_paul;
+            paul_o_play();
+
+        }, 4000);
+    })
+    /*轮播图结束*/
+    /*论坛活动banner结束*/
+    // $("body").click(function(){
+
+    //     $(".calAdd .calendar_paul").removeClass("current");
+    // })
+    $(".pp_month_box").click(function () {
+        act_flag = true;
+        //$(".calAdd .calendar_paul").toggleClass("current");
+        //alert(act_flag);&&act_flag==false
+        if ($(".calAdd .calendar_paul").hasClass('current')) {
+            //$(".calAdd .calendar_paul").removeClass("current");
+        } else {
+
+            $(".calAdd .calendar_paul").addClass("current");
+        }
+
+    })
+
+    $(".transversae_tit li").click(function () {
+        var num = $(this).index();
+        $('.transversae ul').eq(num).addClass("current").siblings().removeClass("current");
+    })
+
+    if ($(".saif_time_axis_banner_explain").hasClass("current")) {
+        $(".saif_time_axis_banner_explain.current").find(".verticalLine").height($(".saif_time_axis_banner_explain.current .saif_time_axis_banner_explain_ul").height() + 52);
+
+
+    }
+    $(".saif_time_axis_banner li a").click(function () {
+        var st_num = $(this).parents("li").index();
+        $(".saif_time_axis_banner_explainBox .saif_time_axis_banner_explain").eq(st_num).addClass("saif_sign").siblings(".saif_time_axis_banner_explain").removeClass("saif_sign");
+        $(".saif_time_axis_banner_explainBox .saif_time_axis_banner_explain").eq(st_num).addClass("current").siblings(".saif_time_axis_banner_explain").removeClass("current");
+        if ($(".saif_time_axis_banner_explainBox .saif_time_axis_banner_explain").hasClass("saif_sign")) {
+            $("saif_time_axis_banner_explainBox .saif_time_axis_banner_explain.saif_sign").height($(".saif_sign .saif_time_axis_banner_explain_ul").height())
+            $(".saif_time_axis_banner_explainBox .saif_sign .verticalLine").height($(".saif_time_axis_banner_explainBox .saif_sign .saif_time_axis_banner_explain_ul").height() + 52);
+        }
+        clickN = 0;
+        liH = 0;
+    })
+
+    /*saif大事记上下翻页开始*/
+
+    var clickN = 0;
+    var liH = 0;
+    $(".turnP_b").click(function () {
+        if ($(".saif_time_axis_banner_explain.current").height() > 900) {
+            liH = $(".current .saif_time_axis_banner_explain_ul li").eq(clickN + 1).position().top;
+            pagePlay();
+            pagePlay1();
+            clickN++;
+            if (clickN >= $(".current .saif_time_axis_banner_explain_ul li").length - 1) {
+                clickN = 1;
+            }
+        }
+    })
+    $(".turnP_t").click(function () {
+        if ($(".saif_time_axis_banner_explain.current").height() > 900) {
+            liH = $(".current .saif_time_axis_banner_explain_ul li").eq(clickN).position().top;
+            pagePlay();
+            clickN--;
+            if (clickN < 0) {
+                clickN = 0;
+            }
+        }
+    })
+    function pagePlay() {
+        $(".saif_time_axis_banner_explain.current").animate({ "top": -liH }, 500);
+
+    }
+    function pagePlay1() {
+        //$(".turnP_b").animate({"top":-liH},500);
+
+    }
+
+
+    /*saif大事记上下翻页结束*/
+
+    /*mf轮播图开始*/
+    /*声明变量组*/
+    var mf_banner_in = $(".mf_banner_in");
+    var mf_lis = $(".mf_ul li");
+    var mf_ul = $(".mf_ul");
+    var $mf_key = 0;  /*控制图片的播放张数*/
+    var $mf_circle = 0; /*控制小圆点*/
+
+    var mf_lisW = mf_lis.width();  //把宽度给 li
+    /* 克隆第一个*/
+    $(".mf_ul").append($(".mf_ul li:first").clone(true));
+    /*生成ol 小圆点*/
+    mf_banner_in.append($("<ol></ol>"));
+    for (var i = 0; i < mf_lis.length; i++) {
+        $(".mf_banner_in ol").append($("<li></li>"));
+    }
+    $(".mf_banner_in ol li:first").attr("class", "current");   //第一个里是current
+
+
+    /*点击小点实现轮播*/
+    $(".mf_banner_in ol li").on("click", function () {
+        $(this).addClass("current").siblings().removeClass();
+        var communication_olNum_in = $(this).index();
+        /*$(".mf_ul li").eq(communication_olNum_in).addClass('current').siblings().removeClass("current");*/
+        $mf_key = communication_olNum_in;
+        $mf_circle = communication_olNum_in;
+        mf_play();
+
+    })
+    /*播放模块开始*/
+    function mf_play() {
+        mf_ul.stop().animate({ "left": -$mf_key * mf_lisW }, 500);
+    }
+
+    function mf_circle_play() {
+        $(".mf_banner_in ol li").eq($mf_circle).addClass("current").siblings().removeClass();
+    }
+
+    //定时器
+    timer10 = setInterval(function () {
+        $mf_key++;
+        if ($mf_key > mf_lis.length) {
+            $mf_key = 1;
+            mf_ul.css("left", 0);
+        }
+        mf_play();
+        $mf_circle++;
+        $mf_circle > $(".mf_banner_in ol li").length - 1 ? $mf_circle = 0 : $mf_circle;
+        mf_circle_play();
+        /*$(".mf_ul li").eq($mf_circle).fadeIn().siblings().fadeOut();*/
+    }, 4000);
+
+
+
+    /*鼠标滑过banner定时器开启*/
+    $('.mf_banner_in').hover(function () {
+        clearInterval(timer10);
+
+    }, function () {
+
+        timer10 = setInterval(function () {
+            $mf_key++;
+            if ($mf_key > mf_lis.length) {
+                $mf_key = 1;
+                mf_ul.css("left", 0);
+            }
+            mf_play();
+            $mf_circle++;
+            $mf_circle > $(".mf_banner_in ol li").length - 1 ? $mf_circle = 0 : $mf_circle;
+            mf_circle_play();
+            /*$(".mf_ul li").eq($mf_circle).fadeIn().siblings().fadeOut();*/
+        }, 4000);
+    })
+    var olW = $(".mf_banner_in ol").width();
+    $(".mf_banner_in ol").css("margin-left", -olW / 2);
+    /*mf轮播图结束*/
+    /*mf二年级开始*/
+    /*mf轮播图开始*/
+    /*声明变量组*/
+    var twoL = $(".twoL");
+    var twoL_lis = $(".twoL_ul li");
+    var twoL_ul = $(".twoL_ul");
+    var $mfT_key = 0;  /*控制图片的播放张数*/
+    var $mfT_circle = 0; /*控制小圆点*/
+
+    var mfT_lisW = twoL_lis.width();  //把宽度给 li
+    /* 克隆第一个*/
+    $(".twoL_ul").append($(".twoL_ul li:first").clone(true));
+    /*生成ol 小圆点*/
+    twoL.append($("<ol></ol>"));
+    for (var i = 0; i < twoL_lis.length; i++) {
+        $(".twoL ol").append($("<li></li>"));
+    }
+    $(".twoL ol li:first").attr("class", "current");   //第一个里是current
+
+
+    /*点击小点实现轮播*/
+    $(".twoL ol li").on("click", function () {
+        $(this).addClass("current").siblings().removeClass();
+        var communication_olNum_in = $(this).index();
+        /*$(".twoL_ul li").eq(communication_olNum_in).addClass('current').siblings().removeClass("current");*/
+        $mfT_key = communication_olNum_in;
+        $mfT_circle = communication_olNum_in;
+        mfT_play();
+
+    })
+    /*播放模块开始*/
+    function mfT_play() {
+        twoL_ul.stop().animate({ "left": -$mfT_key * mfT_lisW }, 500);
+    }
+
+    function mfT_circle_play() {
+        $(".twoL ol li").eq($mfT_circle).addClass("current").siblings().removeClass();
+    }
+
+    //定时器
+    timer11 = setInterval(function () {
+        $mfT_key++;
+        if ($mfT_key > twoL_lis.length) {
+            $mfT_key = 1;
+            twoL_ul.css("left", 0);
+        }
+        mfT_play();
+        $mfT_circle++;
+        $mfT_circle > $(".twoL ol li").length - 1 ? $mfT_circle = 0 : $mfT_circle;
+        mfT_circle_play();
+        /*$(".twoL_ul li").eq($mfT_circle).fadeIn().siblings().fadeOut();*/
+    }, 4000);
+    /*鼠标滑过banner定时器开启*/
+    $('.twoL').hover(function () {
+        clearInterval(timer11);
+
+    }, function () {
+
+        timer11 = setInterval(function () {
+            $mfT_key++;
+            if ($mfT_key > twoL_lis.length) {
+                $mfT_key = 1;
+                twoL_ul.css("left", 0);
+            }
+            mfT_play();
+            $mfT_circle++;
+            $mfT_circle > $(".twoL ol li").length - 1 ? $mfT_circle = 0 : $mfT_circle;
+            mfT_circle_play();
+            /*$(".twoL_ul li").eq($mfT_circle).fadeIn().siblings().fadeOut();*/
+        }, 4000);
+    })
+    var olW = $(".twoL ol").width();
+    $(".twoL ol").css("margin-left", -olW / 2);
+    /*mf轮播图结束*/
+    $(".line1").height($(".mf_one p").height() + 94);
+    $(".line2").height($(".sign_ul").height() - 12);
+    $(".line3").height($(".mf_three p").height() + 36);
+    /*mf二年级结束*/
+    /*行动学习开始*/
+    $(".actionLearn_font").hover(function () {
+        $(this).find(".actionLearn_num").css("transform", "rotate(360deg)");
+    }, function () {
+        $(this).find(".actionLearn_num").css("transform", "rotate(-360deg)");
+    })
+    /*行动学习结束*/
+    /*学生构成开始*/
+    /*学生构成时间轴开始*/
+    var school_time_base = $(".school_time_base")
+    var school_time_base_lis = $(".school_time_base li")
+    var $mfK = 0;
+    /*右侧按钮*/
+    $(".mf-right").on("click", function () {
+
+        $mfK++;
+        if ($mfK > school_time_base_lis.length - 7) {
+            $mfK = school_time_base_lis.length - 7;
+
+        }
+        mf_bt_play();
+
+    })
+    /*左侧按钮*/
+    $(".mf-left").on("click", function () {
+        $mfK--;
+        if ($mfK < 0) {
+            $mfK = 0;
+            school_time_base.css("left", "0");
+        }
+        mf_bt_play();
+
+    })
+
+    /*播放模块开始*/
+    function mf_bt_play() {
+        school_time_base.stop().animate({ "left": -$mfK * 95 }, 500);
+    }
+
+    /*鼠标滑过相应三角，相应三角变色*/
+    $('.mf-left').hover(function () {
+        $(this).find("img").toggle();
+    });
+
+    $('.mf-right').hover(function () {
+        $(this).find("img").toggle();
+
+    });
+
+
+    $(".school_time_base li").click(function () {
+        var num = $(this).index();
+        $(this).find("a").addClass("current").parents("li").siblings().find("a").removeClass("current");
+        $(".statistics_ul>li").eq(num).addClass("current").siblings().removeClass("current");
+    })
+    /*学生构成时间轴结束*/
+    /*学生构成结束*/
+    /*照片与视频开始*/
+    /*照片时间轴开始*/
+    var photo_timeB_ul = $(".photo_timeB_ul")
+    var photo_timeB_ul_lis = $(".photo_timeB_ul li")
+    var $mfp = 0;
+    /*右侧按钮*/
+    $(".right_photo").on("click", function () {
+
+        $mfp++;
+        if ($mfp > photo_timeB_ul_lis.length - 3) {
+            $mfp = photo_timeB_ul_lis.length - 3;
+
+        }
+        mf_photo_play();
+
+    })
+    /*左侧按钮*/
+    $(".left_photo").on("click", function () {
+        $mfp--;
+        if ($mfp < 0) {
+            $mfp = 0;
+            photo_timeB_ul.css("left", "0");
+        }
+        mf_photo_play();
+
+    })
+
+    /*播放模块开始*/
+    function mf_photo_play() {
+        photo_timeB_ul.stop().animate({ "left": -$mfp * 80 }, 500);
+    }
+
+    /*鼠标滑过相应三角，相应三角变色*/
+
+    $(".left_photo").hover(function () {
+        $(this).find("img").toggle();
+    })
+    $(".right_photo").hover(function () {
+        $(this).find("img").toggle();
+    })
+
+    /*学生构成时间轴结束*/
+    /*照片与视频结束*/
+    /*资料下载开始*/
+    $(".mf_donald_list li a").hover(function () {
+        $(this).find("img").toggle();
+    })
+    /*资料下载结束*/
+    /*phd聚合页项目简介轮播图开始*/
+    /*声明变量组*/
+    var projectIntroduction_banner_in = $(".projectIntroduction_banner_in");
+    var projectIntroduction_banner_lis = $(".projectIntroduction_banner_ul li");
+    var projectIntroduction_banner_ul = $(".projectIntroduction_banner_ul");
+    var $projectIntroduction_banner_key = 0;  /*控制图片的播放张数*/
+    var $projectIntroduction_banner_circle = 0; /*控制小圆点*/
+
+    var W_phd = projectIntroduction_banner_lis.width();  //把宽度给 li
+    /* 克隆第一个*/
+    $(".projectIntroduction_banner_ul").append($(".projectIntroduction_banner_ul li:first").clone(true));
+    /*生成ol 小圆点*/
+    projectIntroduction_banner_in.append($("<ol></ol>"));
+    for (var i = 0; i < projectIntroduction_banner_lis.length; i++) {
+        $(".projectIntroduction_banner_in ol").append($("<li></li>"));
+    }
+    $(".projectIntroduction_banner_in ol li:first").attr("class", "current");   //第一个里是current
+
+
+    /*点击小点实现轮播*/
+    $(".projectIntroduction_banner_in ol li").on("click", function () {
+        $(this).addClass("current").siblings().removeClass();
+        var communication_olNum_in = $(this).index();
+        $(".communicate_banner_explainUl_in li").eq(communication_olNum_in).addClass('current').siblings().removeClass("current");
+        $projectIntroduction_banner_key = communication_olNum_in;
+        $projectIntroduction_banner_circle = communication_olNum_in;
+        communication_play_in();
+
+    })
+    /*播放模块开始*/
+    function communication_play_in() {
+        projectIntroduction_banner_ul.stop().animate({ "left": -$projectIntroduction_banner_key * W_phd }, 500);
+    }
+
+    function communication_circle_in() {
+        $(".projectIntroduction_banner_in ol li").eq($projectIntroduction_banner_circle).addClass("current").siblings().removeClass();
+    }
+
+    //定时器
+    timer12 = setInterval(function () {
+        $projectIntroduction_banner_key++;
+        if ($projectIntroduction_banner_key > projectIntroduction_banner_lis.length) {
+            $projectIntroduction_banner_key = 1;
+            projectIntroduction_banner_ul.css("left", 0);
+        }
+        communication_play_in();
+        $projectIntroduction_banner_circle++;
+        $projectIntroduction_banner_circle > $(".projectIntroduction_banner_in ol li").length - 1 ? $projectIntroduction_banner_circle = 0 : $projectIntroduction_banner_circle;
+        communication_circle_in();
+        $(".communicate_banner_explainUl_in li").eq($projectIntroduction_banner_circle).fadeIn().siblings().fadeOut();
+    }, 4000);
+
+
+
+    /*鼠标滑过banner定时器开启*/
+    $('.projectIntroduction_banner_in').hover(function () {
+        clearInterval(timer12);
+
+    }, function () {
+
+        timer12 = setInterval(function () {
+            $projectIntroduction_banner_key++;
+            if ($projectIntroduction_banner_key > projectIntroduction_banner_lis.length) {
+                $projectIntroduction_banner_key = 1;
+                projectIntroduction_banner_ul.css("left", 0);
+            }
+            communication_play_in();
+            $projectIntroduction_banner_circle++;
+            $projectIntroduction_banner_circle > $(".projectIntroduction_banner_in ol li").length - 1 ? $projectIntroduction_banner_circle = 0 : $projectIntroduction_banner_circle;
+            communication_circle_in();
+            $(".communicate_banner_explainUl_in li").eq($projectIntroduction_banner_circle).fadeIn().siblings().fadeOut();
+        }, 4000);
+    })
+
+    /*phd聚合页项目简介轮播图结束*/
+    $(".phd_c_tit>li").click(function () {
+        var num = $(this).index();
+        $(".phd_nA").eq(num).addClass("current").siblings().removeClass("current");
+    })
+    /*校友关系聚合页开始*/
+    $(".schoolfellow_big_box .schoolfellow_big_box_i").eq(0).find("li:last").css("margin-right", 0);
+    $(".schoolfellow_big_box .schoolfellow_big_box_i").eq(1).find("li:last").css("margin-right", 0);
+    $(".schoolfellow_big_box .schoolfellow_big_box_i").eq(2).find("li:last").css("margin-right", 0);
+    $(".hover_b li").click(function (event) {
+        var num = $(this).index();
+        $(".schoolfellow_big_box ul").eq(num).addClass('current').siblings("ul").removeClass("current");
+    });
+    /*校友关系聚合页结束*/
+    $(".distinguished_bottom_t2 li").click(function () {
+        var num = $(this).index();
+        $(".distinguished_bottom_t1 .distinguished_bottom_t").eq(num).addClass("current").siblings(".distinguished_bottom_t").removeClass("current");
+    })
+    $('.eduM_detail_btn').click(function () {
+        $(".special_eduM_detail_btn").show();
+    })
+    $(".pop_box_close").click(function () {
+        $(".special_eduM_detail_btn").hide();
+    })
+    /*判断左右高度开始*/
+    /*if($(".saifTrends_substance_r").height()>$(".saifTrends_substance_l").height()){
+        $(".saifTrends_substance_r").css("margin-bottom","500px");
+    }else{
+        $(".saifTrends_substance_l").css("margin-bottom","300px"); 
+    }*/
+    /*判断左右高度结束*/
+    $(".build_bottom").append($('<div class="build_bg"></div>'));
+    $(".top_build").append($('<div class="build_bg1"></div>'));
+    $(".build_bg").append($('<span></span>'));
+    $(".build_bg1").append($('<span></span>'));
+    /*建设中开始*/
+    $(".build_bottom").hover(function () {
+        $(this).find(".build_bg").addClass("current").end().siblings().find(".build_bg").removeClass("current");
+    }, function () {
+        $(this).find(".build_bg").removeClass("current");
+    })
+    $(".top_build").hover(function () {
+        $(this).find(".build_bg1").addClass("current").end().siblings().find(".build_bg1").removeClass("current");
+    }, function () {
+        $(this).find(".build_bg1").removeClass("current");
+    })
+    /*建设中结束*/
+
+    /*支持高金*/
+
+    $(".ul_time li").hover(function () {
+        var num = $(this).index();
+        $(this).addClass('current').siblings().removeClass('current');
+        $('.div2_juanzeng_list').eq(num).addClass('current').siblings().removeClass('current');
+    }, function () {
+        $(".incident_t").hide();
+    });
+
+    $(".ul_time li").hover(function () {//alert(1)
+        var num1 = $(this).index();
+        $(this).addClass('current').siblings().removeClass('current');
+        $('.div2').eq(num1).addClass('current').siblings().removeClass('current');
+    }, function () {
+        //$(".incident_t").hide();
+    });
+
+
+
+
+    $(".more_mingxie").click(function () {//alert(1)
+        $('.table2 tr').removeClass('hide');
+        $(this).hide();
+    })
+
+
+    $(".fitful-porgress-nav li").click(function () {
+        var div_li = $(".fitful-porgress-nav li");
+        $(this).addClass("on").siblings().removeClass("on");
+        $(this).addClass("color2").siblings().removeClass("color2");
+        var index = div_li.index(this);
+        $(".fitful-porgress-cons>div").eq(index).show().siblings().hide();
+    });
+
+    /*支持高金*/
+
+
+
+    $(function () {
+        //推荐阅读书目
+        $(".arr-r").click(function (event) {
+            play();
+        });
+
+        $('.arr-l').click(function () {
+            //先拼装再左移动                               
+            var temp = $('.focusin3 ul').prepend($('.focusin3 ul li').last());
+            $('.focusin3').css("margin-left", -77);
+            $('.focusin3').stop().animate({
+                "margin-left": 0
+            }, 500);
+
+        })
+
+        /*开始定时器*/
+
+        var time = setInterval(play, 5000);
+
+        function play() {
+
+            //先右移再拼装                          
+            $('.focusin3').stop().animate({
+                "margin-left": -77
+            }, 500, function () {
+                var temp = $('.focusin3 ul').append($('.focusin3 ul li').first());
+                $('.focusin3').css("margin-left", 0); //初始化marginleft
+            });
+        }
+
+        /*鼠标经过停止定时器*/
+        $(".focusin3").hover(function () {
+            clearInterval(time);
+            time = null;
+        }, function () { /* 鼠标离开 开启定时器*/
+            clearInterval(time);
+            time = setInterval(play, 5000);
+        });
+        //大赛案例轮播结束
+
+    });
+    $(function () {
+        //emba专题阅读
+        $(".focusin_box4 .arr-r").click(function (event) {//alert(1)
+            play();
+        });
+
+        $('.focusin_box4 .arr-l').click(function () {
+            //先拼装再左移动                               
+            var temp = $('.focusin4 ul').prepend($('.focusin4 ul li').last());
+            $('.focusin4').css("margin-left", -182);
+            $('.focusin4').stop().animate({
+                "margin-left": 0
+            }, 500);
+
+        })
+
+        /*开始定时器*/
+
+        var time = setInterval(play, 5000);
+
+        function play() {
+
+            //先右移再拼装                          
+            $('.focusin4').stop().animate({
+                "margin-left": -182
+            }, 500, function () {
+                var temp = $('.focusin4 ul').append($('.focusin4 ul li').first());
+                $('.focusin4').css("margin-left", 0); //初始化marginleft
+            });
+        }
+
+        /*鼠标经过停止定时器*/
+        $(".focusin4").hover(function () {
+            clearInterval(time);
+            time = null;
+        }, function () { /* 鼠标离开 开启定时器*/
+            clearInterval(time);
+            time = setInterval(play, 5000);
+        });
+        //大赛案例轮播结束
+
+    });
+    $(function () {
+        //dba专题阅读
+        $(".focusin_box5 .arr-r").click(function (event) {//alert(1)
+            play();
+        });
+
+        $('.focusin_box5 .arr-l').click(function () {
+            //先拼装再左移动                               
+            var temp = $('.focusin5 ul').prepend($('.focusin5 ul li').last());
+            $('.focusin5').css("margin-left", -182);
+            $('.focusin5').stop().animate({
+                "margin-left": 0
+            }, 500);
+
+        })
+
+        /*开始定时器*/
+
+        var time = setInterval(play, 5000);
+
+        function play() {
+
+            //先右移再拼装                          
+            $('.focusin5').stop().animate({
+                "margin-left": -182
+            }, 500, function () {
+                var temp = $('.focusin5 ul').append($('.focusin5 ul li').first());
+                $('.focusin5').css("margin-left", 0); //初始化marginleft
+            });
+        }
+
+        /*鼠标经过停止定时器*/
+        $(".focusin5").hover(function () {
+            clearInterval(time);
+            time = null;
+        }, function () { /* 鼠标离开 开启定时器*/
+            clearInterval(time);
+            time = setInterval(play, 5000);
+        });
+        //大赛案例轮播结束
+
+    });
+
+
+
+
+
+
+})

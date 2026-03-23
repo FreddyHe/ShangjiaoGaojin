@@ -76,6 +76,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { LayoutDashboard, FileText, PenTool, History, Settings, Sparkles, Database } from 'lucide-vue-next'
 import UserMenu from './UserMenu.vue'
+import { useAuth } from '@/composables/useAuth'
 
 interface SettingsType {
   system_name: string
@@ -84,19 +85,24 @@ interface SettingsType {
 }
 
 const route = useRoute()
+const auth = useAuth()
 const settings = ref<SettingsType>({
   system_name: '新闻稿智能体',
   copyright_text: '© 2024 Press Release Assistant'
 })
 
-const navs = [
+const allNavs = [
   { path: '/templates', label: '模板管理', icon: LayoutDashboard },
   { path: '/extract', label: '大纲提取', icon: FileText },
   { path: '/generate', label: '稿件生成', icon: PenTool },
   { path: '/knowledge', label: '信息库', icon: Database },
   { path: '/history', label: '历史记录', icon: History },
-  { path: '/settings', label: '系统设置', icon: Settings },
+  { path: '/settings', label: '系统设置', icon: Settings, adminOnly: true },
 ]
+
+const navs = computed(() => {
+  return allNavs.filter(nav => !nav.adminOnly || auth.isAdmin.value)
+})
 
 const isActive = (path: string) => {
   return route.path === path
@@ -104,7 +110,7 @@ const isActive = (path: string) => {
 
 const currentTitle = computed(() => {
   if (route.path === '/profile') return '个人中心'
-  const nav = navs.find(n => n.path === route.path)
+  const nav = allNavs.find(n => n.path === route.path)
   return nav ? nav.label : (settings.value.system_name || '新闻稿智能体')
 })
 

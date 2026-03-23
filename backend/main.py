@@ -4,9 +4,11 @@ import json
 from pathlib import Path
 from typing import List, Optional, Dict, Set, Tuple
 import re
-from fastapi import FastAPI, UploadFile, File, HTTPException, Form
+from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Depends, Header
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+import jwt
 from pydantic import BaseModel
 from openai import OpenAI
 from docx import Document
@@ -195,6 +197,68 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# --- Auth Configuration ---
+SECRET_KEY = "saif_secret_key_change_in_production"
+ALGORITHM = "HS256"
+security = HTTPBearer(auto_error=False)
+
+# Mock Users (username: (password, role))
+USERS_DB = {
+    "admin": ("admin", "admin"),
+    "user": ("user", "user")
+}
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str
+    role: str
+    username: str
+
+def create_access_token(data: dict) -> str:
+    to_encode = data.copy()
+    to_encode.update({"exp": time.time() + 24 * 3600}) # 24 hours expiry
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:
+    if not credentials:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    try:
+        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        role: str = payload.get("role")
+        if username is None or role is None:
+            raise HTTPException(status_code=401, detail="Invalid token payload")
+        return {"username": username, "role": role}
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=401, detail="Could not validate credentials")
+
+def require_admin(user: dict = Depends(get_current_user)) -> dict:
+    if user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return user
+
+@app.post("/api/auth/login", response_model=TokenResponse)
+def login(req: LoginRequest):
+    user_info = USERS_DB.get(req.username)
+    if not user_info or user_info[0] != req.password:
+        raise HTTPException(status_code=401, detail="Incorrect username or password")
+    
+    role = user_info[1]
+    access_token = create_access_token(data={"sub": req.username, "role": role})
+    return {"access_token": access_token, "token_type": "bearer", "role": role, "username": req.username}
+
+@app.get("/api/auth/sso/login")
+def sso_login_placeholder():
+    """预留的SSO接入入口"""
+    return {"message": "SSO integration endpoint placeholder"}
+
+# --- End Auth Configuration ---
+
 class TypeItem(BaseModel):
     id: str
     name: str
@@ -250,6 +314,20 @@ class TypeWithStats(TypeItem):
 
 class ClassifyRequest(BaseModel):
     texts: List[str]
+
+class ParseResponse(BaseModel):
+    texts: List[str]
+
+class ClassifyResponse(BaseModel):
+    type_id: str
+    type_name: str
+    texts: List[str]
+
+class ExtractOutlineRequest(BaseModel):
+    texts: List[str]
+    type_id: str
+    type_name: str
+    template_id: str = "default"
 
 class PersonMatchRequest(BaseModel):
     materials: str
@@ -862,7 +940,7 @@ async def sync_faculty_knowledge():
             # Step 1: Get all links sequentially (this is fast)
             for category, path in categories.items():
                 url = base_url + path
-                response = requests.get(url, headers=headers, timeout=10)
+                response = await asyncio.to_thread(requests.get, url, headers=headers, timeout=10)
                 response.raise_for_status()
                 
                 soup = BeautifulSoup(response.text, 'html.parser')
@@ -1291,7 +1369,7 @@ def toggle_favorite(type_id: str, template_id: str):
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     return {"ok": True, "is_favorite": meta["is_favorite"]}
 
-@app.delete("/api/outline/{type_id}/{template_id}")
+@app.delete("/api/outline/{type_id}/{template_id}", dependencies=[Depends(require_admin)])
 def delete_template(type_id: str, template_id: str):
     path = outline_path(type_id, template_id)
     if not path.exists():
@@ -1308,73 +1386,215 @@ def classify(req: ClassifyRequest):
     types = load_types()
     return classify_type_for_texts(req.texts, types)
 
-@app.post("/api/extract", response_model=Outline)
-async def extract(files: List[UploadFile] = File(...), template_id: Optional[str] = Form("default")):
+@app.post("/api/extract")
+async def extract(
+    files: Optional[List[UploadFile]] = File(None), 
+    urls: Optional[str] = Form(None)
+):
+    """
+    Step 1: Parse files and URLs, then classify the text type.
+    Streams progress and finally returns the texts and suggested type.
+    """
     ensure_dirs()
-    if not files or len(files) < 1:
-        raise HTTPException(status_code=400, detail="upload at least 1 file")
+    if (not files or len(files) == 0) and not urls:
+        raise HTTPException(status_code=400, detail="upload at least 1 file or provide at least 1 URL")
 
     # Eagerly read uploaded files into memory
     file_entries: List[tuple[str, bytes]] = []
-    for f in files:
-        name = f.filename.lower()
-        b = await f.read()
-        file_entries.append((name, b))
+    if files:
+        for f in files:
+            name = f.filename.lower()
+            b = await f.read()
+            file_entries.append((name, b))
 
-    # Parse texts
-    texts: List[str] = []
-    print("start parse files")
-    for name, b in file_entries:
-        if name.endswith(".txt"):
-            texts.append(read_txt_bytes(b))
-        elif name.endswith(".docx"):
-            texts.append(read_docx_bytes(b))
-        elif name.endswith(".pdf"):
-            texts.append(read_pdf_bytes(b))
+    async def generate_parse_and_classify_stream():
+        try:
+            # Parse texts
+            texts: List[str] = []
+            yield json.dumps({"status": "progress", "message": "开始解析文件内容..."}) + "\n"
+            for name, b in file_entries:
+                if name.endswith(".txt"):
+                    texts.append(read_txt_bytes(b))
+                elif name.endswith(".docx"):
+                    texts.append(await asyncio.to_thread(read_docx_bytes, b))
+                elif name.endswith(".pdf"):
+                    texts.append(await asyncio.to_thread(read_pdf_bytes, b))
 
-    # Classify type
-    print("start classify type")
-    types = load_types()
-    selected = classify_type_for_texts(texts, types)
+            # Parse URLs if provided
+            if urls:
+                url_list = [u.strip() for u in urls.split('\n') if u.strip()]
+                headers = {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+                }
+                yield json.dumps({"status": "progress", "message": f"开始抓取 {len(url_list)} 个网页内容..."}) + "\n"
+                
+                async def fetch_url(session, url):
+                    try:
+                        print(f"fetching url: {url}")
+                        async with session.get(url, headers=headers, timeout=10) as response:
+                            response.raise_for_status()
+                            text_content = await response.text()
+                            soup = BeautifulSoup(text_content, 'html.parser')
+                            
+                            # Define a list of possible content container selectors for robustness
+                            content_selectors = [
+                                {'class_': 'saif_article'},
+                                {'class_': 'artical_start'},
+                                {'class_': 'saifNews_content'},
+                                {'class_': 'saifTrends_substance_l'},
+                                {'class_': 'article-content'},
+                                {'class_': 'rich_media_content'}, # WeChat articles
+                                {'id': 'js_content'}, # WeChat articles
+                                {'class_': 'content'},
+                                {'class_': 'news-detail'},
+                                {'id': 'content'},
+                                {'class_': 'detail-content'}
+                            ]
+                            
+                            content_div = None
+                            
+                            # First try to find <article> tag
+                            article_tag = soup.find('article')
+                            if article_tag:
+                                content_div = article_tag
+                            else:
+                                for selector in content_selectors:
+                                    content_div = soup.find('div', **selector)
+                                    if content_div:
+                                        break
+                                    
+                            if not content_div:
+                                # Fallback to finding the largest div containing text
+                                divs = soup.find_all('div')
+                                if divs:
+                                    content_div = max(divs, key=lambda d: len(d.get_text(strip=True)))
+                            
+                            if content_div:
+                                # Remove unwanted elements like scripts, styles, navigation, footers
+                                for element in content_div(["script", "style", "nav", "footer", "header", "aside"]):
+                                    element.decompose()
+                                
+                                # Extract text and normalize whitespace
+                                text = content_div.get_text(separator='\n', strip=True)
+                                # Clean up multiple newlines
+                                text = re.sub(r'\n{3,}', '\n\n', text)
+                                return text
+                            else:
+                                # Ultimate fallback: just strip scripts/styles from body
+                                for script in soup(["script", "style"]):
+                                    script.decompose()
+                                text = soup.body.get_text(separator='\n', strip=True) if soup.body else soup.get_text(separator='\n', strip=True)
+                                return re.sub(r'\n{3,}', '\n\n', text)
+                    except Exception as e:
+                        print(f"Failed to fetch {url}: {e}")
+                        return f"ERROR:{url}:{str(e)}"
+                
+                # 并发抓取所有 URL
+                connector = aiohttp.TCPConnector(limit=10)
+                async with aiohttp.ClientSession(connector=connector) as session:
+                    tasks = [fetch_url(session, url) for url in url_list]
+                    results = await asyncio.gather(*tasks)
+                    
+                    for res in results:
+                        if res.startswith("ERROR:"):
+                            parts = res.split(":", 2)
+                            url_err = parts[1] if len(parts) > 1 else ""
+                            err_msg = parts[2] if len(parts) > 2 else res
+                            yield json.dumps({"status": "error", "message": f"抓取网页失败 {url_err}: {err_msg}"}) + "\n"
+                        elif res:
+                            texts.append(res)
 
-    # Extract outlines per file
-    per_outlines: List[List[OutlineSection]] = []
+            if not texts:
+                yield json.dumps({"status": "error", "message": "未能从提供的文件或链接中提取到有效文本"}) + "\n"
+                return
 
-    print("start extract")
-    for t in texts:
-        o = outline_for_text(t, selected.name)
-        per_outlines.append(o)
-        print(per_outlines)
+            # Classify type
+            yield json.dumps({"status": "progress", "message": "正在进行内容类型智能分类..."}) + "\n"
+            types = load_types()
+            selected = await asyncio.to_thread(classify_type_for_texts, texts, types)
+            yield json.dumps({"status": "progress", "message": f"自动分类完成: {selected.name}"}) + "\n"
 
-    # Generalize sections
-    # per_outlines = [generalize_sections(o, selected.name) for o in per_outlines]
-    
-    if len(per_outlines) == 1:
-        merged_sections = per_outlines[0]
-    else:
-        existing_path = outline_path(selected.id, template_id)
-        if existing_path.exists():
+            # 步骤1结束，返回解析的文本和分类结果，等待用户确认
+            yield json.dumps({
+                "status": "success", 
+                "message": "解析和分类完成", 
+                "data": {
+                    "type_id": selected.id,
+                    "type_name": selected.name,
+                    "texts": texts
+                }
+            }) + "\n"
+        except Exception as e:
+            print(f"Parse error: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            yield json.dumps({"status": "error", "message": f"解析过程发生内部错误: {str(e)}"}) + "\n"
+
+    return StreamingResponse(generate_parse_and_classify_stream(), media_type="text/event-stream")
+
+@app.post("/api/extract/outline")
+async def extract_outline(req: ExtractOutlineRequest):
+    """
+    Step 2: Generate outline based on the confirmed type and parsed texts.
+    """
+    ensure_dirs()
+    texts = req.texts
+    type_id = req.type_id
+    type_name = req.type_name
+    template_id = req.template_id
+
+    async def generate_extract_outline_stream():
+        try:
+            # Extract outlines per file
+            per_outlines: List[List[OutlineSection]] = []
+
+            yield json.dumps({"status": "progress", "message": f"正在提取单篇内容结构大纲 ({len(texts)}篇)..."}) + "\n"
+            for idx, t in enumerate(texts):
+                yield json.dumps({"status": "progress", "message": f"正在处理第 {idx+1}/{len(texts)} 篇内容..."}) + "\n"
+                o = await asyncio.to_thread(outline_for_text, t, type_name)
+                per_outlines.append(o)
+
+            if len(per_outlines) == 1:
+                merged_sections = per_outlines[0]
+            else:
+                yield json.dumps({"status": "progress", "message": "正在合并多篇大纲，提取通用结构..."}) + "\n"
+                existing_path = outline_path(type_id, template_id)
+                if existing_path.exists():
+                    try:
+                        existing = Outline(**json.loads(existing_path.read_text(encoding="utf-8")))
+                        generalized = await asyncio.to_thread(generalize_sections, existing.sections, type_name)
+                        per_outlines.append(generalized)
+                    except Exception:
+                        pass
+                merged_sections = await asyncio.to_thread(merge_outlines, per_outlines, type_name)
+            
+            # Build and save outline
+            yield json.dumps({"status": "progress", "message": "正在保存提取结果..."}) + "\n"
+            outline = Outline(
+                type_id=type_id,
+                type_name=type_name,
+                template_id=template_id,
+                sections=merged_sections
+            )
+            path = outline_path(type_id, outline.template_id)
             try:
-                existing = Outline(**json.loads(existing_path.read_text(encoding="utf-8")))
-                per_outlines.append(generalize_sections(existing.sections, selected.name))
-            except Exception:
-                pass
-        merged_sections = merge_outlines(per_outlines, selected.name)
-    
-    # Build and save outline
-    outline = Outline(
-        type_id=selected.id,
-        type_name=selected.name,
-        template_id=template_id or "default",
-        sections=merged_sections
-    )
-    path = outline_path(selected.id, outline.template_id)
-    try:
-        path.write_text(json.dumps(outline.model_dump(), ensure_ascii=False, indent=2), encoding="utf-8")
-    except Exception as e:
-        print(f"Error saving outline: {e}")
+                path.write_text(json.dumps(outline.model_dump(), ensure_ascii=False, indent=2), encoding="utf-8")
+            except Exception as e:
+                print(f"Error saving outline: {e}")
 
-    return outline
+            # Send final success response with the outline data
+            yield json.dumps({
+                "status": "success", 
+                "message": "大纲提取完成", 
+                "data": outline.model_dump()
+            }) + "\n"
+        except Exception as e:
+            print(f"Extraction error: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            yield json.dumps({"status": "error", "message": f"提取过程发生内部错误: {str(e)}"}) + "\n"
+
+    return StreamingResponse(generate_extract_outline_stream(), media_type="text/event-stream")
 
 @app.post("/api/files/parse")
 async def parse_files(files: List[UploadFile] = File(...)):
@@ -1388,9 +1608,9 @@ async def parse_files(files: List[UploadFile] = File(...)):
         if name.endswith(".txt"):
             texts.append(read_txt_bytes(b))
         elif name.endswith(".docx"):
-            texts.append(read_docx_bytes(b))
+            texts.append(await asyncio.to_thread(read_docx_bytes, b))
         elif name.endswith(".pdf"):
-            texts.append(read_pdf_bytes(b))
+            texts.append(await asyncio.to_thread(read_pdf_bytes, b))
         else:
             raise HTTPException(status_code=400, detail="unsupported file type")
     return {"texts": texts}
@@ -1409,7 +1629,7 @@ def update_type(type_id: str, item: TypeItem):
     TYPES_REGISTRY_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     return TypeItem(**item.model_dump())
 
-@app.delete("/api/types/{type_id}")
+@app.delete("/api/types/{type_id}", dependencies=[Depends(require_admin)])
 def delete_type(type_id: str):
     types = [x.model_dump() for x in load_types()]
     new_types = [t for t in types if t["id"] != type_id]
@@ -1776,7 +1996,7 @@ def delete_article(article_id: str):
 def get_settings():
     return load_settings()
 
-@app.post("/api/settings", response_model=Settings)
+@app.post("/api/settings", response_model=Settings, dependencies=[Depends(require_admin)])
 def update_settings(s: Settings):
     save_settings(s)
     return s

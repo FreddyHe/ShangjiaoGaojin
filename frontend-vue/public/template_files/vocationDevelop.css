@@ -1,0 +1,1803 @@
+﻿@charset "utf-8";
+
+/* CSS Document */
+.Recruitment_list_pic {
+    margin-bottom: 30px;
+}
+
+.recruitment_tab {
+    margin-bottom: 30px;
+    border-top: 3px solid #171d8f;
+    width: 100%;
+}
+
+.recruitment_tab h5 {
+    color: #333;
+    font-size: 21px;
+    height: 60px;
+    line-height: 60px;
+    border-bottom: 1px solid #dadada;
+}
+
+.recruitment_tab h6 {
+    color: #333;
+    font-size: 15px;
+    font-weight: bold;
+    height: 59px;
+    line-height: 59px;
+}
+
+.recruitment_tab p {
+    color: #666;
+    font-size: 14px;
+    line-height: 24px;
+    width: 866px;
+}
+
+.recruitment_tab_writer {
+    color: #333;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: right;
+    margin-top: 20px;
+}
+
+.recruitment_tab {
+    padding-bottom: 24px;
+    border-bottom: 1px dashed #c6c6c6;
+}
+
+.recruitment_tab_con {
+    width: 777px;
+    height: 1109px;
+    background: url(../images/vocationDevelop/images/recruitment_tab_con.jpg) no-repeat left top;
+    box-sizing: border-box;
+    padding: 64px 70px 0;
+    *width: 637px;
+    *height: 1045px;
+}
+
+.recruitment_tab_con form h5 {
+    color: #333;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 26px;
+}
+
+.recruitment_tab_name {
+    width: 114px;
+    color: #666;
+    font-size: 15px;
+    height: 36px;
+    line-height: 36px;
+    text-align: right;
+    margin-right: 14px;
+}
+
+#company_name {
+    width: 500px;
+    border: 1px solid #dedede;
+    background-color: #f9f9f9;
+    height: 34px;
+    line-height: 34px;
+    box-sizing: border-box;
+    padding-left: 16px;
+    *width: 484px;
+}
+
+.recruitment_tab_list label {
+    cursor: pointer;
+}
+
+.recruitment_tab_list {
+    border-bottom: 1px solid #e4e4e4;
+    padding-bottom: 20px;
+    margin-bottom: 18px;
+}
+
+#department {
+    width: 188px;
+    border: 1px solid #dedede;
+    background-color: #f9f9f9;
+    height: 34px;
+    line-height: 34px;
+    box-sizing: border-box;
+    padding-left: 16px;
+    *width: 172px;
+}
+
+#work_locale {
+    width: 188px;
+    border: 1px solid #dedede;
+    background-color: #f9f9f9;
+    height: 34px;
+    line-height: 34px;
+    box-sizing: border-box;
+    padding-left: 16px;
+    *width: 172px;
+}
+
+.recruitment_tab_name_t label {
+    color: #666;
+    font-size: 16px;
+    line-height: 36px;
+    cursor: pointer;
+}
+
+.recruitment_tab_name_t input {
+    margin: 12px 9px 0 0;
+    cursor: pointer;
+}
+
+#work_property2 {
+    margin-left: 30px;
+}
+
+#jobDescription {
+    border: 1px solid #dedede;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+    padding: 16px;
+    width: 508px;
+    height: 135px;
+    *width: 475px;
+    *height: 126px;
+    font-family: "微软雅黑";
+}
+
+#basicRequire {
+    border: 1px solid #dedede;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+    padding: 16px;
+    width: 508px;
+    height: 135px;
+    *width: 475px;
+    *height: 126px;
+    font-family: "微软雅黑";
+}
+
+.company_cont_person {
+    color: #666;
+    font-size: 15px;
+    height: 34px;
+    line-height: 14px;
+}
+
+.company_cont_person_ul li {
+    float: left;
+    margin-right: 28px;
+    width: 290px;
+    height: 36px;
+    margin-bottom: 16px;
+}
+
+.company_cont_person_ul li input {
+    border: 1px solid #dedede;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+    padding-left: 11px;
+    width: 288px;
+    height: 34px;
+    *width: 277px;
+}
+
+.recruitment_tab_sub {
+    width: 280px;
+    height: 60px;
+    background-color: #171d8f;
+    color: #fff;
+    line-height: 60px;
+    font-size: 21px;
+    margin: 68px auto;
+    cursor: pointer;
+    display: block;
+}
+
+.recruitment_tab_sub:hover {
+    opacity: 0.9;
+}
+
+.StudentPlatform {
+    width: 288px;
+    background-color: #fff;
+    border-top: 3px solid #171d8f;
+}
+
+.StudentPlatform h5 {
+    height: 52px;
+    line-height: 52px;
+    border-bottom: 1px solid #e5e4e4;
+    text-align: center;
+    color: #333;
+    font-size: 21px;
+    margin-bottom: 20px;
+}
+
+.StudentPlatform_inner {
+    width: 259px;
+    margin: 0 auto;
+}
+
+.StudentPlatform_ul li {
+    height: 45px;
+    margin-bottom: 15px;
+}
+
+.StudentPlatform_ul li a {
+    height: 43px;
+    width: 256px;
+    display: block;
+    border: 1px solid #c6c6c6;
+    margin-bottom: 15px;
+    color: #666;
+    font-size: 15px;
+    line-height: 43px;
+    text-align: center;
+}
+
+.StudentPlatform_ul li a:hover {
+    background-color: #171d8f;
+    color: #fff;
+    border: 1px solid #171d8f;
+}
+
+.StudentPlatform_ul li a:hover img {
+    background-color: #171d8f;
+    color: #fff;
+    border: 1px solid #171d8f;
+}
+
+.StudentPlatform_ul li img {
+    display: inline-block;
+    margin: 10px 10px 0;
+    *margin: 0;
+}
+
+.StudentPlatform_ul li .StudentPlatform_img {
+    display: none;
+}
+
+.StudentPlatform_ul {
+    border-bottom: 1px solid #e5e4e4;
+}
+
+.recommend_book h5 {
+    color: #333;
+    font-size: 15px;
+    font-weight: bold;
+    height: 50px;
+    line-height: 50px;
+    text-align: left;
+    border: 0;
+}
+
+.identify {
+    width: 100px;
+    height: 32px;
+    border: 1px solid #dedede;
+    background-color: #f9f9f9;
+    margin-right: 10px;
+    padding-left: 5px;
+}
+
+
+/*轮播图开始*/
+.recommend_book_banner_box {
+    width: 100%;
+    position: relative;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.recommend_book_banner {
+
+    width: 182px;
+    height: 114px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.recommend_book_banner_ul {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 10000%;
+    height: 114px;
+}
+
+.recommend_book_banner_ul li {
+    height: 110px;
+    width: 77px;
+    float: left;
+    border: 1px solid #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+    margin: 2px 15px 0 3px;
+}
+
+.recommend_book_banner_arrow {
+    width: 100%;
+}
+
+.recommend_book_banner_S-right {
+    width: 35px;
+    height: 35px;
+    background: url(../images/vocationDevelop/images/book_arrow_r.png) no-repeat 50% 50% #e4e4e4;
+    cursor: pointer;
+    border-radius: 0px 4px 4px 0px;
+    position: absolute;
+    right: -14px;
+    top: 38px;
+}
+
+.recommend_book_banner_S-left {
+    width: 35px;
+    height: 35px;
+    background: url(../images/vocationDevelop/images/book_arrow_l.png) no-repeat 50% 50% #e4e4e4;
+    cursor: pointer;
+    border-radius: 4px 0 0 4px;
+    position: absolute;
+    left: -14px;
+    top: 38px;
+}
+
+.recommend_book_banner_S-right:hover {
+    background: url(../images/vocationDevelop/images/book_arrow_r.png) no-repeat 50% 50% #eda831;
+}
+
+.recommend_book_banner_S-left:hover {
+    background: url(../images/vocationDevelop/images/book_arrow_l.png) no-repeat 50% 50% #eda831;
+}
+
+/*轮播图结束*/
+.book_cont_us {
+    border-top: 3px solid #171d8f;
+    background-color: #fff;
+    padding-bottom: 40px;
+}
+
+.book_cont_us h5 {
+    font-size: 21px;
+    color: #333;
+    text-align: center;
+    line-height: 52px;
+    height: 52px;
+    border-bottom: 1px solid #e5e4e4;
+    margin-bottom: 16px;
+}
+
+.book_cont_us_p {}
+
+/* width: 180px; */
+.book_cont_us div {
+    color: #666;
+    font-size: 13px;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+.book_cont_us div img {
+    display: inline-block;
+    margin: 5px 12px 0 0;
+    *margin: 0px 12px 0 0;
+}
+
+.book_cont_us_inner {
+    width: 262px;
+    margin: 0 auto;
+}
+
+.book_cont_us_inner1 {
+    margin-bottom: 14px;
+}
+
+.book_cont_us_top {
+    border-bottom: 1px solid #e5e4e4;
+    box-sizing: border-box;
+    padding-left: 9px;
+    *padding-bottom: 14px;
+}
+
+.book_cont_us .weixin_red {
+    color: #171d8f;
+    font-size: 15px;
+    font-weight: bold;
+    height: 40px;
+    line-height: 40px;
+    padding-left: 9px;
+}
+
+.book_cont_us .weixin_red img {
+    margin: 12px 10px 0 0;
+    *margin: 0;
+}
+
+.weixin_erweima {
+    width: 162px;
+    height: 162px;
+    margin: 6px auto 0;
+}
+
+.weixin_erweima img {
+    width: 162px;
+    margin: 0px auto !important;
+    display: block !important;
+}
+
+/*.marB100{margin-bottom:100px;}*/
+.ml50 {
+    margin-left: 50px;
+}
+
+/* 合作申请开始 */
+.coop_apl li {
+    height: 198px;
+    border-bottom: 1px dashed #c6c6c6;
+    margin-bottom: 28px;
+}
+
+.coop_apl_con {
+    width: 570px;
+    line-height: 24px;
+    font-size: 14px;
+    color: #666;
+}
+
+.coop_apl_con h5 {
+    width: 570px;
+    font-size: 15px;
+    color: #333;
+    font-weight: bold;
+}
+
+.coop_apl_box {
+    border-top: 3px solid #171d8f;
+}
+
+.coop_apl_box>h5 {
+    height: 60px;
+    line-height: 60px;
+    color: #333;
+    font-size: 21px;
+}
+
+.coop_apl_img {
+    width: 270px;
+    height: 165px;
+    overflow: hidden;
+}
+
+.coop_apl li div:first-child {
+    margin-right: 27px;
+}
+
+.coo_remarks {
+    width: 245px;
+    height: 45px;
+    background-color: #a01e2b;
+    color: #fff;
+    line-height: 45px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.coo_remarks a {
+    display: block;
+    width: 245px;
+    height: 45px;
+    background-color: #a01e2b;
+    color: #fff;
+    line-height: 45px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.coo_remarks a:hover {
+    background-color: #ac2431;
+}
+
+.enterpriseRookie {
+    color: #666;
+    font-size: 14px;
+    line-height: 24px;
+}
+
+.enterpriseRookie_box {
+    border-top: 3px solid #171d8f;
+}
+
+.enterpriseRookie_box h5 {
+    color: #333;
+    font-size: 21px;
+    line-height: 60px;
+    height: 60px;
+    border-bottom: 1px solid #dadada;
+}
+
+/* 合作申请结束 */
+/* 合作申请详情开始 */
+.recruitment_tab_con_act {
+    width: 830px;
+    height: 1109px;
+    background: url(../images/vocationDevelop/images/page_bg2.png) no-repeat left top;
+    box-sizing: border-box;
+    padding: 38px 15px 0;
+    *width: 800px;
+    *height: 1071px;
+}
+
+#company_name_activity {
+    width: 500px;
+    border: 1px solid #dedede;
+    background-color: #f9f9f9;
+    height: 34px;
+    line-height: 34px;
+    box-sizing: border-box;
+    padding-left: 16px;
+    *width: 484px;
+}
+
+.style_others {
+    width: 123px;
+    height: 28px;
+    border: 1px solid #dedede;
+    background-color: #f9f9f9;
+    line-height: 28px;
+    box-sizing: border-box;
+    padding-left: 16px;
+    margin-top: 0 !important;
+    *width: 107px;
+}
+
+#work_property_act {
+    margin-left: 20px;
+}
+
+.recruitment_tab_name_t_act input {
+    margin: 12px 6px 0 0;
+}
+
+.recruitment_tab_name_t_act label {
+    font-size: 14px;
+}
+
+#acti_date {
+    width: 258px;
+    border: 1px solid #dedede;
+    background-color: #f9f9f9;
+    height: 34px;
+    line-height: 34px;
+    box-sizing: border-box;
+    padding-left: 16px;
+    *width: 242px;
+}
+
+#acti_num {
+    width: 258px;
+    border: 1px solid #dedede;
+    background-color: #f9f9f9;
+    height: 34px;
+    line-height: 34px;
+    box-sizing: border-box;
+    padding-left: 16px;
+    *width: 242px;
+}
+
+.recruitment_tab_name_act {
+    width: 120px;
+}
+
+.plateNumber {
+    width: 170px;
+    height: 28px;
+    border: 1px solid #dedede;
+    background-color: #f9f9f9;
+    line-height: 28px;
+    box-sizing: border-box;
+    padding-left: 10px;
+    margin-top: 0 !important;
+    *width: 160px;
+}
+
+.saifTrends_substance_l .meet_p_inf_tit {
+    color: #666;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    height: 36px;
+    line-height: 36px;
+    margin: 0;
+}
+
+.meet_p_inf_p {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 23px;
+    text-align: center;
+}
+
+.meet_p_inf td {
+    height: 35px;
+    border: 1px solid #e4e4e4;
+    color: #666;
+    font-size: 14px;
+}
+
+.meet_p_inf_name {
+    width: 104px;
+}
+
+.meet_p_inf_ap {
+    width: 104px;
+}
+
+.meet_p_inf_po {
+    width: 164px;
+}
+
+.meet_p_inf_num {
+    width: 115px;
+}
+
+.meet_p_inf_ph {
+    width: 180px;
+}
+
+.meet_p_inf_em {
+    width: 128px;
+}
+
+.recruitment_tab_name_actP {
+    padding-left: 15px;
+}
+
+.meet_p_inf textarea {
+    width: 100%;
+    display: block;
+    padding: 0;
+    border: 0;
+    text-align: center;
+    line-height: 35px;
+    height: 35px;
+    overflow-y: auto;
+    font-family: "微软雅黑";
+}
+
+.othersRequire {
+    height: 56px;
+    line-height: 56px;
+    color: #666;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#othersRequire_con {
+    width: 800px;
+    height: 80px;
+    border-top: 1px solid #e4e4e4;
+    border-bottom: 1px solid #e4e4e4;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #fff;
+    display: block;
+    box-sizing: border-box;
+    padding: 10px;
+    *width: 780px;
+    *height: 130px;
+}
+
+/* 合作申请详情结束 */
+
+/* 毕业就业政策开始 */
+.policy_ul li {
+    height: 58px;
+    border-bottom: 1px dashed #bdbdbd;
+    line-height: 58px;
+    width: 100%;
+}
+
+.policy_ul li a img.pdf_red {
+    display: none;
+}
+
+.policy_ul li a {
+    color: #666;
+    font-size: 14px;
+}
+
+.policy_ul li a:hover {
+    color: #171d8f;
+    font-weight: bold;
+}
+
+.policy_ul li a img {
+    display: inline-block;
+    margin: 15px 12px 0 0;
+    *margin: 0;
+}
+
+/* .saifTrends_substance_l .enterpriseRookie_box h5{margin:0;} */
+.policy_ul {
+    margin-bottom: 40px;
+}
+
+.enterpriseService_top {
+    width: 288px;
+}
+
+.enterpriseService_top_inner {
+    width: 259px;
+    margin: 0 auto;
+}
+
+.enterpriseService_top_inner h5 {
+    color: #333;
+    font-size: 21px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+}
+
+.company_service_list li {
+    height: 53px;
+    border-bottom: 1px solid #e5e4e4;
+    box-sizing: border-box;
+    padding-left: 10px;
+    *width: 249px;
+    *height: 41px;
+}
+
+.company_service_list li:last-child {
+    border-bottom: none;
+}
+
+.enterpriseService_top {
+    border-top: 3px solid #171d8f;
+    background-color: #fff;
+    margin-bottom: 30px;
+}
+
+.company_service_list li {
+    *padding-top: 10px;
+}
+
+.sp_com_ser {
+    margin: -27px 0 0 39px;
+}
+
+.company_service_list li a {
+    color: #666;
+    font-size: 15px;
+    margin: 18px 4px 0 0;
+    display: inline-block;
+    *margin: 0;
+}
+
+.company_service_list li a:hover {
+    color: #171d8f;
+}
+
+.company_service_list li a img {
+    margin-right: 14px;
+}
+
+.company_service_list li a .territory_play_t {
+    margin-right: 0;
+}
+
+.po_little_size {
+    font-size: 10px;
+    display: block;
+    /* margin:-2px 0 0 27px; */
+}
+
+.company_service_list li .sp_po_a {
+    margin-top: 10px;
+}
+
+.company_service_list li .sp_po_a img {
+    margin-top: 5px;
+}
+
+/* 毕业就业政策结束 */
+.OfficeLocation {
+    margin: 0 auto;
+    color: #666;
+    font-size: 14px;
+    border-radius: 20px;
+    display: block;
+    overflow: hidden;
+    border: 1px solid #d6d6d6;
+    border: 1px solid #d6d6d6 \9\0;
+    border: 1px solid #d6d6d6 \9;
+    *border: 1px solid #d6d6d6;
+    overflow: visible\9\0;
+    overflow: visible\9;
+    *overflow: visible;
+}
+
+.OfficeLocation tr {
+    height: 60px;
+    background-color: #fff;
+}
+
+.OfficeLocation tr.line1 {
+    color: #333;
+    font-size: 15px;
+    font-weight: bold;
+    background-image: -webkit-linear-gradient(bottom, rgba(0, 0, 0, 0.1) 0%, #fff 40%);
+    background-image: -moz-linear-gradient(bottom, rgba(0, 0, 0, 0.1) 0%, #fff 40%);
+    background-image: -ms-linear-gradient(bottom, rgba(0, 0, 0, 0.1) 0%, #fff 40%);
+    background-image: -o-linear-gradient(bottom, rgba(0, 0, 0, 0.1) 0%, #fff 40%);
+    background-image: linear-gradient(bottom, rgba(0, 0, 0, 0.1) 0%, #fff 40%);
+}
+
+.OfficeLocation tr:nth-child(2n+1):not(.line1) {
+    background-color: #f8f8f8;
+}
+
+.OfficeLocation td {
+    width: 280px;
+    border: 1px solid #d6d6d6;
+}
+
+/* 毕业就业政策详情开始 */
+.saifTrends_substance_l .table_tit {
+    color: #333;
+    font-size: 21px;
+    text-align: center;
+    height: 70px;
+    line-height: 70px;
+    border-top: 3px solid #171d8f;
+    margin: 0;
+}
+
+.table_tit_se {
+    text-align: center;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #dadada;
+    margin-bottom: 33px;
+}
+
+.table_tit_se span {
+    color: #666;
+    font-size: 14px;
+    text-align: center;
+}
+
+.table_tit_se span img {
+    display: inline-block;
+    margin: 1px 7px 0 0;
+}
+
+.table_tit_se span:first-child {
+    padding-right: 30px;
+    text-align: center;
+}
+
+.company_service_list li .toggle_pic img.toggle_pic_t {
+    display: none;
+}
+
+.company_service_list li .toggle_pic_sp {
+    margin-top: 11px;
+}
+
+.company_service_list li .toggle_pic_sp img {
+    margin-top: 4px;
+}
+
+/* 毕业就业政策详情结束 */
+
+/* 推荐书目开始 */
+/* .recommend_book{border-top:3px solid #171d8f;}*/
+.recommend_book h5 {
+    color: #333;
+    font-size: 21px;
+    line-height: 49px;
+    height: 60px;
+    font-weight: normal;
+    margin-bottom: 8px;
+}
+
+.recommend_book_list {
+    height: 227px;
+    width: 100%;
+    background-image: -webkit-linear-gradient(bottom, rgba(0, 0, 0, 0.1) 0%, #f8f8f8 90%);
+    background-image: -moz-linear-gradient(bottom, rgba(0, 0, 0, 0.1) 0%, #f8f8f8 90%);
+    background-image: -ms-linear-gradient(bottom, rgba(0, 0, 0, 0.1) 0%, #f8f8f8 90%);
+    background-image: -o-linear-gradient(bottom, rgba(0, 0, 0, 0.1) 0%, #f8f8f8 90%);
+    background-image: linear-gradient(bottom, rgba(0, 0, 0, 0.1) 0%, #f8f8f8 90%);
+}
+
+.recommend_book_list {
+    margin-bottom: 100px;
+}
+
+.recommend_book_list ul li {
+    width: 170px;
+    height: 224px;
+    border: 3px solid #fff;
+    overflow: hidden;
+    float: left;
+    margin-right: 39px;
+    overflow: hidden;
+    *position: relative;
+}
+
+.recommend_book_list ul li:last-child {
+    margin-right: 0;
+}
+
+.recommend_book_list ul li a {
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: relative;
+}
+
+.read_demail {
+    width: 100%;
+    height: 100%;
+    background-color: #171d8f;
+    position: absolute;
+    bottom: -224px;
+    left: 0px;
+}
+
+.recommend_book_list ul li .read_demail {
+    transition: all 1s;
+    *background-color: #c93c4a;
+    background-color: #c93c4a\9;
+}
+
+.read_demail_font {
+    width: 116px;
+    height: 38px;
+    border: 1px solid #fff;
+    text-align: center;
+    line-height: 38px;
+    font-size: 16px;
+    position: absolute;
+    left: 50%;
+    margin-left: -58px;
+    top: 50%;
+    margin-top: -19px;
+    color: #fff;
+}
+
+.center_activity {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.center_activity h5 {
+    height: 60px;
+    line-height: 60px;
+    color: #333;
+    font-size: 21px;
+    margin: 0;
+}
+
+.center_activity_more {
+    width: 54px;
+    height: 23px;
+    border: 1px solid #666;
+    font-size: 13px;
+    line-height: 23px;
+    text-align: center;
+    margin-top: 18px;
+    color: #666;
+}
+
+.center_activity_more:hover {
+    background-color: #171d8f;
+    color: #fff;
+    border: 1px solid #171d8f;
+}
+
+.center_activity_top {
+    border-top: 3px solid #171d8f;
+}
+
+.center_activity_con h6 {
+    color: #333;
+    font-size: 15px;
+    height: 47px;
+    line-height: 47px;
+}
+
+.center_activity_con p {
+    color: #666;
+    font-size: 14px;
+    line-height: 24px;
+    width: 100%;
+}
+
+.center_activity_ul li {
+    width: 424px;
+    float: left;
+    margin-right: 30px;
+}
+
+.center_activity_ul li:last-child {
+    margin-right: 0px;
+}
+
+.center_activity_d {
+    width: 63px;
+    height: 23px;
+    border: 1px solid #666;
+    line-height: 23px;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    display: block;
+    margin: 15px 0 0 0;
+}
+
+.center_activity_d:hover {
+    background-color: #171d8f;
+    color: #fff;
+    border: 1px solid #171d8f;
+}
+
+.bigNumber {
+    font-size: 56px;
+    color: #a80f2b;
+    font-family: "Arial";
+    width: 91px;
+    text-align: center;
+    margin-top: 11px;
+}
+
+.littleNumber {
+    font-size: 16px;
+    color: #888;
+    font-family: "Arial";
+    margin: 22px 0 0 0px;
+}
+
+.herald_activity {
+    width: 720px;
+}
+
+.herald_activity h6 {
+    color: #333;
+    font-size: 15px;
+    margin-bottom: 12px;
+    width: 100%;
+}
+
+.herald_activity h6 a {
+    color: #333;
+    font-size: 15px;
+    width: 100%;
+}
+
+.herald_activity h6 a:hover {
+    color: #a80f2b;
+}
+
+.herald_activity p {
+    color: #666;
+    font-size: 13px;
+    line-height: 24px;
+    width: 100%;
+}
+
+.center_activity_number_l {
+    margin-right: 23px;
+}
+
+.cal_ac_cen li {
+    padding-bottom: 30px;
+    border-bottom: 1px dashed #bdbdbd;
+    margin-bottom: 30px;
+}
+
+.cal_ac_cen li:last-child {
+    border-bottom: 0;
+}
+
+.internshipRecruiteInfor_ul li {
+    border-bottom: 1px solid #dadada;
+}
+
+.internshipRecruiteInfor_ul li h6 {
+    color: #a70f2b;
+    font-weight: bold;
+    font-size: 15px;
+    height: 45px;
+    line-height: 45px;
+}
+
+.internshipRecruiteInfor_ul li h6 a {
+    color: #a70f2b;
+    font-weight: bold;
+    font-size: 15px;
+    height: 45px;
+    line-height: 45px;
+}
+
+.internshipRecruiteInfor_ul li h6 a:hover {
+    color: #940f1d;
+}
+
+.internshipRecruiteInfor_ul li p {
+    font-size: 14px;
+    color: #666;
+    line-height: 27px;
+}
+
+.internshipRecruiteInfor_ul li p span {
+    font-weight: bold;
+}
+
+.bottom_de {
+    display: block;
+    background-color: #171d8f;
+    color: #fff;
+    width: 106px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.bottom_de:hover {
+    opacity: 0.9;
+}
+
+/* 推荐书目结束 */
+/* 招聘指南开始 */
+.recruit_box {
+    border-top: 3px solid #171d8f;
+}
+
+.recruit_box h5 {
+    color: #333;
+    font-size: 21px;
+    height: 62px;
+    line-height: 62px;
+    border-bottom: 1px solid #dadada;
+}
+
+.recruit_circle {
+    width: 75px;
+    height: 75px;
+    border: 4px solid #f8f8f8;
+    border-radius: 50%;
+    line-height: 75px;
+    text-align: center;
+    background-color: #171d8f;
+    color: #fff;
+    font-size: 40px;
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    *border-top: 0;
+}
+
+.recruit_circle_r {
+    width: 780px;
+    border-radius: 200px;
+    background-color: #e9e9e9;
+    height: 60px;
+    margin-top: 10px;
+    line-height: 60px;
+    color: #666;
+    font-size: 14px;
+    box-sizing: border-box;
+    padding-left: 104px;
+}
+
+.recruit_circle_t li {
+    position: relative;
+    height: 94px;
+    overflow: hidden;
+    padding-top: 6px;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.recruitmentGuide_arrow {
+    position: absolute;
+    bottom: -15px;
+    left: 30px;
+    z-index: 2;
+}
+
+.recruitmentGuide_arrow_bo {
+    position: absolute;
+    top: -9px;
+    left: 30px;
+    z-index: 2;
+}
+
+/* 招聘指南结束 */
+
+/* 实习招聘信息开始 */
+.enroll_infor {
+    height: 60px;
+    line-height: 60px;
+    border-bottom: 1px solid #dadada;
+}
+
+.enroll_no_pic a {
+    color: #333;
+    font-weight: bold;
+    font-size: 15px;
+    margin-right: 22px;
+}
+
+.enroll_no_pic a:hover {
+    color: #a70f2b;
+}
+
+.enroll_no_pic p {
+    display: inline-block;
+    margin-right: 24px;
+}
+
+.enroll_no_pic p:last-child {
+    margin-right: 0px;
+}
+
+.enroll_no_pic {
+    padding: 20px 0;
+}
+
+/* 实习招聘信息结束 */
+
+/* 就业报告开始 */
+.job_report_con .job_report_con_tit {
+    height: 60px;
+    line-height: 60px;
+    color: #333;
+    font-size: 21px;
+    margin: 0;
+}
+
+.job_report_con {
+    border-top: 3px solid #171d8f;
+}
+
+.job_report_con_tit_t {
+    color: #666;
+    font-size: 16px;
+}
+
+.job_report_con_tit_t li {
+    margin-right: 27px;
+}
+
+.job_report_con_tit_t li a {
+    color: #666;
+    font-size: 16px;
+}
+
+.job_report_con_tit_t li a:hover {
+    color: #171d8f;
+}
+
+.job_report_con_tit_t li a.current {
+    color: #171d8f;
+}
+
+.job_report_de {
+    display: block;
+    margin-top: 7px;
+}
+
+.job_report_con_top {
+    padding-bottom: 22px;
+    border-bottom: 1px solid #dadada;
+}
+
+.job_hasPic {
+    padding-bottom: 27px;
+}
+
+.job_hasPic h6 {
+    color: #333;
+    font-size: 15px;
+    margin: 12px 0 16px;
+    width: 100%;
+}
+
+.job_hasPic h6 a {
+    color: #333;
+    font-size: 15px;
+    width: 100%;
+    display: block;
+}
+
+.job_hasPic h6 a:hover {
+    color: #171d8f;
+}
+
+.job_hasPic p {
+    color: #666;
+    font-size: 14px;
+    line-height: 24px;
+    width: 100%;
+}
+
+.job_hasPic_pic {
+    margin-right: 34px;
+}
+
+.job_hasPic_r {
+    width: 640px;
+}
+
+.job_report_con_ul {
+    margin-top: 25px;
+}
+
+.job_hasPic_r_time {
+    color: #666;
+    font-size: 14px;
+    margin-top: 20px;
+}
+
+.job_report_con_ul li {
+    border-bottom: 1px dashed #c6c6c6;
+}
+
+.job_noPic a img.job_hover_red {
+    display: none;
+}
+
+.job_noPic {
+    height: 57px;
+    line-height: 57px;
+}
+
+.job_noPic a {
+    color: #666;
+    font-size: 14px;
+}
+
+.job_noPic a img {
+    display: inline-block;
+    margin: 18px 10px 0 0;
+    *margin: 0;
+}
+
+.job_noPic a:hover {
+    color: #171d8f;
+}
+
+.time_job_noPic {
+    color: #666;
+    font-size: 14px;
+}
+
+/* 就业报告结束 */
+
+/* 活动信息开始 */
+.actInf_cen_hasPic_tit a {
+    color: #242424;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.actInf_cen_hasPic_detail {
+    border: 0;
+}
+
+.actInf_cen_hasPic_detail a {
+    color: #666;
+    font-size: 14px;
+    border: 1px solid #666666;
+}
+
+.actInf_cen_hasPic_detail a:hover {
+    color: #fff;
+    font-size: 14px;
+    border: 1px solid #171d8f;
+    background-color: #171d8f;
+}
+
+.act_proShow {
+    border-top: 3px solid #171d8f;
+}
+
+/* 活动信息结束 */
+
+/* 落户流程开始 */
+.set_flow_list {
+    position: relative;
+    width: 800px;
+    border-radius: 20px;
+    background-color: #e9e9e9;
+    padding: 20px 40px;
+    box-sizing: border-box;
+    *width: 720px;
+}
+
+.circle_num {
+    width: 75px;
+    height: 75px;
+    background-color: #171d8f;
+    border: 6px solid #f8f8f8;
+    position: absolute;
+    left: -59px;
+    top: 7px;
+    text-align: center;
+    line-height: 75px;
+    border-radius: 100%;
+    color: #fff;
+    font-size: 40px;
+    font-family: "Arial";
+}
+
+.settle_flow {
+    line-height: 24px;
+    color: #666;
+    font-size: 14px;
+    width: 725px;
+}
+
+.settle_flow_tit {
+    color: #333;
+    font-weight: bold;
+    font-size: 15px;
+    margin-bottom: 2px;
+}
+
+.y_line {
+    width: 10px;
+    background-color: #171d8f;
+    position: absolute;
+    left: 34px;
+    top: 74px;
+}
+
+.set_flow_list1 {
+    margin-bottom: 32px;
+    z-index: 100;
+}
+
+.set_flow_list2 {
+    margin-bottom: 70px;
+    z-index: 99;
+}
+
+.threeAFour {
+    z-index: 98;
+}
+
+.settle_flow3 {
+    z-index: 97;
+}
+
+.settle_flow4 {
+    z-index: 96;
+}
+
+.set_flow_list5 {
+    margin-bottom: 32px;
+    z-index: 95;
+}
+
+.set_flow_list6 {
+    margin-bottom: 32px;
+    z-index: 94;
+}
+
+.set_flow_list7 {
+    margin-bottom: 32px;
+    z-index: 93;
+}
+
+.set_flow_list8 {
+    margin-bottom: 32px;
+    z-index: 92;
+}
+
+.settle_flow3 {
+    width: 344px;
+    background-color: #e9e9e9;
+    padding: 20px 30px;
+    line-height: 24px;
+    color: #666;
+    font-size: 14px;
+    border-radius: 20px;
+    position: relative;
+    margin-right: 112px;
+    box-sizing: border-box;
+    *width: 284px;
+}
+
+.w300 {
+    width: 300px;
+}
+
+.settle_flow_remain {
+    color: #666;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.circle_num3 {
+    top: -62px;
+}
+
+.y_line3 {
+    width: 760px;
+    height: 10px;
+    background-color: #171d8f;
+    position: absolute;
+    top: 31px;
+    left: 73px;
+}
+
+.settle_flow4 {
+    background-color: #e9e9e9;
+    padding: 20px 30px;
+    line-height: 24px;
+    color: #666;
+    font-size: 14px;
+    border-radius: 20px;
+    position: relative;
+    width: 344px;
+    box-sizing: border-box;
+    *width: 284px;
+}
+
+.circle_num4 {
+    top: -62px;
+    right: -59px;
+    position: absolute;
+    width: 75px;
+    height: 75px;
+    background-color: #171d8f;
+    border: 6px solid #f8f8f8;
+    position: absolute;
+    text-align: center;
+    line-height: 75px;
+    border-radius: 100%;
+    color: #fff;
+    font-size: 40px;
+    font-family: "Arial";
+}
+
+.circle_num_bottom {
+    width: 75px;
+    height: 75px;
+    background-color: #171d8f;
+    border: 6px solid #f8f8f8;
+    position: absolute;
+    right: -59px;
+    top: 7px;
+    text-align: center;
+    line-height: 75px;
+    border-radius: 100%;
+    color: #fff;
+    font-size: 40px;
+    font-family: "Arial";
+}
+
+.threeAFour {
+    margin-bottom: 32px;
+}
+
+.joggle {
+    position: absolute;
+}
+
+.joggle1 {
+    top: 46px;
+    left: -4px;
+}
+
+.joggle2 {
+    top: 46px;
+    left: -4px;
+}
+
+.joggle3 {
+    top: -4px;
+    left: 195px;
+}
+
+.joggle3_1 {
+    top: -4px;
+    right: 214px;
+}
+
+.joggle4 {
+    top: 136px;
+    left: -4px;
+}
+
+.joggle4_1 {
+    top: 305px;
+    left: -4px;
+}
+
+.joggle5 {
+    top: 46px;
+    left: -4px;
+}
+
+.joggle6 {
+    top: 46px;
+    left: -4px;
+}
+
+.joggle7 {
+    top: 46px;
+    left: -4px;
+}
+
+.joggle_remarks {
+    color: #333;
+    font-size: 15px;
+    font-weight: bold;
+    border-bottom: 1px dashed #dadada;
+    padding-bottom: 18px;
+}
+
+.joggle_remarks_box {
+    border-top: 1px solid #dadada;
+    padding-top: 24px;
+}
+
+/* 落户流程结束 */
+
+
+
+/* 2016.11.21 */
+
+.focusin_box3 {
+    width: 366px;
+    margin: 0px 0 0 26px;
+    position: relative;
+}
+
+.focus3 {
+    width: 170px;
+    margin: 0px 0 0 15px;
+    position: relative;
+    overflow: hidden;
+}
+
+.focusin3 {
+    width: 1000%;
+    height: 110px;
+}
+
+.focus3 ul {
+    width: 100%;
+}
+
+.focus3 ul li {
+    float: left;
+    margin-right: 15px;
+    width: 77px;
+    position: relative;
+    height: 110px;
+    padding-left: 0;
+}
+
+.focus3 ul li a img {
+    width: 77px;
+    height: 110px;
+}
+
+.focus3 ul li span {
+    text-align: center;
+    display: block;
+    padding-top: 5px;
+}
+
+.sec_4_l .arr-l,
+.sec_4_l .arr-r {
+    position: absolute;
+    width: 26px;
+    height: 54px;
+    background: url(../images/left.png) no-repeat;
+    top: 83px;
+}
+
+.focus3 h3 {
+    border-bottom: 0;
+    color: #5d5d5d !important;
+    height: 40px !important;
+    line-height: 40px !important;
+    width: 140px !important;
+    font-size: 14px !important;
+    text-align: center;
+}
+
+.focusin_box3 .arr-r {
+    width: 35px;
+    height: 35px;
+    background: url(../images/vocationDevelop/images/book_arrow_r.png) no-repeat 50% 50% #e4e4e4;
+    cursor: pointer;
+    border-radius: 0px 4px 4px 0px;
+    position: absolute;
+    right: 116px;
+    top: 38px;
+}
+
+.focusin_box3 .arr-l {
+    width: 35px;
+    height: 35px;
+    background: url(../images/vocationDevelop/images/book_arrow_l.png) no-repeat 50% 50% #e4e4e4;
+    cursor: pointer;
+    border-radius: 4px 0 0 4px;
+    position: absolute;
+    left: -40px;
+    top: 38px;
+}
+
+.focusin_box3 .arr-r:hover {
+    background: url(../images/vocationDevelop/images/book_arrow_r.png) no-repeat 50% 50% #eda831;
+}
+
+.focusin_box3 .arr-l:hover {
+    background: url(../images/vocationDevelop/images/book_arrow_l.png) no-repeat 50% 50% #eda831;
+}
+
+
+
+/*2016.12.27*/
+.company_service_list li:nth-child(3) {
+    height: 74px;
+}
+
+
+@media screen and (max-width: 1280px) {
+    .threeAFour {
+        width: 800px;
+    }
+
+    .set_flow_list {
+        width: 621px;
+    }
+
+    .settle_flow {
+        font-size: 12px;
+        width: 600px;
+    }
+
+    .w300 {
+        width: 226px;
+    }
+
+    .settle_flow4 {
+        padding: 20px 30px;
+        font-size: 12px;
+        width: 264px;
+    }
+
+    .settle_flow3 {
+        margin-right: 22px;
+        width: 292px;
+        padding: 20px 30px;
+        line-height: 24px;
+        font-size: 12px;
+    }
+
+    .threeAFour {
+        width: 760px;
+    }
+
+    .y_line3 {
+        width: 542px;
+    }
+
+    .center_activity_ul li {
+        width: 320px;
+        overflow: hidden;
+    }
+}

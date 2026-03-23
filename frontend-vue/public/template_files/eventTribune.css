@@ -1,0 +1,55 @@
+@charset "utf-8";
+/* CSS Document */
+.event_banner{position: relative;width: 100%;height: auto;overflow: hidden;}
+.tit_shadow{width: 100%;height: 50px;color: #fff;font-size: 16px;font-weight: bold;line-height: 50px;position: absolute;left: 0;bottom: 0;box-sizing: border-box;padding-left: 16px;
+	background-image: -webkit-linear-gradient(bottom,rgba(0,0,0,0.6) 0%,rgba(0,0,0,0) 100%);
+	background-image: -moz-linear-gradient(bottom,rgba(0,0,0,0.6) 0%,rgba(0,0,0,0) 100%);
+	background-image: -ms-linear-gradient(bottom,rgba(0,0,0,0.6) 0%,rgba(0,0,0,0) 100%);
+	background-image: -o-linear-gradient(bottom,rgba(0,0,0,0.6) 0%,rgba(0,0,0,0) 100%);
+	background-image: linear-gradient(bottom,rgba(0,0,0,0.6) 0%,rgba(0,0,0,0) 100%);
+	*text-shadow: 0 1px 2px #000;
+}
+.event_information{margin:24px 0 0 12px;width: 100%;padding-bottom:16px;}
+.event_information p img{margin:1px 14px 0 0;}
+.event_information p{float: left;margin:0 40px 16px 0;color: #333;font-weight: bold;font-size: 15px;/* display: inline-block;overflow: hidden; *//*white-space: nowrap!important;*/ width: 880px; }
+.event_btn{width: 150px;height: 45px;background-color: #da9e2a;border-bottom:3px solid #c78e20;text-align: center;line-height: 48px;color: #fff;font-size: 16px;}
+.event_btn a{width: 150px;height: 45px;background-color: #da9e2a;text-align: center;line-height: 48px;color: #fff;font-size: 16px;display: block;}
+.event_btn a:hover{background-color: #e29a10;}
+.event_con_tit{background: url(../images/professor_tit_bg.png) no-repeat 2px 6px;width: 100%;height: 25px;margin-top:32px;}
+.event_con_tit_bg{background-color: #f8f8f8;font-size: 15px;font-weight: bold;color: #333;}
+.event_con_p{color: #666;font-size: 14px;line-height: 24px;border-bottom:1px solid #dadada;padding-bottom:30px;}
+.guest_con li div{float: left;}
+.guest_con li{background-color: #f0f0f0;width: 100%;height: 309px;color: #666;font-size: 14px;line-height: 24px;margin-bottom:15px;}
+.guest_con li:last-child{margin-bottom:152px;}
+.guest_con li div h5{color: #333;font-size: 15px;font-weight: bold;margin:10px 0 6px;width: 594px;}
+.guest_con li div span{font-size: 14px;font-weight: bold;margin-bottom:6px;display: block;width: 594px;}
+.guest_con li div p{width: 594px;}
+.guest_con_two{margin-left: 30px;}
+
+.enlist_add{display: none;}
+.enlist_add.current{display: block;position: fixed;left: 50%;margin-left: -191px;}
+
+
+
+
+
+
+
+
+
+
+
+/*2016.12.20*/
+.event_con_p p { font-size:14px; color:#666; line-height:28px; margin-bottom:15px;}
+
+
+
+
+
+
+
+
+
+
+
+
