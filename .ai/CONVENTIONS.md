@@ -31,7 +31,9 @@
 | `extract` | ExtractPage.vue + 提取相关后端接口 |
 | `history` | HistoryPage.vue + 文章 CRUD 接口 |
 | `settings` | SettingsPage.vue + 设置接口 |
+| `knowledge` | KnowledgePage.vue + 知识库相关后端接口 |
 | `match` | 人名匹配 + 冲突检测 |
+| `auth` | 认证系统（登录、JWT、角色权限） |
 | `backend` | 后端通用修改 |
 | `frontend` | 前端通用修改 |
 | `deploy` | 部署/Nginx/服务器相关 |
@@ -63,11 +65,13 @@
 
 ### Python 规范
 
-- 单文件结构（`main.py`），函数按功能分区，用注释分隔
+- 单文件结构（`main.py`，约 2000 行），函数按功能分区，用注释分隔
 - Pydantic Model 用于请求/响应的类型定义
 - JSON 文件操作统一使用 `ensure_ascii=False, indent=2` 保证中文可读
 - 流式响应使用 `StreamingResponse(generator(), media_type="text/plain")`
 - 错误处理：业务错误用 `HTTPException`，意外错误用 `try/except` + `print`
+- 认证：部分接口使用 `Depends(require_admin)` 限制管理员权限
+- 流式进度：使用 NDJSON 格式 `{"status": "progress"|"success"|"error", "message": ...}`
 
 ### 数据存储规范
 

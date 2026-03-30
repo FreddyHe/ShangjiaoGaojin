@@ -85,3 +85,23 @@ cd /www/wwwroot/ShangjiaoGaojin/frontend-vue && npm run build
 ### P-013: 检查端口占用要用正确的命令
 **原因**：不同的命令在不同环境下表现不同。
 **规则**：优先使用 `ss -tlnp | grep :PORT`，其次 `netstat -tlnp | grep :PORT`。杀进程用 `fuser -k PORT/tcp`。
+
+---
+
+## 🟣 认证与权限相关
+
+### P-016: 修改需要管理员权限的接口时注意 Depends(require_admin)
+**原因**：`DELETE /api/types/{type_id}`、`DELETE /api/outline/{type_id}/{template_id}`、`POST /api/settings` 都需要管理员权限。普通用户调用会返回 403。
+**规则**：新增破坏性接口（删除、系统配置）时，务必添加 `dependencies=[Depends(require_admin)]`。
+
+### P-017: 前端全局 fetch 拦截器会自动带 Token
+**原因**：`main.ts` 中重写了 `window.fetch`，所有 `/api` 请求自动附加 `Authorization` 头。401 响应会触发自动登出。
+**规则**：不要在单个组件中重复添加 Token 头。如果新增非 `/api` 前缀的后端路由，Token 不会自动带上。
+
+### P-018: 用户数据库目前是硬编码的
+**原因**：`USERS_DB` 直接写在 `main.py` 中，`SECRET_KEY` 也是硬编码。
+**规则**：生产环境部署前应将用户数据迁移到外部存储，`SECRET_KEY` 应通过环境变量配置。
+
+### P-019: 知识库更新会自动创建历史备份
+**原因**：每次调用 `POST /api/knowledge/{category}` 都会在 `data/history/{category}/` 创建当前版本的备份。
+**规则**：不要手动删除 `data/history/` 目录。如果磁盘空间不足，可以清理较旧的历史版本文件。

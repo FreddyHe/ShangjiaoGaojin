@@ -175,6 +175,21 @@
           <label class="block text-sm font-medium text-text-secondary mb-2">自定义标题（可选）</label>
           <input class="input" v-model="customTitle" placeholder="留空则自动生成" />
         </div>
+
+        <div class="mb-4">
+          <button 
+            class="btn w-full py-2.5 border border-brand-300 text-brand-700 bg-brand-50 hover:bg-brand-100 transition-colors font-medium"
+            @click="matchPeople"
+            :disabled="checkingConflicts || !materials.trim()"
+          >
+            <span v-if="checkingConflicts" class="flex items-center justify-center gap-2">
+              <Loader2 :size="18" class="animate-spin" />
+              人物检测中…
+            </span>
+            <span v-else>检测人物信息</span>
+          </button>
+        </div>
+
         
         <div v-if="matchedPeople.length > 0" class="mb-4 p-4 bg-brand-50/50 border border-brand-200 rounded-2xl">
           <div class="text-sm font-semibold text-brand-800 mb-4">检测到人物信息（{{ selectedPeopleCount }}/{{ matchedPeople.length }} 已选择）</div>
@@ -439,14 +454,7 @@ onActivated(() => {
   console.log('已选择文件数:', selectedFiles.value.length)
 })
 
-watch(
-  () => step.value,
-  (newStep) => {
-    if (newStep === 3 && materials.value && Object.keys(allPeople.value).length > 0) {
-      matchPeople()
-    }
-  }
-)
+
 
 const handleFileChange = (e: Event) => {
   const target = e.target as HTMLInputElement

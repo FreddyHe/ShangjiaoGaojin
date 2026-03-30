@@ -1,0 +1,33 @@
+[0;4mUNIT FILE                                  STATE  [0m
+aa-nginx.service                           [0;1;32menabled[0m
+aegis.service                              [0;1;32menabled[0m
+aliyun.service                             [0;1;32menabled[0m
+atd.service                                [0;1;32menabled[0m
+autovt@.service                            [0;1;32menabled[0m
+chronyd.service                            [0;1;32menabled[0m
+cloud-config.service                       [0;1;32menabled[0m
+cloud-final.service                        [0;1;32menabled[0m
+cloud-init-local.service                   [0;1;32menabled[0m
+cloud-init.service                         [0;1;32menabled[0m
+cloudmonitor.service                       [0;1;32menabled[0m
+crond.service                              [0;1;32menabled[0m
+dbus-org.freedesktop.nm-dispatcher.service [0;1;32menabled[0m
+dbus-org.freedesktop.timedate1.service     [0;1;32menabled[0m
+ecs_mq.service                             [0;1;32menabled[0m
+getty@.service                             [0;1;32menabled[0m
+kdump.service                              [0;1;32menabled[0m
+loadmodules.service                        [0;1;32menabled[0m
+NetworkManager-dispatcher.service          [0;1;32menabled[0m
+NetworkManager-wait-online.service         [0;1;32menabled[0m
+NetworkManager.service                     [0;1;32menabled[0m
+newsapp.service                            [0;1;32menabled[0m
+rngd.service                               [0;1;32menabled[0m
+rsyslog.service                            [0;1;32menabled[0m
+site_total.service                         [0;1;32menabled[0m
+sshd.service                               [0;1;32menabled[0m
+sysfs.service                              [0;1;32menabled[0m
+systemd-pstore.service                     [0;1;32menabled[0m
+timedatex.service                          [0;1;32menabled[0m
+tuned.service                              [0;1;32menabled[0m
+
+30 unit files listed.

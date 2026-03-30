@@ -58,3 +58,5 @@ Thumbs.db
 backend.zip
 frontend.zip
 test_modification*.py
+backend/.env
+backend/.env.example

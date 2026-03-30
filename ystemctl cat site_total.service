@@ -1,0 +1,18 @@
+[0;1;34m# /etc/systemd/system/newsapp.service[0m
+[Unit]
+Description=Press Release Agent Backend
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/www/wwwroot/ShangjiaoGaojin/backend
+Environment="PATH=/opt/miniconda3/envs/newsapp/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
+ExecStart=/opt/miniconda3/envs/newsapp/bin/python main.py
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/newsapp.log
+StandardError=append:/var/log/newsapp.log
+
+[Install]
+WantedBy=multi-user.target

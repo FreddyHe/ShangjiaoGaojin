@@ -9,15 +9,22 @@
 | Python 环境 | Miniconda3，conda 环境名 `newsapp` |
 | Node.js | 已安装，支持 npm |
 | Nginx | `/usr/sbin/aa_nginx`（定制版二进制，**非标准 nginx**） |
+| 后端服务管理 | systemd (`newsapp.service`) |
+| 后端主要依赖 | fastapi, uvicorn, openai, python-docx, pypdf, pypinyin, PyJWT, aiohttp, beautifulsoup4 |
 
 ## 一、启动后端
 
+后端通过 `newsapp.service` (systemd) 管理，已设置开机自启和崩溃自动重启。
+
 ```bash
-cd /www/wwwroot/ShangjiaoGaojin/backend
-source /opt/miniconda3/etc/profile.d/conda.sh
-conda activate newsapp
-nohup python main.py > /var/log/newsapp.log 2>&1 &
+systemctl start newsapp.service     # 启动
+systemctl stop newsapp.service      # 停止
+systemctl restart newsapp.service   # 重启
+systemctl status newsapp.service    # 查看状态
+journalctl -u newsapp.service -f    # 实时查看日志
 ```
+
+> ⚠️ **不要使用 `nohup python main.py &` 手动启动后端**，会与 systemd 服务冲突导臯端口占用。统一使用 `systemctl` 管理。
 
 验证：
 ```bash
@@ -50,17 +57,8 @@ curl -I http://127.0.0.1/
 ### 重启后端
 
 ```bash
-# 1. 找到并杀掉旧进程
-kill -9 $(netstat -tlnp 2>/dev/null | grep :8002 | awk '{print $7}' | cut -d/ -f1)
-
-# 2. 等待端口释放
-sleep 2
-
-# 3. 重新启动
-cd /www/wwwroot/ShangjiaoGaojin/backend
-source /opt/miniconda3/etc/profile.d/conda.sh
-conda activate newsapp
-nohup python main.py > /var/log/newsapp.log 2>&1 &
+systemctl restart newsapp.service
+systemctl status newsapp.service
 ```
 
 ### 重启 Nginx
@@ -106,7 +104,18 @@ npm run dev
 # Vite 已配置 /api 代理到 http://127.0.0.1:8002
 ```
 
-## 六、常用诊断命令
+## 六、认证信息
+
+当前用户数据库（硬编码在 `main.py` 中）：
+
+| 用户名 | 密码 | 角色 |
+|--------|------|------|
+| `admin` | `admin` | 管理员（可访问系统设置、删除类型/模板） |
+| `user` | `user` | 普通用户 |
+
+JWT Token 有效期 24 小时。
+
+## 七、常用诊断命令
 
 ```bash
 # 检查后端是否在运行
@@ -134,7 +143,7 @@ df -h /
 du -sh /www/wwwroot/ShangjiaoGaojin/backend/data/*
 ```
 
-## 七、Nginx 配置要点
+## 八、Nginx 配置要点
 
 ```nginx
 user root;  # 原本是 nginx，因 chown 兼容性问题改为 root
@@ -155,7 +164,7 @@ server {
 }
 ```
 
-## 八、环境变量（backend/.env）
+## 九、环境变量（backend/.env）
 
 ```env
 OPENAI_API_KEY=sk-xxx          # OpenAI 兼容的 API Key
@@ -165,4 +174,4 @@ SERVER_HOST=0.0.0.0            # 后端监听地址
 SERVER_PORT=8002               # 后端监听端口
 ```
 
-也可以在前端「系统设置」页面修改这些值（存储在 `backend/data/settings.json`）。
+也可以在前端「系统设置」页面修改这些值（存储在 `backend/data/settings.json`）。仅管理员可修改。

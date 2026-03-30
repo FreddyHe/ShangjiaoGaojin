@@ -4,5 +4,5 @@
   "copyright_text": "© 2026 Press Release Assistant",
   "openai_api_key": "sk-AomDFLTBpbXd6JXk2hSv2WvzWccvww3TGkPRnA5L51ENOmNt",
   "openai_base_url": "https://api.chatanywhere.tech/v1",
-  "openai_model": "gpt-5.1"
+  "openai_model": "gpt-5.4"
 }
